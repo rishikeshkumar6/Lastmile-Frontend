@@ -1,0 +1,63 @@
+/* .App{
+  font-family: BlinkMacSystemFont, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif !important;
+} */
+body{
+  font-family: BlinkMacSystemFont, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif !important;
+}
+
+/* .css-6m7cbl-MuiStack-root{
+  padding-bottom: 25px !important;
+  padding-top: 25px !important;
+} */
+
+
+.css-1umw9bq-MuiSvgIcon-root{
+  font-size: 1rem !important ;
+}
+
+.MuiContainer-maxWidthLg{
+  max-width: 100% !important;
+}
+
+.css-1c5o7vy-MuiPagination-ul{
+  justify-content: center;
+}
+
+.css-1umw9bq-MuiSvgIcon-root{
+  font-size: 1rem;
+}
+.customInputBorder{
+  border:1px solid #ced4da;
+  border-radius: 10px;
+}
+
+.borderBottom{
+  border-bottom:1px solid rgb(229 231 235 / 1);
+}
+.customBoxBorder{
+  border:1px solid #ced4da;
+  border-radius: 10px;
+}
+
+.customBoxBorderActive{
+  border-color: aqua;
+  border-radius: 10px;
+}
+
+.customInputBorderError{
+  border: 1px solid red;
+  border-radius: 10px;
+}
+
+input:focus,input:hover{
+  outline: none;
+}
+.bla {
+  transition: transform 0.5s ease-in-out !important; /* Adjust duration and easing as needed */
+}
+
+
+
+
+
+
