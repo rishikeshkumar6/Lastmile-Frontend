@@ -68,10 +68,11 @@ export const paymentApi = api.injectEndpoints({
 export const orderApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getAllOrder: builder.query({
-      query: (defultParameter = "default") => ({
-        url: "/api/v1/getAllOrder?page=1&batchSize=10&order_status=new&start_date=2025-01-20&end_date=2025-02-20",
+      query: (payload = "default") => ({
+        url: "/api/v1/getAllOrder?page=1&batchSize=10&order_status=new&email=&phonenumber=&order_id=ORD123&start_date=2025-01-20&end_date=2025-02-20",
         method: "GET",
       }),
+      providesTags: ["order"],
     }),
     getOrder: builder.query({
       query: (obj) => ({
@@ -86,6 +87,7 @@ export const orderApi = api.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["order"],
     }),
     bulkUploadOrder: builder.mutation({
       query: (payload) => ({
@@ -93,6 +95,7 @@ export const orderApi = api.injectEndpoints({
         method: "POST",
         body: payload,
       }),
+      invalidatesTags: ["order"],
     }),
     updateOrder: builder.mutation({
       query: (body) => ({
@@ -100,6 +103,7 @@ export const orderApi = api.injectEndpoints({
         method: "PUT",
         body: body,
       }),
+      invalidatesTags: ["order"],
     }),
   }),
 });
@@ -116,7 +120,7 @@ export const { useOrderCreationMutation, useLazySubscriptionsCreationQuery } =
 
 export const {
   useGetOrderQuery,
-  useGetAllOrderQuery,
+  useLazyGetAllOrderQuery,
   useCreateOrderMutation,
   useUpdateOrderMutation,
   useBulkUploadOrderMutation,

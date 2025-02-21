@@ -4,29 +4,27 @@ import Button from "@mui/material/Button";
 import { IoCartOutline } from "react-icons/io5";
 import { RxDotsVertical } from "react-icons/rx";
 import Pagination from "@mui/material/Pagination";
-import { useGetAllOrderQuery } from "../Redux/Action";
+import { useLazyGetAllOrderQuery } from "../Redux/Action";
 import { MdErrorOutline } from "react-icons/md";
 import Stack from "@mui/material/Stack";
 import { HiOutlineRefresh } from "react-icons/hi";
+import { useNavigate } from "react-router-dom";
 
 import { Link } from "react-router-dom";
 
 const Order = () => {
   const [Id, setId] = useState(null);
+  const [cancelOrder, setCancelOrder] = useState(false);
   const [activeButton, setActiveButton] = useState("New");
-  const { isLoading, isSuccess, isError, data, error } = useGetAllOrderQuery();
-
+  const [toolkit, setToolKit] = useState(null);
+  const [page, setPage] = useState(1);
+  const [searchInput, setSearchInput] = useState("");
+  const [getAllOrder, { isLoading, isSuccess, isError, data, error }] =
+    useLazyGetAllOrderQuery();
+  const navigate = useNavigate();
   useEffect(() => {
-    if (isLoading === true) {
-      console.log("loding....");
-    }
-    if (isSuccess === true) {
-      console.log("data", data);
-    }
-    if (isError === true) {
-      console.log("error", error);
-    }
-  }, [data, error]);
+    getAllOrder(page, searchInput);
+  }, [page, searchInput]);
 
   const handleActiveButton = (status) => {
     switch (status) {
@@ -46,17 +44,95 @@ const Order = () => {
         return setActiveButton("Return To Origin");
       case "Non Deleivery Report":
         return setActiveButton("Non Deleivery Report");
+      case "Cancel Order":
+        return setActiveButton("Cancel Order");
       case "All Orders":
         return setActiveButton("All Orders");
     }
   };
+  function debounce(fn, delay) {
+    let timer;
+    return function (...args) {
+      clearTimeout(timer);
+      timer = setTimeout(() => fn(...args), delay);
+    };
+  }
+  const handleChange = (event) => {
+    setSearchInput(event.target.value);
+  };
+
+  const debouncedHandleChange = debounce(handleChange, 500);
   return (
     <section className="flex gap-6">
       <Sidebar />
       <div className="m-3 text-xl text-gray-900   w-[90%] m-[auto]">
+        <div class="absolute hidden z-10 p-4 w-full max-w-md max-h-full">
+          <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
+            <button
+              type="button"
+              class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+              data-modal-hide="popup-modal"
+            >
+              <svg
+                class="w-3 h-3"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 14 14"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+                />
+              </svg>
+              <span class="sr-only">Close modal</span>
+            </button>
+            <div class="p-4 md:p-5 text-center">
+              <svg
+                class="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                />
+              </svg>
+              <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+                Are you sure you want to delete this product?
+              </h3>
+              <button
+                data-modal-hide="popup-modal"
+                type="button"
+                class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
+              >
+                Yes, I'm sure
+              </button>
+              <button
+                data-modal-hide="popup-modal"
+                type="button"
+                class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+              >
+                No, cancel
+              </button>
+            </div>
+          </div>
+        </div>
+
         <div className="flex justify-between py-5 pl-14">
           <div className="flex gap-5 items-center w-[40%]">
-            <form class="max-w-md w-[100%]">
+            <form
+              class="max-w-md w-[100%]"
+              onSubmit={(e) => e.preventDefault()}
+            >
               <label
                 for="default-search"
                 class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
@@ -86,6 +162,7 @@ const Order = () => {
                   id="default-search"
                   class="block w-full py-3 px-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="search awb number,order id, email id, phone number"
+                  onChange={debouncedHandleChange}
                   required
                 />
               </div>
@@ -189,6 +266,16 @@ const Order = () => {
             Non Deleivery Report
           </span>
           <span
+            class={`text-sm font-normal py-2 px-3  rounded-sm  cursor-pointer flex gap-2 items-center ${
+              activeButton === "Cancel Order"
+                ? " bg-black text-white"
+                : " bg-white text-black"
+            }`}
+            onClick={() => handleActiveButton("Cancel Order")}
+          >
+            Cancel Orders
+          </span>
+          <span
             class={`text-sm font-normal  py-2 px-3  rounded-sm  cursor-pointer flex gap-2 items-center ${
               activeButton === "All Orders"
                 ? " bg-black text-white"
@@ -223,6 +310,7 @@ const Order = () => {
                   const pickup_details = elem.pickupDetails;
                   const package_details = elem.packageDetails;
                   const order_details = elem.orderDetails;
+                  const { id } = elem;
                   return (
                     <tr
                       className={`${
@@ -301,7 +389,23 @@ const Order = () => {
                                 : ""}
                             </span>
                             <span className="text-blue-500 font-[500]">
-                              +2 More Products
+                              {order_details["productDetails"].length > 0 ? (
+                                <div>
+                                  <span
+                                    data-popover-target="popover-company-profile"
+                                    className="text-secondary hover:cursor-pointer"
+                                    onMouseEnter={() => setToolKit(true)}
+                                    onMouseLeave={() => setToolKit(false)}
+                                  >{`+2 products`}</span>
+                                  {toolkit && (
+                                    <div className="absolute">
+                                      product details
+                                    </div>
+                                  )}
+                                </div>
+                              ) : (
+                                ""
+                              )}
                             </span>
                           </div>
                         ) : (
@@ -353,7 +457,7 @@ const Order = () => {
                       <td className="p-3 text-[0.8rem]">
                         {elem.order_status !== "" ? elem.order_status : ""}
                       </td>
-                      <td className="p-3 text-[0.8rem] flex items-center gap-2">
+                      <td className="px-3 py-5 text-[0.8rem] flex items-center gap-2">
                         <button className="flex gap-2 items-center justify-center text-white bg-[#4285F4] hover:bg-[#4285F4]/90 focus:ring-4 focus:outline-none focus:ring-[#4285F4]/50 font-medium text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#4285F4]/55">
                           Ship Now
                         </button>
@@ -361,20 +465,46 @@ const Order = () => {
                           <RxDotsVertical
                             className="cursor-pointer"
                             onClick={() => {
-                              setId(1);
+                              setId(id);
                             }}
                           />
 
-                          {index === Id && (
-                            <div class="absolute right-0 mt-2 w-[200px] bg-white shadow-lg rounded-md p-3 z-50">
-                              <div class="flex flex-col gap-1">
-                                <span className="p-4 cursor-pointer hover:bg-gray-100">
-                                  Edit Order
-                                </span>
-                                <span class="p-4 cursor-pointer hover:bg-gray-100 text-red-500">
-                                  Cancel Order
-                                </span>
-                              </div>
+                          {id === Id && (
+                            <div class="z-10 absolute bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-40 dark:bg-gray-700 dark:divide-gray-600">
+                              <ul
+                                class="py-2 text-sm text-gray-700 dark:text-gray-200"
+                                aria-labelledby="dropdownMenuIconButton"
+                              >
+                                <li>
+                                  <span
+                                    href="#"
+                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white hover:cursor-pointer"
+                                    onClick={() => navigate("/orderDetails")}
+                                  >
+                                    View Order
+                                  </span>
+                                </li>
+                                <li>
+                                  <span
+                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white hover:cursor-pointer"
+                                    onClick={() =>
+                                      navigate(
+                                        `/order/ordercreate/${id}/consignee-details`
+                                      )
+                                    }
+                                  >
+                                    Edit Order
+                                  </span>
+                                </li>
+                                <li>
+                                  <span
+                                    href="#"
+                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white hover:cursor-pointer text-red-600"
+                                  >
+                                    Cancel Order
+                                  </span>
+                                </li>
+                              </ul>
                             </div>
                           )}
                         </div>
@@ -385,29 +515,91 @@ const Order = () => {
               </tbody>
             </table>
           ) : (
-            <div className="h-[400px] flex items-center justify-center">
-              <div className="flex flex-col gap-5 justify-center align-center">
-                <span className="text-[25px] flex items-center justify-center w-12 h-12 rounded-full bg-red-100 mx-auto">
-                  {" "}
-                  <MdErrorOutline className="text-red-500 " />
-                </span>
-                <div className="flex flex-col gap-2 mx-auto">
-                  <span className="font-bold text-red-800">
-                    Unable to load orders
-                  </span>
-                  <span className="text-sm text-red-600 text-center mx-auto">
-                    please try again or refresh the page
-                  </span>
-                </div>
-                <button className="w-[40%] bg-red-200 flex items-center justify-center gap-2 px-4 py-2 text-[15px] rounded-md text-red-600 mx-auto">
-                  {" "}
-                  <span>
-                    <HiOutlineRefresh />
-                  </span>
-                  Retry
-                </button>
-              </div>
-            </div>
+            <table className="w-full text-left leading-5">
+              <thead className="bg-gray-50 border-2 border-gray-200">
+                <tr>
+                  <th className="p-3 text-sm">Order Details</th>
+                  <th className="p-3 text-sm">Pickup Details</th>
+                  <th className="p-3 text-sm">Consignee Details</th>
+                  <th className="p-3 text-sm">Product Details</th>
+                  <th className="p-3 text-sm">Package Details</th>
+                  <th className="p-3 text-sm">Payment Mode</th>
+                  <th className="p-3 text-sm">Status</th>
+                  <th className="p-3 text-sm">Action</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white border-2">
+                {Array(10)
+                  .fill(null)
+                  .map((_, index) => (
+                    <tr
+                      key={index}
+                      className={`${
+                        (index + 1) % 2 === 0 ? "bg-gray-100" : "bg-white"
+                      }`}
+                    >
+                      <td className="p-3 text-[0.8rem] font-[500]">
+                        <div className="w-24 h-4 bg-gray-300 animate-pulse rounded"></div>
+                      </td>
+                      <td className="p-3 text-[0.8rem]">
+                        <div className="flex flex-col gap-1">
+                          <div className="w-20 h-4 bg-gray-300 animate-pulse rounded"></div>
+                          <div className="flex flex-col gap-1">
+                            <div className="w-16 h-4 bg-gray-300 animate-pulse rounded"></div>
+                            <div className="w-32 h-4 bg-gray-300 animate-pulse rounded"></div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="p-3 text-[0.8rem]">
+                        <div className="flex flex-col gap-1">
+                          <div className="w-20 h-4 bg-gray-300 animate-pulse rounded"></div>
+                          <div className="flex flex-col gap-1">
+                            <div className="w-16 h-4 bg-gray-300 animate-pulse rounded"></div>
+                            <div className="w-32 h-4 bg-gray-300 animate-pulse rounded"></div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="p-3 text-[0.8rem]">
+                        <div className="flex flex-col gap-1">
+                          <div className="w-32 h-4 bg-gray-300 animate-pulse rounded"></div>
+                          <div className="w-20 h-4 bg-gray-300 animate-pulse rounded"></div>
+                          <div className="w-24 h-4 bg-gray-300 animate-pulse rounded"></div>
+                        </div>
+                      </td>
+                      <td className="p-3 text-[0.8rem]">
+                        <div className="flex flex-col gap-1">
+                          <div className="w-16 h-4 bg-gray-300 animate-pulse rounded"></div>
+                          <div className="w-24 h-4 bg-gray-300 animate-pulse rounded"></div>
+                          <div className="w-20 h-4 bg-gray-300 animate-pulse rounded"></div>
+                        </div>
+                      </td>
+                      <td className="p-3 text-[0.8rem]">
+                        <div className="w-16 h-4 bg-gray-300 animate-pulse rounded"></div>
+                      </td>
+                      <td className="p-3 text-[0.8rem]">
+                        <div className="w-16 h-4 bg-gray-300 animate-pulse rounded"></div>
+                      </td>
+                      <td className="p-3 text-[0.8rem]">
+                        <div className="w-24 h-8 bg-gray-300 animate-pulse rounded"></div>
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          )}
+          {isSuccess === true &&
+          Object.keys(data).length > 0 &&
+          data.orderRes.length > 0 ? (
+            <Stack spacing={2} className="py-5 m-[auto]">
+              <Pagination
+                count={data.pageCount}
+                variant="outlined"
+                shape="rounded"
+                onChange={(event, value) => setPage(value)}
+              />
+            </Stack>
+          ) : (
+            ""
           )}
         </div>
         {isLoading === true && (
@@ -485,9 +677,31 @@ const Order = () => {
             </table>
           </div>
         )}
-        <Stack spacing={2} className="py-5 m-[auto]">
-          <Pagination count={10} variant="outlined" shape="rounded" />
-        </Stack>
+        {isError === true && (
+          <div className="h-[400px] flex items-center justify-center">
+            <div className="flex flex-col gap-5 justify-center align-center">
+              <span className="text-[25px] flex items-center justify-center w-12 h-12 rounded-full bg-red-100 mx-auto">
+                {" "}
+                <MdErrorOutline className="text-red-500 " />
+              </span>
+              <div className="flex flex-col gap-2 mx-auto">
+                <span className="font-bold text-red-800">
+                  Unable to load orders
+                </span>
+                <span className="text-sm text-red-600 text-center mx-auto">
+                  please try again or refresh the page
+                </span>
+              </div>
+              <button className="w-[40%] bg-red-200 flex items-center justify-center gap-2 px-4 py-2 text-[15px] rounded-md text-red-600 mx-auto">
+                {" "}
+                <span>
+                  <HiOutlineRefresh />
+                </span>
+                Retry
+              </button>
+            </div>
+          </div>
+        )}
       </div>
       {console.log(
         "rtk query state",
@@ -497,6 +711,7 @@ const Order = () => {
         data,
         error
       )}
+      {console.log("pagination page", page)}
     </section>
   );
 };
