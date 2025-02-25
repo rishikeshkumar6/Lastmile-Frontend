@@ -1,11 +1,101 @@
 import * as XLSX from "xlsx";
 import React from "react";
+import { useSelector } from "react-redux";
 import { MdOutlineFileDownload } from "react-icons/md";
 import { saveAs } from "file-saver";
 
 const GenerateExcel = () => {
+  const Data = useSelector(
+    (state) => state["rootReducer"]["orderSlice"]["exportOrder"]
+  );
+  const getNestedValue = (obj, key, defaultValue = "") =>
+    obj ? obj[key] || defaultValue : defaultValue;
   const handleDownload = () => {
-    // Example data
+    const JsonData = Data.map((elem) => {
+      const { consigneeDetails, pickupDetails, orderDetails, packageDetails } =
+        elem;
+
+      // Destructure and default values from `consigneeDetails`
+      const consigneeInfo = {
+        fullname: getNestedValue(consigneeDetails, "fullname"),
+        phonenumber: getNestedValue(consigneeDetails, "phonenumber"),
+        alternatephonenumber: getNestedValue(
+          consigneeDetails,
+          "alternatephonenumber"
+        ),
+        consigneecompany: getNestedValue(consigneeDetails, "consigneecompany"),
+        gstin: getNestedValue(consigneeDetails, "gstin"),
+        email: getNestedValue(consigneeDetails, "email"),
+        fulladdress: getNestedValue(consigneeDetails, "fulladdress"),
+        landmark: getNestedValue(consigneeDetails, "landmark"),
+        country: getNestedValue(consigneeDetails, "country"),
+        state: getNestedValue(consigneeDetails, "state"),
+        city: getNestedValue(consigneeDetails, "city"),
+        pincode: getNestedValue(consigneeDetails, "pincode"),
+        location_name: getNestedValue(consigneeDetails, "location_name"),
+      };
+
+      // Destructure and default values from `pickupDetails`
+      const pickupInfo = {
+        contact_person_name: getNestedValue(
+          pickupDetails,
+          "contact_person_name"
+        ),
+        contact_person_phone: getNestedValue(
+          pickupDetails,
+          "contact_person_phone"
+        ),
+        contact_person_email: getNestedValue(
+          pickupDetails,
+          "contact_person_email"
+        ),
+        alternate_phone: getNestedValue(pickupDetails, "alternate_phone"),
+        address: getNestedValue(pickupDetails, "address"),
+        landmark: getNestedValue(pickupDetails, "landmark"),
+        pincode: getNestedValue(pickupDetails, "pincode"),
+        city: getNestedValue(pickupDetails, "city"),
+        state: getNestedValue(pickupDetails, "state"),
+        country: getNestedValue(pickupDetails, "country"),
+        location_type: getNestedValue(pickupDetails, "location_type"),
+        location_code: getNestedValue(pickupDetails, "location_code"),
+        active: !!getNestedValue(pickupDetails, "active", false),
+        is_default: !!getNestedValue(pickupDetails, "is_default", false),
+      };
+
+      // Destructure and default values from `orderDetails`
+      const orderInfo = {
+        orderid: getNestedValue(orderDetails, "orderid"),
+        channel: getNestedValue(orderDetails, "channel"),
+        productDetails: getNestedValue(orderDetails, "productDetails", []),
+        payment_mode: getNestedValue(orderDetails, "payment_mode"),
+        cod_charges: getNestedValue(orderDetails, "cod_charges"),
+        discount: getNestedValue(orderDetails, "discount"),
+        gift_wrap_charges: getNestedValue(orderDetails, "gift_wrap_charges"),
+        other_charges: getNestedValue(orderDetails, "other_charges"),
+        total_amount: getNestedValue(orderDetails, "total_amount"),
+        order_value: getNestedValue(orderDetails, "order_value"),
+        tax_amount: getNestedValue(orderDetails, "tax_amount"),
+        dead_weight: getNestedValue(orderDetails, "dead_weigth"),
+      };
+
+      // Destructure and default values from `packageDetails`
+      const packageInfo = {
+        dead_weigth: getNestedValue(packageDetails, "dead_weigth"),
+        volumetric_weight: getNestedValue(packageDetails, "volumetric_weigth"),
+        length: getNestedValue(packageDetails, "length"),
+        breath: getNestedValue(packageDetails, "breath"),
+        height: getNestedValue(packageDetails, "height"),
+      };
+
+      // Combine all details into the final object
+      return {
+        ...consigneeInfo,
+        ...pickupInfo,
+        ...orderInfo,
+        ...packageInfo,
+        order_status: "new", // Default order status
+      };
+    });
     const exampleData = [
       {
         fullname: "John Doe",
@@ -64,6 +154,7 @@ const GenerateExcel = () => {
     ];
 
     // Convert data to worksheet
+    console.log("jsonData", JsonData);
     const worksheet = XLSX.utils.json_to_sheet(exampleData);
     console.log("worksheet", worksheet);
     // Set column widths
@@ -116,10 +207,12 @@ const GenerateExcel = () => {
     ];
 
     // Style cells to align left
+    let count = 0;
     const range = XLSX.utils.decode_range(worksheet["!ref"]);
     console.log("range", range);
     for (let R = range.s.r; R <= range.e.r; ++R) {
       for (let C = range.s.c; C <= range.e.c; ++C) {
+        count += 1;
         const cell_address = XLSX.utils.encode_cell({ r: R, c: C });
         console.log(cell_address);
         if (!worksheet[cell_address]) continue;
@@ -128,7 +221,7 @@ const GenerateExcel = () => {
         };
       }
     }
-
+    console.log("count expected 80 times", count);
     // Create workbook and append worksheet
     const workbook = XLSX.utils.book_new();
     console.log(workbook, worksheet, "Orders");
@@ -148,9 +241,11 @@ const GenerateExcel = () => {
 
   return (
     <button
-      class="text-sm font-normal  py-2 px-3  rounded-sm  cursor-no-drop flex gap-2 items-center  bg-gray-100  text-black w-[15%] justify-center"
+      class={`text-sm font-normal  py-2 px-3  rounded-sm  ${
+        Data.length > 0 ? "cursor-pointer" : "cursor-no-drop"
+      } flex gap-2 items-center  bg-gray-100  text-black w-[15%] justify-center`}
       onClick={handleDownload}
-      disabled={true}
+      disabled={Data.length > 0 ? false : true}
     >
       <MdOutlineFileDownload />
       Export Orders

@@ -7,7 +7,8 @@ import { useLazyGetAllOrderQuery } from "../Redux/Action";
 import Stack from "@mui/material/Stack";
 import { HiOutlineRefresh } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
-
+import { order } from "../Redux/exportOrderSlice";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import DataTable from "../components/userDashboardComponents/DataTable";
 import LoadingTable from "../components/userDashboardComponents/LoadingTable";
@@ -15,7 +16,12 @@ import ErrorTable from "../components/userDashboardComponents/ErrorTable";
 import GenerateExcel from "../components/userDashboardComponents/ExportOrder";
 
 const Order = () => {
+  const dispatch = useDispatch();
+  const Data = useSelector(
+    (state) => state["rootReducer"]["orderSlice"]["exportOrder"]
+  );
   const [cancelOrder, setCancelOrder] = useState(false);
+  const [selectAll, setSelectAll] = useState(false);
   const [activeButton, setActiveButton] = useState("new");
   const [page, setPage] = useState(1);
   const [searchInput, setSearchInput] = useState("");
@@ -60,6 +66,13 @@ const Order = () => {
   }
   const handleChange = (event) => {
     setSearchInput(event.target.value);
+  };
+
+  const handleClick = () => {
+    if (!selectAll) dispatch(order({ bulkOrder: data.orderRes }));
+    setSelectAll(!selectAll);
+    if (selectAll) dispatch(order({ bulkOrder: [] }));
+    setSelectAll(!selectAll);
   };
 
   const debouncedHandleChange = debounce(handleChange, 500);
@@ -301,7 +314,11 @@ const Order = () => {
                 <thead className="bg-gray-50 border-2 border-gray-200">
                   <tr>
                     <th className="p-3 text-sm">
-                      <input type="checkbox" />
+                      <input
+                        type="checkbox"
+                        checked={!selectAll ? false : true}
+                        onClick={handleClick}
+                      />
                     </th>
                     <th className="p-3 text-sm">Order Details</th>
                     <th className="p-3 text-sm">Pickup Details</th>
@@ -315,7 +332,15 @@ const Order = () => {
                 </thead>
                 <tbody className="bg-white border-2">
                   {data.orderRes.map((row, index) => {
-                    return <DataTable row={row} index={index} />;
+                    return (
+                      <DataTable
+                        data={data}
+                        row={row}
+                        index={index}
+                        selectAll={selectAll}
+                        setSelectAll={setSelectAll}
+                      />
+                    );
                   })}
                 </tbody>
               </table>

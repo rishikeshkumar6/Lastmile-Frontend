@@ -1,14 +1,31 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { createPopper } from "@popperjs/core";
 import { RxDotsVertical } from "react-icons/rx";
+import { filterOrder, insertSingleOrder } from "../../Redux/exportOrderSlice";
 
-const DataTable = ({ row, index }) => {
+const DataTable = ({ data, row, index, selectAll, setSelectAll }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const Data = useSelector(
+    (state) => state["rootReducer"]["orderSlice"]["exportOrder"]
+  );
   const [Id, setId] = useState(null);
+  const [selectedOrders, setSelectedOrders] = useState([]);
+  const [Index, setIndex] = useState(null);
   const [toolkit, setToolKit] = useState(null);
   const buttonRef = useRef(null);
   const tooltipRef = useRef(null);
+  useEffect(() => {
+    console.log("Data", Data);
+    if (Data.length > 0) {
+      setSelectedOrders(Data.map((elem) => elem.id));
+    }
+    if (Data.length === 0) {
+      setSelectedOrders([]);
+    }
+  }, [Data]);
   const handleMouseEnter = () => {
     setToolKit(true);
     createPopper(buttonRef.current, tooltipRef.current, {
@@ -25,10 +42,26 @@ const DataTable = ({ row, index }) => {
     packageDetails: package_details,
     orderDetails: order_details,
   } = row;
+
+  const handleChecked = (id, row) => {
+    if (selectedOrders.includes(id)) {
+      dispatch(filterOrder(id));
+      setSelectAll(false);
+    } else {
+      dispatch(insertSingleOrder(row));
+      if (Data.length + 1 === data.orderRes.length) {
+        setSelectAll(true);
+      }
+    }
+  };
   return (
     <tr className={`${(index + 1) % 2 === 0 ? "bg-gray-100" : "bg-white"}`}>
       <td className="p-3 text-[0.8rem]  font-[500]">
-        <input type="checkbox" />
+        <input
+          type="checkbox"
+          checked={selectedOrders.includes(id)}
+          onClick={() => handleChecked(id, row)}
+        />
       </td>
       <td className="p-3 text-[0.8rem]  font-[500]">
         <span
@@ -231,6 +264,7 @@ const DataTable = ({ row, index }) => {
           )}
         </div>
       </td>
+      {console.log(selectedOrders)}
     </tr>
   );
 };

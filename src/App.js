@@ -22,10 +22,9 @@ import ForgotPassword from "./components/UserAuthentication/ForgotPassword.js";
 import OTPVerification from "./components/UserAuthentication/OtpVerification.js";
 
 function App() {
-  const data = useSelector((state) => state.userSlice.token);
   return (
     <BrowserRouter>
-      {data ? <Header /> : null}
+      <Header />
       <ToastContainer />
       <Routes>
         <Route path="*" element={<h1>this page is not exist</h1>} />

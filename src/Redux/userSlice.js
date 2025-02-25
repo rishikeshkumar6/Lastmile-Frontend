@@ -10,7 +10,7 @@ const userSlice = createSlice({
   reducers: {
     userManageState: (state, action) => {
       console.log(action);
-      switch (action.payload.type) {
+      switch (action.type) {
         case "userid":
           return { ...state, userRegisterId: action.payload.userId };
         case "forgotpassword_id":
@@ -18,7 +18,7 @@ const userSlice = createSlice({
             ...state,
             forgotPasswordId: action.payload.forgotPasswordId,
           };
-        case "token":
+        case "userSlice/userManageState":
           return {
             ...state,
             token: action.payload.token,
