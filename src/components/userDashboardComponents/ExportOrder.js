@@ -207,12 +207,10 @@ const GenerateExcel = () => {
     ];
 
     // Style cells to align left
-    let count = 0;
     const range = XLSX.utils.decode_range(worksheet["!ref"]);
     console.log("range", range);
     for (let R = range.s.r; R <= range.e.r; ++R) {
       for (let C = range.s.c; C <= range.e.c; ++C) {
-        count += 1;
         const cell_address = XLSX.utils.encode_cell({ r: R, c: C });
         console.log(cell_address);
         if (!worksheet[cell_address]) continue;
@@ -221,7 +219,6 @@ const GenerateExcel = () => {
         };
       }
     }
-    console.log("count expected 80 times", count);
     // Create workbook and append worksheet
     const workbook = XLSX.utils.book_new();
     console.log(workbook, worksheet, "Orders");

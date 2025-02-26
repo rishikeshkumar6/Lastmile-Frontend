@@ -22,24 +22,40 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
       },
     ],
     payment_mode: "prepaid",
-    shipping_charges: 0.0,
-    cod_charges: 0.0,
-    discount: 0.0,
-    gift_wrap_charges: 0.0,
-    other_charges: 0.0,
-    total_amount: 100.0,
-    order_value: 100.0,
-    tax_amount: 0.0,
+    shipping_charges: 0,
+    cod_charges: 0,
+    discount: 0,
+    gift_wrap_charges: 0,
+    other_charges: 0,
+    total_amount: 0,
+    order_value: 0,
+    tax_amount: 0,
   });
 
-  const totalAmmount = orderDetailsForm.productDetails.reduce(
-    (acc, curr, index) => {
-      const orderForms = { ...orderDetailsForm };
+  const totalAmmount = (values) => {
+    return values.productDetails.reduce((acc, curr, index) => {
+      const orderForms = { ...values };
       orderForms.total_amount = acc + curr.quantity * curr.price;
       return acc + curr.quantity * curr.price;
-    },
-    0
-  );
+    }, 0);
+  };
+
+  const extraCharge = (values) => {
+    const {
+      shipping_charges,
+      cod_charges,
+      discount,
+      gift_wrap_charges,
+      other_charges,
+    } = values;
+    return (
+      parseFloat(shipping_charges) +
+      parseFloat(cod_charges) +
+      parseFloat(discount) +
+      parseFloat(gift_wrap_charges) +
+      parseFloat(other_charges)
+    );
+  };
 
   const orderDetailsFormSchema = Yup.object().shape({
     orderid: Yup.string().required("order id is required field"),
@@ -254,11 +270,11 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
                 <h1 className="font-[500] text-xl">Payment Mode</h1>
                 <div className="w-[100%] flex items-center gap-20">
                   <label className="flex gap-2 items-center text-[13px] font-[500]">
-                    <input type="radio" name="payment_mode" />
+                    <Field type="radio" name="payment_mode" value="prepaid" />
                     Prepaid
                   </label>
                   <label className="flex gap-2 items-center text-[13px] font-[500]">
-                    <input type="radio" name="payment_mode" />
+                    <Field type="radio" name="payment_mode" value="cod" />
                     COD
                   </label>
                 </div>
@@ -276,8 +292,15 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
                     COD Charge
                     <Field
                       name="cod_charges"
-                      className="customInputBorder px-3 py-1"
+                      className={`customInputBorder px-3 py-1 ${
+                        values.payment_mode === "prepaid"
+                          ? "cursor-no-drop"
+                          : ""
+                      }`}
                       placeholder="Enter Order Id"
+                      disabled={
+                        values.payment_mode === "prepaid" ? true : false
+                      }
                     />
                   </div>
                   <div className="flex flex-col w-[25%]">
@@ -314,37 +337,22 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
                       placeholder="Enter Order Id"
                     />
                   </div>
-                  <div className="flex flex-col w-[25%]">
-                    Discounts
-                    <Field
-                      name="discount"
-                      className="customInputBorder px-3 py-1"
-                      placeholder="Enter Order Id"
-                    />
-                  </div>
-                  <div className="flex flex-col w-[25%]">
-                    Gift Wrap
-                    <Field
-                      name="gift_wrap_charges"
-                      className="customInputBorder px-3 py-1"
-                      placeholder="Enter Order Id"
-                    />
-                  </div>
                 </div>
               </div>
               <div className="py-6 px-10 bg-gray bg-slate-200 rounded-sm w-[100%] font-[500] text-[15px] flex flex-col gap-5">
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center text-sm font-[500]">
                   Total Product Value
-                  <span>{totalAmmount}</span>
+                  <span>{totalAmmount(values)}</span>
                 </div>
-                <div className="flex justify-between items-center">
+
+                <div className="flex justify-between items-center text-sm font-[500]">
                   Extra Charges
-                  <span>40000</span>
+                  <span>{extraCharge(values)}</span>
                 </div>
-                <hr />
+                <hr class="w-full my-4 border-t border-gray-300" />
                 <div className="flex justify-between items-center">
-                  <span className="font-bold"> Total</span>
-                  <span>40000</span>
+                  <span className="ftext-sm font-[500]"> Total</span>
+                  <span>{totalAmmount(values) + extraCharge(values)}</span>
                 </div>
               </div>
               <div className="w-[100%] flex justify-end gap-5 py-16">
@@ -369,6 +377,14 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
               {console.log(values)}
               {console.log("errors", errors)}
               {console.log("touched", touched)}
+              {console.log("total ammount", totalAmmount)}
+              {console.log(
+                values.shipping_charges +
+                  values.cod_charges +
+                  values.discount +
+                  values.gift_wrap_charges +
+                  values.other_charges
+              )}
             </div>
           </Form>
         );

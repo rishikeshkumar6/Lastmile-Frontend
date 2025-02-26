@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 const PublicRoutes = () => {
   // const data = useSelector((state) => state.userSlice.token);
   const { isLoading, isSuccess, isError } = useGetUserQuery();
+  console.log("public routes", isLoading, isSuccess, isError);
   const location = useLocation();
   console.log("url location", location.pathname);
   if (isLoading) return <p>Loading...</p>; // Show a loading message

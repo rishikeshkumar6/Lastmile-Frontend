@@ -24,6 +24,7 @@ const DataTable = ({ data, row, index, selectAll, setSelectAll }) => {
     }
     if (Data.length === 0) {
       setSelectedOrders([]);
+      setSelectAll(false);
     }
   }, [Data]);
   const handleMouseEnter = () => {

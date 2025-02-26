@@ -7,9 +7,10 @@ export const api = createApi({
     credentials: "include",
     prepareHeaders: (headers, { getState }) => {
       const state = getState();
+      console.log(state);
       headers.set(
         "Authorization",
-        `bearer ${state.rootReducer["userSlice"]["token"]}`
+        `bearer ${state["rootReducer"]["userSlice"]["token"]}`
       );
       return headers;
     },
