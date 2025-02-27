@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import { useUpdateOrderMutation } from "../../Redux/Action";
+import { MdDelete } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { Button } from "@mui/material";
@@ -32,14 +33,6 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
     tax_amount: 0,
   });
 
-  const totalAmmount = (values) => {
-    return values.productDetails.reduce((acc, curr, index) => {
-      const orderForms = { ...values };
-      orderForms.total_amount = acc + curr.quantity * curr.price;
-      return acc + curr.quantity * curr.price;
-    }, 0);
-  };
-
   const extraCharge = (values) => {
     const {
       shipping_charges,
@@ -47,14 +40,16 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
       discount,
       gift_wrap_charges,
       other_charges,
+      tax_amount,
     } = values;
-    return (
+
+    const extraCharge =
       parseFloat(shipping_charges) +
-      parseFloat(cod_charges) +
+      parseFloat(cod_charges) -
       parseFloat(discount) +
       parseFloat(gift_wrap_charges) +
-      parseFloat(other_charges)
-    );
+      parseFloat(other_charges);
+    return isNaN(extraCharge) === true ? 0 : extraCharge;
   };
 
   const orderDetailsFormSchema = Yup.object().shape({
@@ -81,6 +76,8 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
     setFieldValue("productDetails", orderDetailsForms.productDetails);
   };
 
+  const prevDataRef = useRef();
+
   useEffect(() => {
     if (
       Success === true &&
@@ -88,8 +85,11 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
       Data.orderRes.orderDetails !== null &&
       Object.keys(Data.orderRes.orderDetails).length > 0
     ) {
-      console.log("orderDetailsForm useEffect", Data.orderRes);
-      setOrderDetailsForm(Data.orderRes.orderDetails);
+      // Check if the order details are different from the previous ones
+      if (prevDataRef.current !== Data.orderRes.orderDetails) {
+        setOrderDetailsForm(Data.orderRes.orderDetails);
+        prevDataRef.current = Data.orderRes.orderDetails; // Update the previous value
+      }
     }
   }, [Data]);
 
@@ -105,6 +105,15 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
       navigate(`/order/ordercreate/${id}/pickup-details`);
     }
   }, [data]);
+
+  const handleDelete = (values, id, setFieldValue) => {
+    console.log("handleDelete function is called", values, id, "----");
+    const orderForms = { ...values };
+    const filterData = orderForms.productDetails.filter((elem, index) => {
+      return index !== id;
+    });
+    setFieldValue("productDetails", filterData);
+  };
 
   return (
     <Formik
@@ -142,6 +151,23 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
             console.log("hey i am else statement");
             return `px-3 py-1 customInputBorder`;
           }
+        };
+
+        const totalAmmount = (values) => {
+          const totalAmmount = values.productDetails.reduce(
+            (acc, curr, index) => {
+              return acc + curr.quantity * curr.price;
+            },
+            0
+          );
+          return totalAmmount;
+        };
+        const TotalAmmount = totalAmmount(values);
+
+        const taxCharge = (values) => {
+          const { tax_amount } = values;
+          const finalValue = (tax_amount / 100) * TotalAmmount;
+          return isNaN(finalValue) === true ? 0 : finalValue;
         };
         return (
           <Form>
@@ -207,7 +233,7 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
                   console.log("index", index);
                   return (
                     <>
-                      <div className="flex flex-col w-[28%]">
+                      <div className="flex flex-col w-[25%]">
                         Product Name*
                         <Field
                           name={`productDetails[${index}].name`}
@@ -220,7 +246,7 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
                           className="text-red-500"
                         />
                       </div>
-                      <div className="flex flex-col w-[18%]">
+                      <div className="flex flex-col w-[15%]">
                         quantity*
                         <Field
                           type="number"
@@ -234,7 +260,7 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
                           className="text-red-500"
                         />
                       </div>
-                      <div className="flex flex-col w-[18%]">
+                      <div className="flex flex-col w-[15%]">
                         price*
                         <Field
                           type="number"
@@ -248,7 +274,7 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
                           className="text-red-500"
                         />
                       </div>
-                      <div className="flex flex-col w-[28%]">
+                      <div className="flex flex-col w-[25%]">
                         Sku Code
                         <Field
                           name={`productDetails[${index}].sku_code`}
@@ -261,6 +287,14 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
                           className="text-red-500"
                         />
                       </div>
+                      {index !== 0 && (
+                        <MdDelete
+                          className="text-[25px] mt-8 text-red-500 cursor-pointer"
+                          onClick={() =>
+                            handleDelete(values, index, setFieldValue)
+                          }
+                        />
+                      )}
                     </>
                   );
                 })}
@@ -279,11 +313,11 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
                   </label>
                 </div>
 
-                <div className="flex w-[100%] font-normal text-[15px] gap-y-2 gap-x-7">
+                <div className="flex w-[100%] font-normal flex-wrap text-[15px] gap-y-2 gap-x-7">
                   <div className="flex flex-col w-[25%]">
                     Shipping Charges
                     <Field
-                      name=" shipping_charges"
+                      name="shipping_charges"
                       className="customInputBorder px-3 py-1"
                       placeholder="Enter Order Id"
                     />
@@ -319,8 +353,6 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
                       placeholder="Enter Order Id"
                     />
                   </div>
-                </div>
-                <div className="flex w-[100%] font-normal text-[15px] gap-y-2 gap-x-7">
                   <div className="flex flex-col w-[25%]">
                     Other Charges{" "}
                     <Field
@@ -342,17 +374,21 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
               <div className="py-6 px-10 bg-gray bg-slate-200 rounded-sm w-[100%] font-[500] text-[15px] flex flex-col gap-5">
                 <div className="flex justify-between items-center text-sm font-[500]">
                   Total Product Value
-                  <span>{totalAmmount(values)}</span>
+                  <span>{`${TotalAmmount}`}</span>
                 </div>
 
                 <div className="flex justify-between items-center text-sm font-[500]">
                   Extra Charges
-                  <span>{extraCharge(values)}</span>
+                  <span>{extraCharge(values) + taxCharge(values)}</span>
                 </div>
                 <hr class="w-full my-4 border-t border-gray-300" />
                 <div className="flex justify-between items-center">
                   <span className="ftext-sm font-[500]"> Total</span>
-                  <span>{totalAmmount(values) + extraCharge(values)}</span>
+                  <span>
+                    {totalAmmount(values) +
+                      extraCharge(values) +
+                      taxCharge(values)}
+                  </span>
                 </div>
               </div>
               <div className="w-[100%] flex justify-end gap-5 py-16">
@@ -377,14 +413,7 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
               {console.log(values)}
               {console.log("errors", errors)}
               {console.log("touched", touched)}
-              {console.log("total ammount", totalAmmount)}
-              {console.log(
-                values.shipping_charges +
-                  values.cod_charges +
-                  values.discount +
-                  values.gift_wrap_charges +
-                  values.other_charges
-              )}
+              {console.log("values", values)}
             </div>
           </Form>
         );

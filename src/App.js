@@ -20,24 +20,26 @@ import LoginForm from "./components/UserAuthentication/Login.js";
 import SignupForm from "./components/UserAuthentication/Register.js";
 import ForgotPassword from "./components/UserAuthentication/ForgotPassword.js";
 import OTPVerification from "./components/UserAuthentication/OtpVerification.js";
+import WalletHistory from "./components/Payment/WalletHistory.js";
 
 function App() {
   return (
     <BrowserRouter>
-      <Header />
+      {false && <Header />}
       <ToastContainer />
       <Routes>
         <Route path="*" element={<h1>this page is not exist</h1>} />
 
         <Route element={<PublicRoutes />}>
-          <Route path="/" element={<h1>this is a landing page</h1>} />
+          <Route path="/" element={<Home />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/register" element={<SignupForm />} />
           <Route path="/forgotpassword" element={<ForgotPassword />} />
           <Route path="/otpverifaction" element={<OTPVerification />} />
         </Route>
         <Route element={<ProtectedRoutes />}>
-          <Route path="/dashboard" element={<Home />} />
+          <Route path="/dashboard" element={<h1>Hey i am dashboard page</h1>} />
+          <Route path="/wallethistory" element={<WalletHistory />} />
           <Route path="/order" element={<Order />} />
           <Route path="/order/ordercreate" element={<OrderCreation />} />
           <Route path="/orderdetails" element={<OrderDetail />} />

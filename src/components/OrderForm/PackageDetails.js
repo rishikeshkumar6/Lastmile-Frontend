@@ -18,11 +18,19 @@ const PackageDetails = ({
     useUpdateOrderMutation();
   const navigate = useNavigate();
   const [packageDetailsForm, setPackageDetailsForm] = useState({
-    dead_weigth: 0,
-    volumetric_weigth: 0,
-    length: 0,
-    breath: 0,
-    height: 0,
+    dead_weigth: "",
+    volumetric_weigth: "",
+    length: "",
+    breath: "",
+    height: "",
+  });
+
+  const packageDetailsFormSchema = Yup.object().shape({
+    dead_weigth: Yup.number().required("dead weight is required field"),
+
+    length: Yup.number().required("length is required field"),
+    breath: Yup.number().required("breath is required field"),
+    height: Yup.number().required("height is required field"),
   });
 
   useEffect(() => {
@@ -53,6 +61,7 @@ const PackageDetails = ({
     <Formik
       enableReinitialize={true}
       initialValues={packageDetailsForm}
+      validationSchema={packageDetailsFormSchema}
       onSubmit={(fields) => {
         if (slug !== undefined && id !== undefined) {
           const newField = { ...fields };
@@ -68,17 +77,24 @@ const PackageDetails = ({
           <Form>
             <div className="w-[82%] m-[auto] flex flex-col gap-5">
               Package Details
-              <div className="flex flex-col w-[50%] font-[500] text-[15px]">
+              <div className="flex flex-col w-[100%] font-[500] text-[15px]">
                 Dead Weight*
                 <div className="flex flex-col">
                   <div className="w-[100%] flex gap-5 items-center">
-                    <Field
-                      type="number"
-                      name="dead_weigth"
-                      className="px-3 py-1 customInputBorder w-[60%]"
-                      placeholder="Enter Weight"
-                    />
-                    <span>(physical weight of package)</span>
+                    <div className="flex flex-col w-[60%]">
+                      <Field
+                        type="number"
+                        name="dead_weigth"
+                        className="px-3 py-1 customInputBorder w-[80%]"
+                        placeholder="Enter Weight"
+                      />
+                      <ErrorMessage
+                        name={`dead_weigth`}
+                        component={"div"}
+                        className="text-red-500"
+                      />
+                    </div>
+                    <span className="mb-12">(physical weight of package)</span>
                   </div>
                   <span className="text-[12px]">
                     The minimum chargeable weight is 0.5kg
@@ -91,30 +107,45 @@ const PackageDetails = ({
               Physical Dimension
               <div className="flex  w-[100%] font-[500] text-[15px] gap-5">
                 <div className="flex flex-col w-[30%]">
-                  length
+                  length*
                   <Field
                     type="number"
                     name="length"
                     className="px-3 py-1 customInputBorder "
                     placeholder="Enter length"
                   />
+                  <ErrorMessage
+                    name={`length`}
+                    component={"div"}
+                    className="text-red-500"
+                  />
                 </div>
                 <div className="flex flex-col w-[30%]">
-                  breath
+                  breath*
                   <Field
                     type="number"
                     name="breath"
                     className="px-3 py-1 customInputBorder "
                     placeholder="Enter length"
                   />
+                  <ErrorMessage
+                    name={`breath`}
+                    component={"div"}
+                    className="text-red-500"
+                  />
                 </div>
                 <div className="flex flex-col w-[30%]">
-                  height
+                  height*
                   <Field
                     type="number"
                     name="height"
                     className="px-3 py-1 customInputBorder "
                     placeholder="Enter length"
+                  />
+                  <ErrorMessage
+                    name={`height`}
+                    component={"div"}
+                    className="text-red-500"
                   />
                 </div>
               </div>

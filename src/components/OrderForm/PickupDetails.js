@@ -10,148 +10,58 @@ import Drawers from "./PickupDrawer";
 
 const PickupDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
   const [open, setOpen] = useState(false);
-  const [pickupFormPayload, setPickupFormPayload] = useState(null);
+  const [pickupFormPayload, setPickupFormPayload] = useState({
+    pickup_location_name: "Rishikesh Kumar Singh",
+    pickup_person_name: "Rishikesh Kumar Singh",
+    pickup_person_phone: 6207654176,
+    pickup_person_email: "rishu@gmail.com",
+    pickup_alternate_phone: "",
+    pickup_address:
+      "Sector 6 Road, 3rd Floor, Plot No. 10, LSC-02, Sector 06, Dwarka, Delhi 110075, IN",
+    pickup_landmark: "NEAR HDFC BANK",
+    pickup_pincode: 110075,
+    pickup_city: "NEW DELHI",
+    pickup_state: "DELHI",
+    pickup_country: "India",
+    pickup_location_type: "warehouse",
+    pikcup_location_code: "0029",
+    slug: slug,
+    id: id,
+  });
   const [ID, setId] = useState(0);
   const navigate = useNavigate();
   const [pickupDetailsForm, setPickupDetailsForm] = useState([
     {
-      location_name: "Rishikesh Kumar Singh",
-      contact_person_name: "Rishikesh Kumar Singh",
-      contact_person_phone: 6207654176,
-      contact_person_email: "rishu@gmail.com",
-      alternate_phone: "",
-      address:
+      pickup_location_name: "Rishikesh Kumar Singh",
+      pickup_person_name: "Rishikesh Kumar Singh",
+      pickup_person_phone: 6207654176,
+      pickup_person_email: "rishu@gmail.com",
+      pickup_alternate_phone: "",
+      pickup_address:
         "Sector 6 Road, 3rd Floor, Plot No. 10, LSC-02, Sector 06, Dwarka, Delhi 110075, IN",
-      landmark: "NEAR HDFC BANK",
-      pincode: 110075,
-      city: "NEW DELHI",
-      state: "DELHI",
-      country: "India",
-      location_type: "warehouse",
-      location_code: "0029",
-      active: true,
-      is_default: false,
+      pickup_landmark: "NEAR HDFC BANK",
+      pickup_pincode: 110075,
+      pickup_city: "NEW DELHI",
+      pickup_state: "DELHI",
+      pickup_country: "India",
+      pickup_location_type: "warehouse",
+      pikcup_location_code: "0029",
     },
     {
-      location_name: "Test Location1",
-      contact_person_name: "Ankit",
-      contact_person_phone: 4133243231,
-      contact_person_email: "prabhaker@123gmai.com",
-      alternate_phone: "",
-      address: "dwarka sector 7",
-      landmark: "",
-      pincode: 122003,
-      city: "GURGAON",
-      state: "HARYANA",
-      country: "India",
-      location_type: "warehouse",
-      location_code: "0047",
-      active: true,
-      is_default: true,
-    },
-    {
-      location_name: "Testing",
-      contact_person_name: "Rishikesh Kumar Singh",
-      contact_person_phone: 1234567890,
-      contact_person_email: "rishikeshkumarsingh810@gmail.com",
-      alternate_phone: "",
-      address: "123 Main Street Suite 456 Springfield, IL 62701 United States",
-      landmark: "NEAR HDFC BANK",
-      pincode: 813221,
-      city: "KHARAGPUR - BH",
-      state: "BIHAR",
-      country: "India",
-      location_type: "warehouse",
-      location_code: "0061",
-      active: true,
-      is_default: false,
-    },
-    {
-      location_name: "Test Location Moksh",
-      contact_person_name: "Moksh",
-      contact_person_phone: 9871178775,
-      contact_person_email: "moksh.jaswal1@gmail.com",
-      alternate_phone: "",
-      address: "141, Arunachal apartment, plot 16, sector 7, dwarka, new delhi",
-      landmark: "",
-      pincode: 110075,
-      city: "new delhi",
-      state: "delhi",
-      country: "India",
-      location_type: "warehouse",
-      location_code: "0063",
-      active: true,
-      is_default: false,
-    },
-    {
-      location_name: "test loc 2 ",
-      contact_person_name: "Ankit Prabhaker",
-      contact_person_phone: 9876546788,
-      contact_person_email: "testloc2@gmail.com",
-      alternate_phone: "",
-      address: "B16 Bhagwati Garden Ext. Part 3",
-      landmark: "",
-      pincode: 110059,
-      city: "NEW DELHI",
-      state: "DELHI",
-      country: "India",
-      location_type: "warehouse",
-      location_code: "0072",
-      active: true,
-      is_default: false,
-    },
-    {
-      location_name: "test loc 3",
-      contact_person_name: "test 3",
-      contact_person_phone: 9876545565,
-      contact_person_email: "ankitprabhaker9650@gmail.com",
-      alternate_phone: "",
-      address: "B-16 GALI NO.4 BHAGWATI GARDEN EXTN. UTTAM NAGAR",
-      landmark: "",
-      pincode: 110059,
-      city: "NEW DELHI",
-      state: "DELHI",
-      country: "India",
-      location_type: "warehouse",
-      location_code: "0073",
-      active: true,
-      is_default: false,
-    },
-    {
-      location_name: "Test loc 3 ",
-      contact_person_name: "Ankit Prabhaker",
-      contact_person_phone: 4353453452,
-      contact_person_email: "ankitprabhaker9650@gmail.com",
-      alternate_phone: "",
-      address:
-        "B16 Bhagwati Garden Ext. Part 3B16 Bhagwati wati Garden Ext. Part 3B16 Bhagwati Garden Ext. Part 3B16 Bhagwati Garden Ext. Part 3B16 Bhagwati Garden Ext. Part 3B16 Bhagwati Garden Ext. Part 3B16 Bhagwati Garden Ext. Part 3",
-      landmark: "",
-      pincode: 110059,
-      city: "New Delhi",
-      state: "Delhi",
-      country: "India",
-      location_type: "warehouse",
-      location_code: "0075",
-      active: true,
-      is_default: false,
-    },
-    {
-      location_name: "Rishikesh Kumar ",
-      contact_person_name: "Rishikesh Kumar Singh",
-      contact_person_phone: 6207654176,
-      contact_person_email: "rishu@gmail.com",
-      alternate_phone: "",
-      address:
+      pickup_location_name: "Rishikesh Kumar Singh",
+      pickup_person_name: "Rishikesh Kumar Singh",
+      pickup_person_phone: 6207654176,
+      pickup_person_email: "rishu@gmail.com",
+      pickup_alternate_phone: "",
+      pickup_address:
         "Sector 6 Road, 3rd Floor, Plot No. 10, LSC-02, Sector 06, Dwarka, Delhi 110075, IN",
-      landmark: "NEAR HDFC BANK",
-      pincode: 110075,
-      city: "NEW DELHI",
-      state: "DELHI",
-      country: "India",
-      location_type: "warehouse",
-      location_code: "0076",
-      active: true,
-      is_default: false,
+      pickup_landmark: "NEAR HDFC BANK",
+      pickup_pincode: 110075,
+      pickup_city: "NEW DELHI",
+      pickup_state: "DELHI",
+      pickup_country: "India",
+      pickup_location_type: "warehouse",
+      pikcup_location_code: "0029",
     },
   ]);
   const [overflowStates, setOverflowStates] = useState([]);
@@ -232,17 +142,19 @@ const PickupDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
                 key={index}
                 onClick={() => handleCLick(index, elem)}
               >
-                <h1 className="font-[500]">{elem.contact_person_name}</h1>
-                <span className="text-sm font-normal ">{elem.address}</span>
-                <span className="text-sm font-normal ">{elem.city}</span>
+                <h1 className="font-[500]">{elem.pickup_person_name}</h1>
+                <span className="text-sm font-normal ">
+                  {elem.pickup_address}
+                </span>
+                <span className="text-sm font-normal ">{elem.pickup_city}</span>
                 <div className="text-sm font-[400] flex flex-col gap-2 ">
                   <span className="flex gap-2 items-center">
                     <HiOutlineMail className="text-[15px]" />
-                    {elem.contact_person_email}
+                    {elem.pickup_person_email}
                   </span>
                   <span className="flex gap-2 items-center">
                     <MdOutlineLocalPhone className="text-[15px]" />
-                    {elem.contact_person_phone}
+                    {elem.pickup_person_phone}
                   </span>
                 </div>
                 {/* Conditionally render See More */}

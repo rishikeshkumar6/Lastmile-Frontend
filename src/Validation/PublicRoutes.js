@@ -13,11 +13,7 @@ const PublicRoutes = () => {
 
   if (isSuccess) return <Navigate to="/dashboard" />; // Redirect to dashboard if authenticated
 
-  return location.pathname === "/" ? (
-    <Navigate to={"/login"} replace />
-  ) : (
-    <Outlet />
-  ); // Allow access to public routes if not authenticated
+  return <Outlet />; // Allow access to public routes if not authenticated
 };
 
 export default PublicRoutes;

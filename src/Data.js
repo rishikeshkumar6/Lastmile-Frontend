@@ -13,7 +13,7 @@ export const menus = [
   { name: "Orders", link: "/order", icon: IoCartOutline },
   { name: "messages", link: "/", icon: FiMessageSquare },
   { name: "analytics", link: "/", icon: TbReportAnalytics, margin: true },
-  { name: "Wallet History", link: "/", icon: IoWalletOutline },
+  { name: "Wallet History", link: "/wallethistory", icon: IoWalletOutline },
   { name: "Subscription", link: "/subscription", icon: MdOutlineSubscriptions },
   { name: "Saved", link: "/", icon: AiOutlineHeart, margin: true },
   { name: "logout", link: "/", icon: IoIosLogOut },
