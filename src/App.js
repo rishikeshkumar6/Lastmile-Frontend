@@ -21,11 +21,14 @@ import SignupForm from "./components/UserAuthentication/Register.js";
 import ForgotPassword from "./components/UserAuthentication/ForgotPassword.js";
 import OTPVerification from "./components/UserAuthentication/OtpVerification.js";
 import WalletHistory from "./components/Payment/WalletHistory.js";
-
+import Dashboard from "./pages/Dashboard.js";
+import Label from "./pages/Label.js";
+import Barcode from "./pages/BarcodeScanner.js";
 function App() {
+  const data = useSelector((state) => state["rootReducer"]["userSlice"]);
   return (
     <BrowserRouter>
-      {false && <Header />}
+      {data.isLoggedin && <Header />}
       <ToastContainer />
       <Routes>
         <Route path="*" element={<h1>this page is not exist</h1>} />
@@ -38,7 +41,7 @@ function App() {
           <Route path="/otpverifaction" element={<OTPVerification />} />
         </Route>
         <Route element={<ProtectedRoutes />}>
-          <Route path="/dashboard" element={<h1>Hey i am dashboard page</h1>} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/wallethistory" element={<WalletHistory />} />
           <Route path="/order" element={<Order />} />
           <Route path="/order/ordercreate" element={<OrderCreation />} />
@@ -47,6 +50,8 @@ function App() {
           <Route path="/drawer" element={<Drawers />} />
           <Route path="/subscription" element={<Subscriptions />} />
           <Route path="/testing" element={<TrackingInformation />} />
+          <Route path="/label" element={<Label />} />
+          <Route path="/barcode-scanner" element={<Barcode />} />
           <Route path="*" element={<h1>this page does'nt exist</h1>} />
           <Route
             path="/order/ordercreate/:orderid/:slug"

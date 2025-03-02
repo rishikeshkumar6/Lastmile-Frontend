@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
 const OTPVerification = ({ onBackClick }) => {
-  const data = useSelector((state) => state.userSlice);
+  const data = useSelector((state) => state["rootReducer"]["userSlice"]);
 
   const [
     otpverification,

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import html2pdf from "html2pdf.js";
 import { createPopper } from "@popperjs/core";
 import { RxDotsVertical } from "react-icons/rx";
 import { filterOrder, insertSingleOrder } from "../../Redux/exportOrderSlice";
@@ -17,6 +18,61 @@ const DataTable = ({ data, row, index, selectAll, setSelectAll }) => {
   const [toolkit, setToolKit] = useState(null);
   const buttonRef = useRef(null);
   const tooltipRef = useRef(null);
+  const labelRef = useRef(null);
+
+  const labelData = {
+    shipTo: {
+      name: "Moksh Jaswal",
+      address: "House No. 45, Palm Enclave, Rajouri Garden",
+      city: "New Delhi, 110027, India",
+      phone: "9871178775",
+    },
+    shipFrom: {
+      company: "Warehousity",
+      name: "Moksh Jaswal",
+      address: "House No. 45, Palm Enclave, Rajouri Garden",
+      city: "New Delhi, 110027, India",
+      phone: "9871178775",
+    },
+    package: {
+      dimensions: "10 x 10 x 10 cm",
+      weight: "0.5 kg",
+      date: "10 Apr 2024, 05:03:26",
+      paymentMode: "Prepaid",
+    },
+    courier: {
+      name: "Delhivery",
+      awb: "3306837002",
+    },
+    order: {
+      id: "3075",
+      amount: 100,
+    },
+    products: [
+      {
+        name: "Product 1",
+        quantity: 1,
+        amount: 100,
+      },
+    ],
+  };
+
+  const handleDownloadPDF = () => {
+    console.log("handleDownloadPDF is calling");
+    if (labelRef.current) {
+      const element = labelRef.current;
+      const opt = {
+        margin: 0,
+        filename: `shipping-label-${labelData.order.id}.pdf`,
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: "in", format: [5, 7.5], orientation: "portrait" },
+      };
+
+      html2pdf().set(opt).from(element).save();
+    }
+  };
+
   useEffect(() => {
     console.log("Data", Data);
     if (Data.length > 0) {
@@ -76,19 +132,19 @@ const DataTable = ({ data, row, index, selectAll, setSelectAll }) => {
         {pickup_details !== null ? (
           <div className="flex flex-col gap-1">
             <span className="font-[500]">
-              {pickup_details.contact_person_name !== ""
-                ? pickup_details.contact_person_name
+              {pickup_details.pickup_person_name !== ""
+                ? pickup_details.pickup_person_name
                 : ""}
             </span>
             <div className="flex flex-col ">
               <span>
-                {pickup_details.contact_person_phone !== ""
-                  ? pickup_details.contact_person_phone
+                {pickup_details.pickup_person_phone !== ""
+                  ? pickup_details.pickup_person_phone
                   : ""}
               </span>
               <span>
-                {pickup_details.contact_person_email !== ""
-                  ? pickup_details.contact_person_email
+                {pickup_details.pickup_person_email !== ""
+                  ? pickup_details.pickup_person_email
                   : ""}
               </span>
             </div>
@@ -250,6 +306,14 @@ const DataTable = ({ data, row, index, selectAll, setSelectAll }) => {
                     }
                   >
                     Edit Order
+                  </span>
+                </li>
+                <li>
+                  <span
+                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white hover:cursor-pointer"
+                    onClick={() => navigate("/label")}
+                  >
+                    Generate Label
                   </span>
                 </li>
                 <li>

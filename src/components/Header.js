@@ -83,7 +83,7 @@ const Header = () => {
         className={`bg-white shadow-md py-2 flex flex-row justify-between px-5 sticky top-0 left-0 right-0 z-10 
         }`}
       >
-        <div className="items-center text-[20px] font-bold">Rishu Logistic</div>
+        <div className="items-center text-[20px] font-bold">LogiTrack</div>
         <div className="flex gap-4 items-center">
           {/* <button
           className="text-white bg-sky-400 px-2"

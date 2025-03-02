@@ -1,17 +1,35 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { menus } from "../Data";
 import { HiMenuAlt3 } from "react-icons/hi";
 import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
-import { logout } from "../Redux/rootReducer";
+import { Link, useNavigate } from "react-router-dom";
+import { useLogoutMutation } from "../Redux/Action";
+import { userLogout } from "../Redux/rootReducer";
 
 const Sidebar = () => {
+  const [logout, { isLoading, isSuccess, isError, data, error }] =
+    useLogoutMutation();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [curowsel, setCurowsel] = useState(false);
-  const handleLogout = () => {
-    console.log("handleLogout function is invoked");
-    dispatch(logout());
+
+  useEffect(() => {
+    if (isSuccess === true && data) {
+      dispatch(userLogout());
+      window.location.href = "/";
+    }
+  }, [data, error]);
+
+  const handleClick = (link, label) => {
+    if (label !== "logout") {
+      console.log("link and label", link, label);
+      console.log("if condition is execute");
+      navigate(`${link}`);
+    } else {
+      console.log("else condition is execute");
+      logout();
+    }
   };
   return (
     <section className={`flex gap-6 fixed z-[200]`}>
@@ -33,7 +51,7 @@ const Sidebar = () => {
       >
         {/* Header Section - Non-scrolling */}
         <div className="py-3 flex justify-between flex-shrink-0">
-          {open && <h1 className="text-[20px] font-bold">Rishu Logistic</h1>}
+          {open && <h1 className="text-[20px] font-bold"> Rishu Logistic</h1>}
           <HiMenuAlt3
             size={26}
             className="cursor-pointer"
@@ -44,9 +62,9 @@ const Sidebar = () => {
         {/* Scrollable Content Section */}
         <div className="mt-4 flex flex-col gap-4 relative flex-1 overflow-y-auto">
           {menus?.map((menu, i) => (
-            <div onClick={handleLogout} key={i}>
-              <Link
-                to={menu?.link}
+            <div key={i}>
+              <div
+                onClick={() => handleClick(menu.link, menu?.name)}
                 className={`${
                   menu?.margin && "mt-5"
                 } group flex items-center text-sm gap-3.5 font-medium p-2 hover:bg-gray-800 rounded-md hover:cursor-pointer`}
@@ -67,7 +85,7 @@ const Sidebar = () => {
                 >
                   {menu?.name}
                 </h2>
-              </Link>
+              </div>
             </div>
           ))}
         </div>

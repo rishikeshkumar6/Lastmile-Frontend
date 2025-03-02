@@ -10,12 +10,13 @@ const appReducer = combineReducers({
 
 const rootReducer = (state, action) => {
   if (action.type === "user/logout") {
+    api.util.resetApiState();
     return appReducer(undefined, action);
   }
   return appReducer(state, action);
 };
 
-export const logout = () => {
+export const userLogout = () => {
   return { type: "user/logout" };
 };
 

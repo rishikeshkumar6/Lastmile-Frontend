@@ -89,7 +89,24 @@ const FileUpload = () => {
         city,
         state,
         country,
+        orderid,
+        channel,
+        productDetails,
+        pickup_fullname,
+        pickup_phonenumber,
+        pickup_email,
+        pickup_fulladdress,
+        pickup_landmark,
+        pickup_pincode,
+        pickup_city,
+        pickup_state,
+        pickup_country,
+        length,
+        breath,
+        height,
+        dead_weigth,
       } = elem;
+
       const obj = {
         fullname,
         email,
@@ -100,16 +117,31 @@ const FileUpload = () => {
         city,
         state,
         country,
+        orderid,
+        channel,
+        productDetails,
+        pickup_fullname,
+        pickup_phonenumber,
+        pickup_email,
+        pickup_fulladdress,
+        pickup_landmark,
+        pickup_pincode,
+        pickup_city,
+        pickup_state,
+        pickup_country,
+        length,
+        breath,
+        height,
+        dead_weigth,
       };
       const rowValues = Object.values(obj);
       const newRowValues = rowValues.filter((elem) => elem === undefined);
 
       if (newRowValues.length > 0) {
         return `please fill all required filed data row on ${fileExtension} file`;
-      } else {
-        return "";
       }
     }
+    return "";
   };
 
   const handleFileUpload = (event) => {
@@ -153,15 +185,15 @@ const FileUpload = () => {
           },
 
           pickupDetails: {
-            fullname: row.pickup_fullname || "",
-            phonenumber: row.pickup_phonenumber || "",
-            email: row.pickup_email || "",
-            fulladdress: row.pickup_fulladdress || "",
-            landmark: row.pickup_landmark || "",
-            country: row.pickup_country || "",
-            state: row.pickup_state || "",
-            city: row.pickup_city || "",
-            pincode: row.pickup_pincode || "",
+            pickup_person_name: row.pickup_fullname || "",
+            pickup_person_phone: row.pickup_phonenumber || "",
+            pickup_person_email: row.pickup_email || "",
+            pickup_address: row.pickup_fulladdress || "",
+            pickup_landmark: row.pickup_landmark || "",
+            pickup_country: row.pickup_country || "",
+            pickup_state: row.pickup_state || "",
+            pickup_city: row.pickup_city || "",
+            pickup_pincode: row.pickup_pincode || "",
           },
           packageDetails: {
             dead_weigth: parseFloat(row.dead_weigth || 0),
@@ -185,6 +217,7 @@ const FileUpload = () => {
     if (fileExtension === "csv") {
       Papa.parse(file, {
         header: true,
+        skipEmptyLines: true,
         complete: (result) => {
           console.log("result", result);
           const uploadedHeaders = result.meta.fields || [];
@@ -197,11 +230,6 @@ const FileUpload = () => {
           const parsingData = validateFields(fileExtension, result.data);
           if (parsingData) {
             handleValidationError(parsingData);
-            return;
-          }
-
-          if (result.errors.length > 0) {
-            toast.error("Error parsing CSV file");
             return;
           }
 

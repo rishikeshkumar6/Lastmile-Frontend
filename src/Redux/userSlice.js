@@ -6,12 +6,13 @@ const userSlice = createSlice({
     token: "",
     userRegisterId: "",
     forgotPasswordId: "",
+    isLoggedin: false,
   },
   reducers: {
     userManageState: (state, action) => {
       console.log(action);
       switch (action.type) {
-        case "userid":
+        case "userSlice/userManageState":
           return { ...state, userRegisterId: action.payload.userId };
         case "forgotpassword_id":
           return {
@@ -25,8 +26,11 @@ const userSlice = createSlice({
           };
       }
     },
+    isLoggedin: (state, action) => {
+      return { ...state, isLoggedin: action.payload };
+    },
   },
 });
 
 export default userSlice.reducer;
-export const { userManageState } = userSlice.actions;
+export const { userManageState, isLoggedin } = userSlice.actions;

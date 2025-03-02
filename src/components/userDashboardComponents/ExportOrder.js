@@ -12,88 +12,46 @@ const GenerateExcel = () => {
     obj ? obj[key] || defaultValue : defaultValue;
   const handleDownload = () => {
     const JsonData = Data.map((elem) => {
-      const { consigneeDetails, pickupDetails, orderDetails, packageDetails } =
+      const { consigneeDetails, pickupDetails, packageDetails, orderDetails } =
         elem;
-
-      // Destructure and default values from `consigneeDetails`
-      const consigneeInfo = {
-        fullname: getNestedValue(consigneeDetails, "fullname"),
-        phonenumber: getNestedValue(consigneeDetails, "phonenumber"),
-        alternatephonenumber: getNestedValue(
-          consigneeDetails,
-          "alternatephonenumber"
-        ),
-        consigneecompany: getNestedValue(consigneeDetails, "consigneecompany"),
-        gstin: getNestedValue(consigneeDetails, "gstin"),
-        email: getNestedValue(consigneeDetails, "email"),
-        fulladdress: getNestedValue(consigneeDetails, "fulladdress"),
-        landmark: getNestedValue(consigneeDetails, "landmark"),
-        country: getNestedValue(consigneeDetails, "country"),
-        state: getNestedValue(consigneeDetails, "state"),
-        city: getNestedValue(consigneeDetails, "city"),
-        pincode: getNestedValue(consigneeDetails, "pincode"),
-        location_name: getNestedValue(consigneeDetails, "location_name"),
-      };
-
-      // Destructure and default values from `pickupDetails`
-      const pickupInfo = {
-        contact_person_name: getNestedValue(
-          pickupDetails,
-          "contact_person_name"
-        ),
-        contact_person_phone: getNestedValue(
-          pickupDetails,
-          "contact_person_phone"
-        ),
-        contact_person_email: getNestedValue(
-          pickupDetails,
-          "contact_person_email"
-        ),
-        alternate_phone: getNestedValue(pickupDetails, "alternate_phone"),
-        address: getNestedValue(pickupDetails, "address"),
-        landmark: getNestedValue(pickupDetails, "landmark"),
-        pincode: getNestedValue(pickupDetails, "pincode"),
-        city: getNestedValue(pickupDetails, "city"),
-        state: getNestedValue(pickupDetails, "state"),
-        country: getNestedValue(pickupDetails, "country"),
-        location_type: getNestedValue(pickupDetails, "location_type"),
-        location_code: getNestedValue(pickupDetails, "location_code"),
-        active: !!getNestedValue(pickupDetails, "active", false),
-        is_default: !!getNestedValue(pickupDetails, "is_default", false),
-      };
-
-      // Destructure and default values from `orderDetails`
-      const orderInfo = {
-        orderid: getNestedValue(orderDetails, "orderid"),
-        channel: getNestedValue(orderDetails, "channel"),
-        productDetails: getNestedValue(orderDetails, "productDetails", []),
-        payment_mode: getNestedValue(orderDetails, "payment_mode"),
-        cod_charges: getNestedValue(orderDetails, "cod_charges"),
-        discount: getNestedValue(orderDetails, "discount"),
-        gift_wrap_charges: getNestedValue(orderDetails, "gift_wrap_charges"),
-        other_charges: getNestedValue(orderDetails, "other_charges"),
-        total_amount: getNestedValue(orderDetails, "total_amount"),
-        order_value: getNestedValue(orderDetails, "order_value"),
-        tax_amount: getNestedValue(orderDetails, "tax_amount"),
-        dead_weight: getNestedValue(orderDetails, "dead_weigth"),
-      };
-
-      // Destructure and default values from `packageDetails`
-      const packageInfo = {
-        dead_weigth: getNestedValue(packageDetails, "dead_weigth"),
-        volumetric_weight: getNestedValue(packageDetails, "volumetric_weigth"),
-        length: getNestedValue(packageDetails, "length"),
-        breath: getNestedValue(packageDetails, "breath"),
-        height: getNestedValue(packageDetails, "height"),
-      };
-
-      // Combine all details into the final object
       return {
-        ...consigneeInfo,
-        ...pickupInfo,
-        ...orderInfo,
-        ...packageInfo,
-        order_status: "new", // Default order status
+        fullname: consigneeDetails.fullname,
+        phonenumber: consigneeDetails.phonenumber,
+        alternatephonenumber: consigneeDetails.alternatephonenumber,
+        consigneecompany: consigneeDetails.consigneecompany,
+        gstin: consigneeDetails.gstin,
+        email: consigneeDetails.email,
+        fulladdress: consigneeDetails.fulladdress,
+        country: consigneeDetails.country,
+        state: consigneeDetails.state,
+        city: consigneeDetails.city,
+        pincode: consigneeDetails.pincode,
+        pickup_person_name: pickupDetails.pickup_person_name,
+        pickup_person_phone: pickupDetails.pickup_person_phone,
+        pickup_person_email: pickupDetails.pickup_person_email,
+        pickup_address: pickupDetails.pickup_address,
+        pickup_landmark: pickupDetails.pickup_landmark,
+        pickup_country: pickupDetails.pickup_country,
+        pickup_state: pickupDetails.pickup_state,
+        pickup_city: pickupDetails.pickup_city,
+        orderid: orderDetails.orderid,
+        channel: orderDetails.channel,
+        productDetails:
+          orderDetails.productDetails !== "" &&
+          orderDetails.productDetails.length > 0
+            ? orderDetails.productDetails
+                .map((product) => `${product.name} (x${product.quantity})`)
+                .join(", ")
+            : "",
+        payment_mode: orderDetails.payment_mode,
+        total_amount: orderDetails.total_amount,
+        order_value: orderDetails.order_value,
+        tax_amount: orderDetails.tax_amount,
+        dead_weight: packageDetails.dead_weigth, // Correct this typo in data if possible
+        length: packageDetails.length,
+        breath: packageDetails.breath,
+        height: packageDetails.height,
+        order_status: elem.order_status,
       };
     });
     const exampleData = [
@@ -154,8 +112,10 @@ const GenerateExcel = () => {
     ];
 
     // Convert data to worksheet
-    console.log("jsonData", JsonData);
-    const worksheet = XLSX.utils.json_to_sheet(exampleData);
+    console.log("jsonData", JSON.stringify(JsonData));
+
+    console.log("exampleData", exampleData);
+    const worksheet = XLSX.utils.json_to_sheet(JsonData);
     console.log("worksheet", worksheet);
     // Set column widths
     worksheet["!cols"] = [
@@ -235,18 +195,23 @@ const GenerateExcel = () => {
     saveAs(blob, "Orders.xlsx");
     console.log(blob);
   };
+  console.log("redux data on export order page", Data);
 
   return (
-    <button
-      class={`text-sm font-normal  py-2 px-3  rounded-sm  ${
-        Data.length > 0 ? "cursor-pointer" : "cursor-no-drop"
-      } flex gap-2 items-center  bg-gray-100  text-black w-[15%] justify-center`}
-      onClick={handleDownload}
-      disabled={Data.length > 0 ? false : true}
-    >
-      <MdOutlineFileDownload />
-      Export Orders
-    </button>
+    <>
+      <button
+        class={`text-sm font-normal py-2 px-3 rounded-sm ${
+          Data.length > 0
+            ? "cursor-pointer"
+            : "cursor-no-drop disabled:text-gray-400"
+        }  flex gap-2 items-center bg-gray-100 w-[15%] justify-center  disabled:bg-gray-100`}
+        onClick={handleDownload}
+        disabled={Data.length > 0 ? false : true}
+      >
+        <MdOutlineFileDownload />
+        Export Orders
+      </button>
+    </>
   );
 };
 

@@ -69,8 +69,10 @@ const Order = () => {
   };
 
   const handleClick = () => {
+    console.log("function is execute");
     if (!selectAll) dispatch(order({ bulkOrder: data.orderRes }));
     setSelectAll(!selectAll);
+    console.log("function is execute");
     if (selectAll) dispatch(order({ bulkOrder: [] }));
     setSelectAll(!selectAll);
   };
