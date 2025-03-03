@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { makeStyles } from "@material-ui/core/styles";
 import Sidebar from "../components/Sidebar";
-import { CssBaseline, Container, Paper } from "@material-ui/core";
+import { CssBaseline, Container, Paper, Typography } from "@mui/material";
 import Switch from "@mui/material/Switch";
 import PropTypes from "prop-types";
 import { styled } from "@mui/material/styles";
@@ -15,7 +14,6 @@ import MenuBookIcon from "@mui/icons-material/MenuBook";
 import { SiHackthebox } from "react-icons/si";
 import { FormProvider } from "react-hook-form";
 import { useTheme } from "@mui/material/styles";
-import { Typography } from "@material-ui/core";
 import { FaLongArrowAltLeft } from "react-icons/fa";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 
@@ -39,10 +37,9 @@ const stepsslug = steps.map((elem, index) => {
 });
 console.log("stepsslug", stepsslug);
 //linear stepper outer function
-const useStyles = makeStyles((theme) => ({
-  button: {
-    marginRight: theme.spacing(1),
-  },
+const useStyles = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(4),
+  marginTop: theme.spacing(4),
 }));
 
 const QontoStepIconRoot = styled("div")(({ theme, ownerState }) => ({
