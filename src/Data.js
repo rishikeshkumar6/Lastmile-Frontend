@@ -1,13 +1,12 @@
 import { MdOutlineDashboard } from "react-icons/md";
-import { RiSettings4Line } from "react-icons/ri";
 import { IoCartOutline } from "react-icons/io5";
 import { TbReportAnalytics } from "react-icons/tb";
-import { AiOutlineUser, AiOutlineHeart } from "react-icons/ai";
+import { AiOutlineHeart } from "react-icons/ai";
 import { MdOutlineSubscriptions } from "react-icons/md";
 import { IoIosLogOut } from "react-icons/io";
 import { MdOutlineQrCodeScanner } from "react-icons/md";
 import { IoWalletOutline } from "react-icons/io5";
-import { FiMessageSquare, FiFolder, FiShoppingCart } from "react-icons/fi";
+import { FiMessageSquare } from "react-icons/fi";
 
 export const menus = [
   { name: "dashboard", link: "/dashboard", icon: MdOutlineDashboard },

@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { useState } from "react";
+import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Header from "./components/Header";
@@ -11,8 +11,7 @@ import OrderCreation from "./pages/OrderCreation.js";
 import OrderDetail from "./pages/orderDetails.js";
 import OrderTraking from "./pages/OrderTraking.js";
 import Drawers from "./pages/Testing.js";
-import ResponsibleTable from "./components/testing.js";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import TrackingInformation from "./pages/Testing.js";
 import Subscriptions from "./pages/Subscriptions.js";
