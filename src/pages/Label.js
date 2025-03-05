@@ -140,9 +140,9 @@ function Label() {
               </p>
             </div>
 
-            {/* <div className="flex justify-center " ref={labelRef}>
+            <div className="flex justify-center " ref={labelRef}>
               <ShippingLabel {...labelData} />
-            </div> */}
+            </div>
           </div>
         )}
 
