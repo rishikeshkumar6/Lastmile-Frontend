@@ -33,12 +33,8 @@ const HeroSection = () => {
             </div>
           </div>
           <div className="md:w-1/2">
-            <div className="bg-white p-6 rounded-lg shadow-xl">
-              <img
-                src="https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
-                alt="Order management dashboard"
-                className="rounded-md w-full h-auto"
-              />
+            <div className=" p-6 ">
+              <img src="/5602455.webp" className="rounded-md w-full h-auto" />
             </div>
           </div>
         </div>

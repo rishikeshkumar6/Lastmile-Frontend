@@ -16,6 +16,20 @@ const Popup = ({ setpopup, popup, orderCreation }) => {
     }
   };
 
+  const initializeRazorpay = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => {
+        resolve(true);
+      };
+      script.onerror = () => {
+        resolve(false);
+      };
+      document.body.appendChild(script);
+    });
+  };
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       console.log("hey dont worry i am calling");
@@ -126,7 +140,12 @@ const Popup = ({ setpopup, popup, orderCreation }) => {
             <div className="mt-10">
               <button
                 className="w-full rounded-sm bg-primary-green bg-cyan-400 py-4 flex items-center justify-center gap-3"
-                onClick={() => {
+                onClick={async () => {
+                  const res = await initializeRazorpay();
+                  if (!res) {
+                    alert("Razorpay SDK failed to load");
+                    return;
+                  }
                   orderCreation(ammount);
                 }}
               >

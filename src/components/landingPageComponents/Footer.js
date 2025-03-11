@@ -150,7 +150,7 @@ const Footer = () => {
               <li className="flex items-start">
                 <MapPin className="h-5 w-5 text-indigo-400 mr-3 flex-shrink-0 mt-0.5" />
                 <span className="text-gray-400">
-                  123 Commerce Street, Bangalore, India 560001
+                  Dwarka Delhi Sector- 6 Plot No- 10 Near HDFC Bank
                 </span>
               </li>
               <li className="flex items-center">
@@ -159,7 +159,7 @@ const Footer = () => {
                   href="mailto:info@logitrack.com"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
-                  info@logitrack.com
+                  rishikeshkumarsingh810@gmail.com
                 </a>
               </li>
               <li className="flex items-center">
@@ -168,7 +168,7 @@ const Footer = () => {
                   href="tel:+919876543210"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
-                  +91 98765 43210
+                  +91 6207654176
                 </a>
               </li>
             </ul>
@@ -178,7 +178,8 @@ const Footer = () => {
         <div className="border-t border-gray-800 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 mb-4 md:mb-0">
-              &copy; {new Date().getFullYear()} LogiTrack. All rights reserved.
+              &copy; {new Date().getFullYear()} Logistic Solutions. All rights
+              reserved.
             </p>
             <div className="flex space-x-6">
               <a

@@ -1,59 +1,4 @@
-// import React, { useEffect } from "react";
-// import Sidebar from "../components/Sidebar";
-// import { useLazySubscriptionsCreationQuery } from "../Redux/Action";
-// const Subscriptions = () => {
-//   console.log(process.env.REACT_APP_RAZORPAY_KEY_ID);
-//   const [
-//     subscriptionsCreation,
-//     { isLoading, isSuccess, isError, data, error },
-//   ] = useLazySubscriptionsCreationQuery();
-
-//   useEffect(() => {
-//     if (isSuccess && data && data.response?.id) {
-//       console.log("Subscription Data:", data.response);
-
-//       var options = {
-//         key: process.env.REACT_APP_RAZORPAY_KEY_ID,
-//         subscription_id: data.response.id,
-//         handler: function (response) {
-//           console.log("Razorpay Response:", response);
-//         },
-//       };
-//       console.log("options checking----", options);
-//       var paymentObject = new window.Razorpay(options);
-//       paymentObject.open();
-//       paymentObject.on("payment.failed", function (response) {
-//         console.error("Payment Failed:", response.error);
-//       });
-//     } else {
-//       console.error("Error in useEffect: Data or isSuccess invalid.");
-//     }
-//   }, [data, isSuccess]);
-
-//   const handleClick = (e) => {
-//     e.preventDefault();
-//     subscriptionsCreation();
-//   };
-//   return (
-//     <section className="flex gap-6">
-//       <Sidebar />
-//       <div className="w-[90%] m-[auto]">
-//         <button onClick={handleClick}>Buy Subscription</button>
-//       </div>
-//       {console.log("just check this part", {
-//         isLoading,
-//         isSuccess,
-//         isError,
-//         data,
-//         error,
-//       })}
-//     </section>
-//   );
-// };
-
-// export default Subscriptions;
-
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Check,
   Truck,
@@ -63,6 +8,8 @@ import {
   BarChart as ChartBar,
   Clock,
 } from "lucide-react";
+import { useLazySubscriptionsCreationQuery } from "../Redux/Action";
+
 import Sidebar from "../components/Sidebar";
 
 function FeatureCard({ icon: Icon, title, description }) {
@@ -80,6 +27,69 @@ function FeatureCard({ icon: Icon, title, description }) {
 }
 
 function PricingCard() {
+  const [
+    subscriptionsCreation,
+    { isLoading, isSuccess, isError, data, error },
+  ] = useLazySubscriptionsCreationQuery();
+
+  const initializeRazorpay = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => {
+        resolve(true);
+      };
+      script.onerror = () => {
+        resolve(false);
+      };
+      document.body.appendChild(script);
+    });
+  };
+
+  useEffect(() => {
+    console.log("useEffect is calling", data, isSuccess);
+    if (isSuccess && data && data.response?.id) {
+      console.log("Subscription Data:", data.response);
+
+      var options = {
+        key: process.env.REACT_APP_RAZORPAY_KEY_ID,
+        subscription_id: data.response.id,
+        name: "Logistic Solutions",
+        description: "Monthly Subscription",
+        amount: 59900, // Amount in paise (₹29 = 2900 paise)
+        handler: function (response) {
+          console.log("Razorpay Response:", response);
+        },
+        prefill: {
+          name: "Rishikesh Kumar Singh",
+          email: "rishikesh.kumar@gmail.com",
+          contact: "6207654176",
+        },
+        currency: "INR",
+        config: {
+          display: {
+            debug: true, // Show detailed errors
+          },
+        },
+      };
+      console.log("options checking----", options);
+      var paymentObject = new window.Razorpay(options);
+      paymentObject.open();
+      paymentObject.on("payment.failed", function (response) {
+        console.error("Payment Failed:", response.error);
+      });
+    } else {
+      console.error("Error in useEffect: Data or isSuccess invalid.");
+    }
+  }, [data, isSuccess]);
+  const handleClick = async () => {
+    const res = await initializeRazorpay();
+    if (!res) {
+      alert("Razorpay SDK failed to load");
+      return;
+    }
+    subscriptionsCreation();
+  };
   return (
     <div className="bg-white p-8 rounded-2xl shadow-xl border border-indigo-50 max-w-md w-full">
       <div className="text-center mb-8">
@@ -106,7 +116,10 @@ function PricingCard() {
         ))}
       </div>
 
-      <button className="mt-8 w-full bg-indigo-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-indigo-700 transition-colors">
+      <button
+        className="mt-8 w-full bg-indigo-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-indigo-700 transition-colors"
+        onClick={handleClick}
+      >
         Upgrade Now
       </button>
     </div>
