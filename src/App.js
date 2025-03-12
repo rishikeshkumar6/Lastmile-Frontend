@@ -23,6 +23,7 @@ import Dashboard from "./pages/Dashboard.js";
 import Label from "./pages/Label.js";
 import Barcode from "./pages/BarcodeScanner.js";
 import { LoadingScreen } from "./components/LoadingUi.js";
+import Loader from "./components/Loader.jsx";
 
 const Home = lazy(() => import("./pages/Home.js"));
 function App() {
@@ -31,7 +32,7 @@ function App() {
     <BrowserRouter>
       {data.isLoggedin && <Header />}
       <ToastContainer />
-      <Suspense fallback={<LoadingScreen />}>
+      <Suspense fallback={<Loader />}>
         <Routes>
           <Route path="*" element={<h1>this page is not exist</h1>} />
 
