@@ -5,7 +5,6 @@ import { useSelector } from "react-redux";
 import Header from "./components/Header";
 import PublicRoutes from "./Validation/PublicRoutes.js";
 import ProtectedRoutes from "./Validation/ProtectedRouting.js";
-import Order from "./pages/OrderDashboard.js";
 import OrderCreation from "./pages/OrderCreation.js";
 import OrderDetail from "./pages/orderDetails.js";
 import OrderTraking from "./pages/OrderTraking.js";
@@ -24,8 +23,11 @@ import Label from "./pages/Label.js";
 import Barcode from "./pages/BarcodeScanner.js";
 import { LoadingScreen } from "./components/LoadingUi.js";
 import Loader from "./components/Loader.jsx";
+import ResetPassword from "./components/UserAuthentication/ResetPassword.js";
+import ForgotPasswordOtpVerifications from "./components/UserAuthentication/ForgotPasswordOtpVerification.js";
 
 const Home = lazy(() => import("./pages/Home.js"));
+const Order = lazy(() => import("./pages/OrderDashboard.js"));
 function App() {
   const data = useSelector((state) => state["rootReducer"]["userSlice"]);
   return (
@@ -41,6 +43,11 @@ function App() {
             <Route path="/login" element={<LoginForm />} />
             <Route path="/register" element={<SignupForm />} />
             <Route path="/forgotpassword" element={<ForgotPassword />} />
+            <Route
+              path="/forgotpasswordotpverification"
+              element={<ForgotPasswordOtpVerifications />}
+            />
+            <Route path="/resetpassword" element={<ResetPassword />} />
             <Route path="/otpverifaction" element={<OTPVerification />} />
           </Route>
           <Route element={<ProtectedRoutes />}>

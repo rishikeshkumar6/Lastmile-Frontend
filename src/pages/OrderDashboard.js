@@ -365,7 +365,6 @@ const Order = () => {
             )}
           </div>
         )}
-        {isLoading === true && <LoadingTable />}
         {isError === true && <ErrorTable />}
       </div>
       {console.log(

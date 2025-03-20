@@ -43,6 +43,7 @@ export const loginFormSchema = Yup.object().shape({
     .matches(/^\d{10}$/, "Phone number must be exactly 10 digits")
     .test("phone-required", "Phone number is required", function (value) {
       console.log("phonenumber", !!value);
+      console.log("value", !!value);
       const { loginMethod } = this.parent;
       return loginMethod === "phonenumber" ? !!value : true; // Required if loginMethod is "phonenumber"
     }),

@@ -47,6 +47,27 @@ export const userApi = api.injectEndpoints({
         body: payload,
       }),
     }),
+    forgotPassword: builder.mutation({
+      query: (payload) => ({
+        url: "/api/v1/forgotpassword",
+        method: "POST",
+        body: payload,
+      }),
+    }),
+    forgotPasswordOtpVerification: builder.mutation({
+      query: (payload) => ({
+        url: "/api/v1/passowrdotpverification",
+        method: "POST",
+        body: payload,
+      }),
+    }),
+    updatePassword: builder.mutation({
+      query: (payload) => ({
+        url: "/api/v1/updatepassword",
+        method: "PUT",
+        body: payload,
+      }),
+    }),
     logout: builder.mutation({
       query: () => ({
         url: "/api/v1/logout",
@@ -122,6 +143,9 @@ export const {
   useRegisterMutation,
   useOtpverificationMutation,
   useLoginMutation,
+  useForgotPasswordMutation,
+  useForgotPasswordOtpVerificationMutation,
+  useUpdatePasswordMutation,
   useLogoutMutation,
 } = userApi;
 

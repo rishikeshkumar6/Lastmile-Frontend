@@ -34,7 +34,12 @@ const SignupForm = () => {
         onClose: () => navigate("/otpverifaction"),
       });
     } else if (isError === true) {
-      toast.error(error.data.error.errors[0].message, { autoClose: "3000" });
+      toast.error(
+        error?.data?.error?.errors[0]?.message || error.data["errorMessage"],
+        {
+          autoClose: "3000",
+        }
+      );
     }
   }, [data, error]);
 
