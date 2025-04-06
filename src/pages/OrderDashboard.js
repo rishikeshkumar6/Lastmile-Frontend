@@ -29,6 +29,7 @@ const Order = () => {
     useLazyGetAllOrderQuery();
   const navigate = useNavigate();
   useEffect(() => {
+    document.title = "Dashboard";
     console.log("useEffect called with:", searchInput);
     getAllOrder({ page, searchInput, activeButton }, { force: true });
   }, [page, searchInput, activeButton]);
@@ -202,7 +203,7 @@ const Order = () => {
         </div>
 
         <ul class="flex flex-wrap text-sm gap-5 text-center pl-12 text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400 pb-5">
-          <span
+          <button
             class={`  text-sm font-normal py-2 px-3  rounded-sm  cursor-pointer flex gap-2 items-center ${
               activeButton === "new"
                 ? " bg-black text-white"
@@ -211,97 +212,115 @@ const Order = () => {
             onClick={() => handleActiveButton("new")}
           >
             New Order
-          </span>
-          <span
+          </button>
+          <button
             class={`  text-sm font-normal  py-2 px-3  rounded-sm  cursor-pointer flex gap-2 items-center ${
               activeButton === "Booked"
                 ? " bg-black text-white"
                 : " bg-white text-black"
             }`}
             onClick={() => handleActiveButton("Booked")}
+            disabled={true}
+            title="coming soon"
           >
             Booked
-          </span>
-          <span
+          </button>
+          <button
             class={`text-sm font-normal py-2 px-3  rounded-sm  cursor-pointer flex gap-2 items-center ${
               activeButton === "Pickup/Mainfest"
                 ? " bg-black text-white"
                 : " bg-white text-black"
             }`}
             onClick={() => handleActiveButton("Pickup/Mainfest")}
+            disabled={true}
+            title="coming soon"
           >
             Pickup/Mainfest
-          </span>
-          <span
+          </button>
+          <button
             class={`text-sm font-normal py-2 px-3  rounded-sm  cursor-pointer flex gap-2 items-center ${
               activeButton === "In Transit"
                 ? " bg-black text-white"
                 : " bg-white text-black"
             }`}
             onClick={() => handleActiveButton("In Transit")}
+            disabled={true}
+            title="coming soon"
           >
             In Transit
-          </span>
-          <span
+          </button>
+          <button
             class={`text-sm font-normal  py-2 px-3  rounded-sm  cursor-pointer flex gap-2 items-center ${
               activeButton === "Out For Deleivery"
                 ? " bg-black text-white"
                 : " bg-white text-black"
             }`}
             onClick={() => handleActiveButton("Out For Deleivery")}
+            disabled={true}
+            title="coming soon"
           >
             Out For Deleivery
-          </span>
-          <span
+          </button>
+          <button
             class={`text-sm font-normal  py-2 px-3  rounded-sm  cursor-pointer flex gap-2 items-center ${
               activeButton === "Deleivered"
                 ? " bg-black text-white"
                 : " bg-white text-black"
             }`}
             onClick={() => handleActiveButton("Deleivered")}
+            disabled={true}
+            title="coming soon"
           >
             Deleivered
-          </span>
-          <span
+          </button>
+          <button
             class={`text-sm font-normal  py-2 px-3  rounded-sm  cursor-pointer flex gap-2 items-center ${
               activeButton === "Return To Origin"
                 ? " bg-black text-white"
                 : " bg-white text-black"
             }`}
             onClick={() => handleActiveButton("Return To Origin")}
+            disabled={true}
+            title="coming soon"
           >
             Return To Origin
-          </span>
-          <span
+          </button>
+          <button
             class={`text-sm font-normal py-2 px-3  rounded-sm  cursor-pointer flex gap-2 items-center ${
               activeButton === "Non Deleivery Report"
                 ? " bg-black text-white"
                 : " bg-white text-black"
             }`}
             onClick={() => handleActiveButton("Non Deleivery Report")}
+            disabled={true}
+            title="coming soon"
           >
             Non Deleivery Report
-          </span>
-          <span
+          </button>
+          <button
             class={`text-sm font-normal py-2 px-3  rounded-sm  cursor-pointer flex gap-2 items-center ${
               activeButton === "Cancel Order"
                 ? " bg-black text-white"
                 : " bg-white text-black"
             }`}
             onClick={() => handleActiveButton("Cancel Order")}
+            disabled={true}
+            title="coming soon"
           >
             Cancel Orders
-          </span>
-          <span
+          </button>
+          <button
             class={`text-sm font-normal  py-2 px-3  rounded-sm  cursor-pointer flex gap-2 items-center ${
               activeButton === "All Orders"
                 ? " bg-black text-white"
                 : " bg-white text-black"
             }`}
             onClick={() => handleActiveButton("All Orders")}
+            disabled={true}
+            title="coming soon"
           >
             All Orders
-          </span>
+          </button>
         </ul>
 
         {isError !== true && (

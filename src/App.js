@@ -25,6 +25,7 @@ import { LoadingScreen } from "./components/LoadingUi.js";
 import Loader from "./components/Loader.jsx";
 import ResetPassword from "./components/UserAuthentication/ResetPassword.js";
 import ForgotPasswordOtpVerifications from "./components/UserAuthentication/ForgotPasswordOtpVerification.js";
+import ErrorPage from "./components/RouterErrorPage.js";
 
 const Home = lazy(() => import("./pages/Home.js"));
 const Order = lazy(() => import("./pages/OrderDashboard.js"));
@@ -36,7 +37,7 @@ function App() {
       <ToastContainer />
       <Suspense fallback={<Loader />}>
         <Routes>
-          <Route path="*" element={<h1>this page is not exist</h1>} />
+          <Route path="*" element={<ErrorPage />} />
 
           <Route element={<PublicRoutes />}>
             <Route path="/" element={<Home />} />

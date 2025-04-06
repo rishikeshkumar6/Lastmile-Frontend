@@ -22,7 +22,7 @@ const OrderDetail = () => {
         <div className="flex justify-between w-[100%]">
           <div className="flex gap-5 items-center ">
             <FaLongArrowAltLeft className="text-[25px]" />
-            <h1 className="text-[25px] font-[600]">R19ET1CS0039</h1>
+            <h1 className="text-[25px] font-[600]">#R19ET1CS0039</h1>
             <Button variant="contained" className="bg-green-500">
               New
             </Button>
@@ -30,19 +30,19 @@ const OrderDetail = () => {
           <Button variant="contained">Refresh</Button>
         </div>
 
-        <div className="w-[65%]">
+        <div className="w-[65%] text-[15px]">
           <div className=" bg-white shadow-sm rounded-md px-10 py-6 flex flex-col gap-6">
             <h2 className="font-[500] flex gap-5 text-[20px] items-center">
               <IoCartOutline className="text-[25px]" />
               Order Details
             </h2>
-            <table className="text-left">
+            <table className="text-left ">
               <thead>
                 <tr>
-                  <th>Order Date</th>
-                  <th>Channel</th>
-                  <th>Pick Up</th>
-                  <th>Payment</th>
+                  <th className="font-[500]">Order Date</th>
+                  <th className="font-[500]">Channel</th>
+                  <th className="font-[500]">Pick Up</th>
+                  <th className="font-[500]">Payment</th>
                 </tr>
               </thead>
               <tbody>
@@ -56,7 +56,7 @@ const OrderDetail = () => {
             </table>
           </div>
         </div>
-        <div className="w-[33%]">
+        <div className="w-[33%] text-[15px]">
           <div className=" bg-white shadow-sm rounded-md px-10 py-6 flex flex-col gap-6 absolute">
             <h2 className="font-[500] flex gap-5 text-[20px] items-center">
               <LocalShippingIcon className="text-[25px]" />
@@ -97,10 +97,10 @@ const OrderDetail = () => {
             <table className="text-left">
               <thead>
                 <tr>
-                  <th>{`Dead Weight (kg)`}</th>
-                  <th>{`Dimension (cm)`}</th>
-                  <th>{`Volumetric Weight (kg)`}</th>
-                  <th>{`Applicable Weight (kg)`}</th>
+                  <th className="font-[500]">{`Dead Weight (kg)`}</th>
+                  <th className="font-[500]">{`Dimension (cm)`}</th>
+                  <th className="font-[500]">{`Volumetric Weight (kg)`}</th>
+                  <th className="font-[500]">{`Applicable Weight (kg)`}</th>
                 </tr>
               </thead>
               <tbody>
@@ -146,7 +146,7 @@ const OrderDetail = () => {
             </table>
           </div>
         </div>
-        <div className="w-[65%]">
+        <div className="w-[65%] text-[15px]">
           <div className=" bg-white shadow-sm rounded-md px-10 py-6 flex flex-col gap-6">
             <h2 className="font-[500] flex gap-5 text-[20px] items-center">
               <SiHackthebox className="text-[25px]" />
@@ -155,30 +155,40 @@ const OrderDetail = () => {
             <table className="text-left">
               <thead>
                 <tr>
-                  <th>{`Name`}</th>
-                  <th>{`Sku Code`}</th>
-                  <th>{`quantity`}</th>
-                  <th>{`Until Price`}</th>
-                  <th>{`Ammount`}</th>
+                  <th className="font-[500] py-2 px-36">{`Name`}</th>
+                  <th className="font-[500] p-2">{`Sku Code`}</th>
+                  <th className="font-[500] p-2">{`quantity`}</th>
+                  <th className="font-[500] p-2">{`Until Price`}</th>
+                  <th className="font-[500] p-2">{`Ammount`}</th>
                 </tr>
               </thead>
               <tbody>
                 <tr className="borderBottom">
-                  <td>{`Rishikesh Kumar Singh`}</td>
-                  <td>{`sku1`}</td>
-                  <td>20</td>
-                  <td>60000</td>
-                  <td>600000</td>
+                  <td className="py-6 w-[28%] px-3">{`Apollon Nutrition Multi- Premium Multi Vitamin and Mineral | Stress Management with KSM-66 | Glucose Control with Phlorizin | Antioxidant Support with Spectrafor | Enhanced Skin Hydration and Heart Health with CoQ-10`}</td>
+                  <td className="px-3">{`sku1`}</td>
+                  <td className="px-3">20</td>
+                  <td className="px-3">60000</td>
+                  <td className="px-3">600000</td>
                 </tr>
                 <tr className="borderBottom">
-                  <td>{`Rishikesh Kumar Singh`}</td>
-                  <td>{`sku1`}</td>
-                  <td>20</td>
-                  <td>60000</td>
-                  <td>600000</td>
+                  <td className="py-6 px-3 w-[28%]">{`Per4M Whey Isolate Zero | 26gms Protein | Grass fed from Europe | 66 servings - Red Velvet Cake`}</td>
+                  <td className="px-3">{`sku1`}</td>
+                  <td className="px-3">20</td>
+                  <td className="px-3">60000</td>
+                  <td className="px-3">600000</td>
                 </tr>
               </tbody>
             </table>
+            <div className="flex items-end p-5 flex-col gap-y-5 ">
+              <div className="flex items-center justify-between w-[30%]">
+                <span>{`Order Total  (2 Items)`}</span>
+                <span>{`12000000`}</span>
+              </div>
+              <div className="flex items-center justify-between w-[30%] font-bold">
+                <span>{`Total`}</span>
+                <span>{`12000000`}</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>

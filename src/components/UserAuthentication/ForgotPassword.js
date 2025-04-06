@@ -149,7 +149,7 @@ const ForgotPassword = ({ onBackClick }) => {
                     type="submit"
                     className="w-full bg-blue-600 text-white rounded-lg py-2.5 font-medium hover:bg-blue-700 transition-colors"
                   >
-                    Reset Password
+                  {isLoading?'Loading.......':'Reset Password'}
                   </button>
                 </div>
               </div>

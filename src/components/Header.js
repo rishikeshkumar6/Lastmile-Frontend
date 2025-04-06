@@ -45,7 +45,7 @@ const Header = () => {
         key: isSuccess !== false && data.paymentRes.key,
         amount: isSuccess !== false && data.paymentRes.amount,
         currency: "INR",
-        name: "Supply Chain Solution",
+        name: "Logistic Solution",
         description: "purchase the item",
         order_id: isSuccess !== false && data.paymentRes.id,
         handler: async (res) => {

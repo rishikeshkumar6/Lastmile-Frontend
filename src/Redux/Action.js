@@ -99,7 +99,7 @@ export const orderApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getAllOrder: builder.query({
       query: (payload = "default") => ({
-        url: `/api/v1/getAllOrder?page=${payload.page}&batchSize=10&order_status=${payload.activeButton}&searchTerm=${payload.searchInput}&start_date=2025-01-22&end_date=2025-03-04`,
+        url: `/api/v1/getAllOrder?page=${payload.page}&batchSize=10&order_status=${payload.activeButton}&searchTerm=${payload.searchInput}&start_date=2025-01-22&end_date=2025-04-06`,
         method: "GET",
       }),
       providesTags: ["order"],

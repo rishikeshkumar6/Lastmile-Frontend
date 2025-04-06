@@ -189,14 +189,17 @@ const LoginForm = () => {
                   type="submit"
                   className="w-full bg-blue-600 text-white rounded-lg py-2.5 font-medium hover:bg-blue-700 transition-colors"
                 >
-                  Sign In
+                  {isLoading ? "Loading....." : "Sign In"}{" "}
                 </button>
               </div>
 
               <div className="mt-6 text-center">
                 <p className="text-gray-600">
                   Don't have an account?{" "}
-                  <button className="text-blue-600 hover:text-blue-800 font-medium">
+                  <button
+                    className="text-blue-600 hover:text-blue-800 font-medium"
+                    disabled={isLoading ? true : false}
+                  >
                     <Link to={"/register"}>Sign up</Link>
                   </button>
                 </p>

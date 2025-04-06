@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import { Button } from "@mui/material";
+
+import { MdMyLocation } from "react-icons/md";
 import * as Yup from "yup";
 // import component 👇
 import Drawer from "react-modern-drawer";
@@ -33,6 +35,55 @@ const Drawers = ({ open, setOpen }) => {
     setOpen(!open);
   };
 
+  const getLocation = async (setFieldValue) => {
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser.");
+      return;
+    }
+
+    try {
+      const position = await new Promise((resolve, reject) =>
+        navigator.geolocation.getCurrentPosition(resolve, reject)
+      );
+
+      const { latitude, longitude } = position.coords;
+      console.log("Latitude:", latitude, "Longitude:", longitude);
+
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=AIzaSyAI9qtH7xxemsrHm0PBNSjwjpzowfIDRtI`
+      );
+      const data = await response.json();
+
+      if (data.status !== "OK" || !data.results.length) {
+        console.warn("Failed to fetch address from coordinates.");
+        return;
+      }
+
+      const addressComponents = data.results[0].address_components;
+      const getComponent = (type) =>
+        addressComponents.find((comp) => comp.types.includes(type))
+          ?.long_name || "";
+
+      const fullAddress = data.results[0].formatted_address;
+      const pincode = getComponent("postal_code");
+      const state = getComponent("administrative_area_level_1");
+      const city =
+        getComponent("administrative_area_level_3") ||
+        getComponent("administrative_area_level_2") || // fallback
+        getComponent("locality");
+
+      setFieldValue("fulladdress", fullAddress);
+      setFieldValue("pincode", pincode);
+      setFieldValue("state", state);
+      setFieldValue("city", city);
+
+      console.log("Address:", { fullAddress, pincode, state, city });
+    } catch (error) {
+      console.error("Geolocation or API error:", error);
+      alert("Failed to fetch location. Please try again.");
+    }
+  };
+
   return (
     <>
       <Drawer
@@ -62,9 +113,12 @@ const Drawers = ({ open, setOpen }) => {
                 <div className="px-10 py-8 flex flex-col gap-y-10 content-between">
                   <span className="text-2xl">Add New Pickup Location</span>
                   <div className="text-[15px] font-normal flex flex-wrap gap-x-12	gap-y-5">
-                    <div className="text-xl w-full ">
-                      Contact Person Information ( Person of contact for the
-                      pickup location )
+                    <div className="w-full ">
+                      <span className="text-lg">
+                        {" "}
+                        Contact Person Information ( Person of contact for the
+                        pickup location )
+                      </span>
                     </div>
                     <div className="flex flex-col w-[30%] relative">
                       Full Name*
@@ -122,9 +176,18 @@ const Drawers = ({ open, setOpen }) => {
                     </div>
                   </div>
                   <div className="text-[15px] font-normal flex flex-wrap gap-x-12 gap-y-5">
-                    <div className="text-xl w-full">
-                      Pickup Location Details ( Where will the orders be picked
-                      up from? )
+                    <div className="w-full flex items-center justify-between">
+                      <span className="text-lg">
+                        {" "}
+                        Pickup Location Details ( Where will the orders be
+                        picked up from? )
+                      </span>
+                      <span
+                        className="flex items-center gap-2 cursor-pointer"
+                        onClick={() => getLocation(setFieldValue, values)}
+                      >
+                        <MdMyLocation className="mt-1" /> use current location
+                      </span>
                     </div>
                     <div className="flex flex-col w-[46%]">
                       Full Address*
