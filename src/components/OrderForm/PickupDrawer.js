@@ -50,7 +50,7 @@ const Drawers = ({ open, setOpen }) => {
       console.log("Latitude:", latitude, "Longitude:", longitude);
 
       const response = await fetch(
-        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=AIzaSyAI9qtH7xxemsrHm0PBNSjwjpzowfIDRtI`
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${process.env.REACT_APP_GEO_CODE_API_KEY}`
       );
       const data = await response.json();
 
