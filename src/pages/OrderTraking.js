@@ -14,9 +14,11 @@ import "leaflet/dist/leaflet.css";
 import "leaflet-rotatedmarker";
 
 const OrderTrackingMap = () => {
-  const source = [25.5940947, 85.1375645];
-  const destination = [24.7955, 84.9994];
-  const [vehiclePosition, setVehiclePosition] = useState([25.2131, 84.9861]); // Initial position
+  const source = [25.095316, 86.66494];
+  const destination = [25.2121991, 86.4151267];
+  const [vehiclePosition, setVehiclePosition] = useState([
+    25.0282922, 86.6222717,
+  ]); // Initial position
   const [rotationAngle, setRotationAngle] = useState(0); // Vehicle rotation angle
   const [speed, setSpeed] = useState(0); // Vehicle speed
   const [etd, setEtd] = useState(0); // Estimated time to destination in minutes
@@ -116,7 +118,7 @@ const OrderTrackingMap = () => {
         const estimatedTime = calculateETD(newPosition, currentSpeed);
 
         // Update the state with new vehicle position, speed, and ETD
-        setVehiclePosition(newPosition);
+        // setVehiclePosition(newPosition);
         setSpeed(currentSpeed);
         setEtd(estimatedTime);
 

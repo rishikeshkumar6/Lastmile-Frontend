@@ -8,6 +8,7 @@
     "@mui/icons-material": "^6.4.6",
     "@mui/material": "^6.4.6",
     "@popperjs/core": "^2.11.8",
+    "@react-google-maps/api": "^2.20.6",
     "@react-leaflet/core": "^2.1.0",
     "@reduxjs/toolkit": "^2.3.0",
     "@testing-library/jest-dom": "^5.17.0",
@@ -50,6 +51,7 @@
     "recharts": "^2.15.1",
     "redux": "^5.0.1",
     "stream-browserify": "^3.0.0",
+    "use-places-autocomplete": "^4.0.1",
     "web-vitals": "^2.1.4",
     "xlsx": "^0.18.5",
     "yup": "^1.4.0"

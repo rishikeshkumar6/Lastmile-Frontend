@@ -26,6 +26,7 @@ import Loader from "./components/Loader.jsx";
 import ResetPassword from "./components/UserAuthentication/ResetPassword.js";
 import ForgotPasswordOtpVerifications from "./components/UserAuthentication/ForgotPasswordOtpVerification.js";
 import ErrorPage from "./components/RouterErrorPage.js";
+import Map from "./pages/Map.js";
 
 const Home = lazy(() => import("./pages/Home.js"));
 const Order = lazy(() => import("./pages/OrderDashboard.js"));
@@ -63,7 +64,8 @@ function App() {
             <Route path="/testing" element={<TrackingInformation />} />
             <Route path="/label" element={<Label />} />
             <Route path="/barcode-scanner" element={<Barcode />} />
-            <Route path="*" element={<h1>this page does'nt exist</h1>} />
+            <Route path="/google-map" element={<Map />} />
+            <Route path="*" element={<ErrorPage />} />
             <Route
               path="/order/ordercreate/:orderid/:slug"
               element={<OrderCreation />}

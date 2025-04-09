@@ -15,17 +15,19 @@ const GenerateExcel = () => {
       const { consigneeDetails, pickupDetails, packageDetails, orderDetails } =
         elem;
       return {
-        fullname: consigneeDetails.fullname,
-        phonenumber: consigneeDetails.phonenumber,
-        alternatephonenumber: consigneeDetails.alternatephonenumber,
-        consigneecompany: consigneeDetails.consigneecompany,
-        gstin: consigneeDetails.gstin,
-        email: consigneeDetails.email,
-        fulladdress: consigneeDetails.fulladdress,
-        country: consigneeDetails.country,
-        state: consigneeDetails.state,
-        city: consigneeDetails.city,
-        pincode: consigneeDetails.pincode,
+        consignee_person_name: consigneeDetails.fullname,
+        consignee_person_phone: consigneeDetails.phonenumber,
+        consignee_person_alterPhonenumber:
+          consigneeDetails.alternatephonenumber,
+        consignee_person_consigneecompany: consigneeDetails.consigneecompany,
+        consignee_person_gstin: consigneeDetails.gstin,
+        consignee_person_email: consigneeDetails.email,
+        consignee_person_fulladdress: consigneeDetails.fulladdress,
+        consignee_person_country: consigneeDetails.country,
+        consignee_person_state: consigneeDetails.state,
+        consignee_person_city: consigneeDetails.city,
+        consignee_person_pincode: consigneeDetails.pincode,
+        consignee_person_landmark: consigneeDetails.landmark,
         pickup_person_name: pickupDetails.pickup_person_name,
         pickup_person_phone: pickupDetails.pickup_person_phone,
         pickup_person_email: pickupDetails.pickup_person_email,
@@ -34,20 +36,27 @@ const GenerateExcel = () => {
         pickup_country: pickupDetails.pickup_country,
         pickup_state: pickupDetails.pickup_state,
         pickup_city: pickupDetails.pickup_city,
+        pickup_pincode: pickupDetails.pickup_pincode,
         orderid: orderDetails.orderid,
         channel: orderDetails.channel,
         productDetails:
           orderDetails.productDetails !== "" &&
           orderDetails.productDetails.length > 0
-            ? orderDetails.productDetails
-                .map((product) => `${product.name} (x${product.quantity})`)
-                .join(", ")
-            : "",
+            ? JSON.stringify(
+                orderDetails.productDetails.map((product) => product)
+              )
+            : [],
         payment_mode: orderDetails.payment_mode,
         total_amount: orderDetails.total_amount,
         order_value: orderDetails.order_value,
         tax_amount: orderDetails.tax_amount,
-        dead_weight: packageDetails.dead_weigth, // Correct this typo in data if possible
+        discount: orderDetails.discount,
+        gift_wrap_charges: orderDetails.gift_wrap_charges,
+        other_charges: orderDetails.other_charges,
+        cod_charges: orderDetails.cod_charges,
+        shipping_charges: orderDetails.shipping_charges,
+        dead_weight: packageDetails.dead_weigth,
+        volumetric_weigth: packageDetails.volumetric_weigth, // Correct this typo in data if possible
         length: packageDetails.length,
         breath: packageDetails.breath,
         height: packageDetails.height,

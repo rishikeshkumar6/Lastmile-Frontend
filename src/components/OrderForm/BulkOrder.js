@@ -9,18 +9,18 @@ import Papa from "papaparse";
 import * as XLSX from "xlsx";
 
 const expectedHeaders = [
-  "fullname",
-  "phonenumber",
-  "alternatephonenumber",
-  "consigneecompany",
-  "gstin",
-  "email",
-  "fulladdress",
-  "landmark",
-  "country",
-  "state",
-  "city",
-  "pincode",
+  "consignee_person_name",
+  "consignee_person_phone",
+  "consignee_person_alterPhonenumber",
+  "consignee_person_consigneecompany",
+  "consignee_person_gstin",
+  "consignee_person_email",
+  "consignee_person_fulladdress",
+  "consignee_person_landmark",
+  "consignee_person_country",
+  "consignee_person_state",
+  "consignee_person_city",
+  "consignee_person_pincode",
   "orderid",
   "channel",
   "productDetails",
@@ -33,16 +33,16 @@ const expectedHeaders = [
   "total_amount",
   "order_value",
   "tax_amount",
-  "pickup_fullname",
-  "pickup_phonenumber",
-  "pickup_email",
-  "pickup_fulladdress",
+  "pickup_person_name",
+  "pickup_person_phone",
+  "pickup_person_email",
+  "pickup_address",
   "pickup_landmark",
   "pickup_country",
   "pickup_state",
   "pickup_city",
   "pickup_pincode",
-  "dead_weigth",
+  "dead_weight",
   "volumetric_weigth",
   "length",
   "breath",
@@ -70,6 +70,7 @@ const FileUpload = () => {
     const newArrray = expectedHeaders.filter((elem) => {
       return !uploadedHeaders.includes(elem);
     });
+    console.log("newArray", newArrray);
     if (Object.keys(newArrray).length > 0) {
       return `Invalid ${fileExtension} file format`;
     } else {
@@ -78,24 +79,25 @@ const FileUpload = () => {
   };
 
   const validateFields = (fileExtension, data) => {
+    console.log("validateFields", data);
     for (let elem of data) {
       const {
-        fullname,
-        email,
-        phonenumber,
-        pincode,
-        fulladdress,
-        landmark,
-        city,
-        state,
-        country,
+        consignee_person_name,
+        consignee_person_email,
+        consignee_person_phone,
+        consignee_person_pincode,
+        consignee_person_fulladdress,
+        consignee_person_landmark,
+        consignee_person_city,
+        consignee_person_state,
+        consignee_person_country,
         orderid,
         channel,
         productDetails,
-        pickup_fullname,
-        pickup_phonenumber,
-        pickup_email,
-        pickup_fulladdress,
+        pickup_person_name,
+        pickup_person_phone,
+        pickup_person_email,
+        pickup_address,
         pickup_landmark,
         pickup_pincode,
         pickup_city,
@@ -104,26 +106,25 @@ const FileUpload = () => {
         length,
         breath,
         height,
-        dead_weigth,
       } = elem;
 
       const obj = {
-        fullname,
-        email,
-        phonenumber,
-        pincode,
-        fulladdress,
-        landmark,
-        city,
-        state,
-        country,
+        consignee_person_name,
+        consignee_person_email,
+        consignee_person_phone,
+        consignee_person_pincode,
+        consignee_person_fulladdress,
+        consignee_person_landmark,
+        consignee_person_city,
+        consignee_person_state,
+        consignee_person_country,
         orderid,
         channel,
         productDetails,
-        pickup_fullname,
-        pickup_phonenumber,
-        pickup_email,
-        pickup_fulladdress,
+        pickup_person_name,
+        pickup_person_phone,
+        pickup_person_email,
+        pickup_address,
         pickup_landmark,
         pickup_pincode,
         pickup_city,
@@ -132,11 +133,11 @@ const FileUpload = () => {
         length,
         breath,
         height,
-        dead_weigth,
       };
       const rowValues = Object.values(obj);
+      console.log("rowValues", rowValues);
       const newRowValues = rowValues.filter((elem) => elem === undefined);
-
+      console.log("newRowsValues", newRowValues);
       if (newRowValues.length > 0) {
         return `please fill all required filed data row on ${fileExtension} file`;
       }
@@ -150,24 +151,24 @@ const FileUpload = () => {
     const fileExtension = file.name.split(".").pop().toLowerCase();
 
     const processFile = (data) => {
-      console.log("data", data);
+      console.log("processFile data", data);
       // Map your data to the required JSON format
 
       const formattedData = data.map((row) => {
         return {
           consigneeDetails: {
-            fullname: row.fullname || "",
-            phonenumber: row.phonenumber || "",
-            alternatephonenumber: row.alternatephonenumber || "",
-            consigneecompany: row.consigneecompany || "",
-            gstin: row.gstin || "",
-            email: row.email || "",
-            fulladdress: row.fulladdress || "",
-            landmark: row.landmark || "",
-            country: "India",
-            state: row.state || "",
-            city: row.city || "",
-            pincode: row.pincode || "",
+            fullname: row.consignee_person_name || "",
+            phonenumber: row.consignee_person_phone || "",
+            alternatephonenumber: row.consignee_person_alterPhonenumber || "",
+            consigneecompany: row.consignee_person_consigneecompany || "",
+            gstin: row.consignee_person_gstin || "",
+            email: row.consignee_person_email || "",
+            fulladdress: row.consignee_person_fulladdress || "",
+            landmark: row.consignee_person_landmark || "",
+            consignee_person_country: "India",
+            state: row.consignee_person_state || "",
+            city: row.consignee_person_city || "",
+            pincode: row.consignee_person_pincode || "",
           },
           orderDetails: {
             orderid: row.orderid || "",
@@ -185,10 +186,10 @@ const FileUpload = () => {
           },
 
           pickupDetails: {
-            pickup_person_name: row.pickup_fullname || "",
-            pickup_person_phone: row.pickup_phonenumber || "",
-            pickup_person_email: row.pickup_email || "",
-            pickup_address: row.pickup_fulladdress || "",
+            pickup_person_name: row.pickup_person_name || "",
+            pickup_person_phone: row.pickup_person_phone || "",
+            pickup_person_email: row.pickup_person_email || "",
+            pickup_address: row.pickup_address || "",
             pickup_landmark: row.pickup_landmark || "",
             pickup_country: row.pickup_country || "",
             pickup_state: row.pickup_state || "",
@@ -247,24 +248,26 @@ const FileUpload = () => {
           const workbook = XLSX.read(data, { type: "array" });
           const sheetName = workbook.SheetNames[0];
           const worksheet = workbook.Sheets[sheetName];
-
           // Get headers from first row
           const headers = XLSX.utils.sheet_to_json(worksheet, { header: 1 })[0];
+
           const sheetData = XLSX.utils.sheet_to_json(worksheet);
+          console.log("sheetData", sheetData);
           const validation = validateHeaders(fileExtension, headers);
 
           if (validation) {
             handleValidationError(validation);
             return;
           }
-          const parsingData = validateFields(fileExtension, sheetData);
-          if (parsingData) {
-            handleValidationError(parsingData);
-            return;
-          }
+          // const parsingData = validateFields(fileExtension, sheetData);
+          // if (parsingData) {
+          //   handleValidationError(parsingData);
+          //   return;
+          // }
 
           processFile(sheetData);
         } catch (error) {
+          console.log("error", error);
           toast.error("Error reading Excel file");
         }
       };
