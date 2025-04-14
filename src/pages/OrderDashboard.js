@@ -14,6 +14,7 @@ import DataTable from "../components/userDashboardComponents/DataTable";
 import LoadingTable from "../components/userDashboardComponents/LoadingTable";
 import ErrorTable from "../components/userDashboardComponents/ErrorTable";
 import GenerateExcel from "../components/userDashboardComponents/ExportOrder";
+import DateRangePicker from "../components/OrderForm/DatePicker";
 
 const Order = () => {
   const dispatch = useDispatch();
@@ -25,14 +26,16 @@ const Order = () => {
   const [activeButton, setActiveButton] = useState("new");
   const [page, setPage] = useState(1);
   const [searchInput, setSearchInput] = useState("");
+  const [dates, setDates] = useState({ start_date: "", end_date: "" });
+
   const [getAllOrder, { isLoading, isSuccess, isError, data, error }] =
     useLazyGetAllOrderQuery();
   const navigate = useNavigate();
   useEffect(() => {
     document.title = "Dashboard";
     console.log("useEffect called with:", searchInput);
-    getAllOrder({ page, searchInput, activeButton }, { force: true });
-  }, [page, searchInput, activeButton]);
+    getAllOrder({ page, searchInput, activeButton, dates }, { force: true });
+  }, [page, searchInput, activeButton, dates]);
 
   const handleActiveButton = (status) => {
     switch (status) {
@@ -323,14 +326,14 @@ const Order = () => {
           </button>
         </ul>
 
-        {isError !== true && (
-          <div className="w-full px-8 py-4 bg-white">
-            <div className="py-5 flex justify-end">
-              <GenerateExcel />
-            </div>
-            {isSuccess === true &&
+        <div className="w-full px-8 py-4 bg-white">
+          <div className="py-5 flex justify-between">
+            <DateRangePicker dates={dates} setDates={setDates} />
+            <GenerateExcel />
+          </div>
+          {isSuccess === true &&
             Object.keys(data).length > 0 &&
-            data.orderRes.length > 0 ? (
+            data.orderRes.length > 0 && (
               <table className="w-full text-left leading-5 ">
                 <thead className="bg-gray-50 border-2 border-gray-200">
                   <tr>
@@ -365,26 +368,25 @@ const Order = () => {
                   })}
                 </tbody>
               </table>
-            ) : (
-              <LoadingTable />
             )}
-            {isSuccess === true &&
-            Object.keys(data).length > 0 &&
-            data.orderRes.length > 0 ? (
-              <Stack spacing={2} className="py-5 m-[auto]">
-                <Pagination
-                  count={data.pageCount}
-                  variant="outlined"
-                  shape="rounded"
-                  onChange={(event, value) => setPage(value)}
-                />
-              </Stack>
-            ) : (
-              ""
-            )}
-          </div>
-        )}
+          {isSuccess === true &&
+          Object.keys(data).length > 0 &&
+          data.orderRes.length > 0 ? (
+            <Stack spacing={2} className="py-5 m-[auto]">
+              <Pagination
+                count={data.pageCount}
+                variant="outlined"
+                shape="rounded"
+                onChange={(event, value) => setPage(value)}
+              />
+            </Stack>
+          ) : (
+            ""
+          )}
+        </div>
+
         {isError === true && <ErrorTable />}
+        {isLoading === true && <LoadingTable />}
       </div>
       {console.log(
         "rtk query state",

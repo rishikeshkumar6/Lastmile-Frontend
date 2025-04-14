@@ -23,10 +23,7 @@ const ShippingLabel = ({
     }
   }, [courier.awb]);
 
-  const totalAmount = products.reduce(
-    (sum, product) => sum + product.amount,
-    0
-  );
+  const totalAmount = products.reduce((sum, product) => sum + product.price, 0);
 
   return (
     <div className="text-[11px] max-w-[700px] border border-black w-full md:w-[5in] h-auto md:h-[7.5in] flex flex-col print:w-[5in] print:h-[7.5in] print-section">
@@ -95,17 +92,17 @@ const ShippingLabel = ({
         <table className="w-full">
           <thead className="bg-base-100 py-3">
             <tr>
-              <th className="w-[35%] py-3 text-left pl-5">Product Name</th>
-              <th className="w-[15%] py-3 text-left">QTY</th>
-              <th className="w-[15%] text-right pr-5">Amount</th>
+              <th className="w-[35%] py-3 text-left px-5">Product Name</th>
+              <th className="w-[15%] py-3 text-left px-5">QTY</th>
+              <th className="w-[15%] text-right px-5">Amount</th>
             </tr>
           </thead>
           <tbody>
             {products.map((product, index) => (
               <tr key={index}>
-                <td className="pl-5 py-4">{product.name}</td>
-                <td>{product.quantity}</td>
-                <td className="text-right py-4 pr-5">₹{product.amount}</td>
+                <td className="px-5 py-4">{product.name}</td>
+                <td className="px-5">{product.quantity}</td>
+                <td className="text-right py-4 px-5">₹{product.price}</td>
               </tr>
             ))}
           </tbody>

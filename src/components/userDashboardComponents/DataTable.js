@@ -311,7 +311,7 @@ const DataTable = ({ data, row, index, selectAll, setSelectAll }) => {
                 <li>
                   <span
                     class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white hover:cursor-pointer"
-                    onClick={() => navigate("/label")}
+                    onClick={() => navigate(`/label/${id}`)}
                   >
                     Generate Label
                   </span>

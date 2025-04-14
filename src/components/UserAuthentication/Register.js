@@ -49,9 +49,7 @@ const SignupForm = () => {
       initialValues={registerForm}
       validationSchema={registerSchema}
       onSubmit={(fields) => {
-        alert(JSON.stringify(fields));
         register(fields);
-        console.log(fields);
       }}
       render={({ values, errors, setFieldValue }) => {
         const handleClick = (setFieldValue, currentValues) => {

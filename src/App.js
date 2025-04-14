@@ -27,6 +27,7 @@ import ResetPassword from "./components/UserAuthentication/ResetPassword.js";
 import ForgotPasswordOtpVerifications from "./components/UserAuthentication/ForgotPasswordOtpVerification.js";
 import ErrorPage from "./components/RouterErrorPage.js";
 import Map from "./pages/Map.js";
+import DateRangePicker from "./components/OrderForm/DatePicker.js";
 
 const Home = lazy(() => import("./pages/Home.js"));
 const Order = lazy(() => import("./pages/OrderDashboard.js"));
@@ -62,9 +63,10 @@ function App() {
             <Route path="/drawer" element={<Drawers />} />
             <Route path="/subscription" element={<Subscriptions />} />
             <Route path="/testing" element={<TrackingInformation />} />
-            <Route path="/label" element={<Label />} />
+            <Route path="/label/:id" element={<Label />} />
             <Route path="/barcode-scanner" element={<Barcode />} />
             <Route path="/google-map" element={<Map />} />
+            <Route path="/date-pciker" element={<DateRangePicker />} />
             <Route path="*" element={<ErrorPage />} />
             <Route
               path="/order/ordercreate/:orderid/:slug"

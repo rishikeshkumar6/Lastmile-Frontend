@@ -59,9 +59,7 @@ const LoginForm = () => {
       validateOnChange={true}
       validateOnBlur={true}
       onSubmit={(fields) => {
-        alert(JSON.stringify(fields));
         login(fields);
-        console.log(fields);
       }}
     >
       {({ values, errors, setFieldValue }) => (

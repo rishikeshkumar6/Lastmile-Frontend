@@ -54,7 +54,6 @@ const ForgotPassword = ({ onBackClick }) => {
       initialValues={forgotPaasowrd}
       validationSchema={forgotPasswordSchema}
       onSubmit={(fields) => {
-        alert(JSON.stringify(fields));
         forgotPassword(fields);
       }}
       render={({ values, errors }) => {
@@ -149,7 +148,7 @@ const ForgotPassword = ({ onBackClick }) => {
                     type="submit"
                     className="w-full bg-blue-600 text-white rounded-lg py-2.5 font-medium hover:bg-blue-700 transition-colors"
                   >
-                  {isLoading?'Loading.......':'Reset Password'}
+                    {isLoading ? "Loading......." : "Reset Password"}
                   </button>
                 </div>
               </div>

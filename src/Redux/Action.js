@@ -99,7 +99,7 @@ export const orderApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getAllOrder: builder.query({
       query: (payload = "default") => ({
-        url: `/api/v1/getAllOrder?page=${payload.page}&batchSize=10&order_status=${payload.activeButton}&searchTerm=${payload.searchInput}&start_date=2025-01-22&end_date=2025-04-09`,
+        url: `/api/v1/getAllOrder?page=${payload.page}&batchSize=10&order_status=${payload.activeButton}&searchTerm=${payload.searchInput}&start_date=${payload.dates.start_date}&end_date=${payload.dates.end_date}`,
         method: "GET",
       }),
       providesTags: ["order"],
@@ -135,6 +135,13 @@ export const orderApi = api.injectEndpoints({
       }),
       invalidatesTags: ["order"],
     }),
+    generateLabel: builder.mutation({
+      query: (payload) => ({
+        url: "/api/v1/generateLabel",
+        method: "POST",
+        body: payload,
+      }),
+    }),
   }),
 });
 
@@ -158,4 +165,5 @@ export const {
   useCreateOrderMutation,
   useUpdateOrderMutation,
   useBulkUploadOrderMutation,
+  useGenerateLabelMutation,
 } = orderApi;
