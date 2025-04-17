@@ -15,6 +15,7 @@ import LoadingTable from "../components/userDashboardComponents/LoadingTable";
 import ErrorTable from "../components/userDashboardComponents/ErrorTable";
 import GenerateExcel from "../components/userDashboardComponents/ExportOrder";
 import DateRangePicker from "../components/OrderForm/DatePicker";
+import ReactSelect from "../components/userDashboardComponents/ReactSelect";
 
 const Order = () => {
   const dispatch = useDispatch();
@@ -328,7 +329,7 @@ const Order = () => {
 
         <div className="w-full px-8 py-4 bg-white">
           <div className="py-5 flex justify-between">
-            <DateRangePicker dates={dates} setDates={setDates} />
+            <ReactSelect dates={dates} setDates={setDates} />
             <GenerateExcel />
           </div>
           {isSuccess === true &&

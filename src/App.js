@@ -28,6 +28,7 @@ import ForgotPasswordOtpVerifications from "./components/UserAuthentication/Forg
 import ErrorPage from "./components/RouterErrorPage.js";
 import Map from "./pages/Map.js";
 import DateRangePicker from "./components/OrderForm/DatePicker.js";
+import ReactSelect from "./components/userDashboardComponents/ReactSelect.js";
 
 const Home = lazy(() => import("./pages/Home.js"));
 const Order = lazy(() => import("./pages/OrderDashboard.js"));
@@ -66,8 +67,8 @@ function App() {
             <Route path="/label/:id" element={<Label />} />
             <Route path="/barcode-scanner" element={<Barcode />} />
             <Route path="/google-map" element={<Map />} />
-            <Route path="/date-pciker" element={<DateRangePicker />} />
             <Route path="*" element={<ErrorPage />} />
+            <Route path="/react-select" element={<ReactSelect />} />
             <Route
               path="/order/ordercreate/:orderid/:slug"
               element={<OrderCreation />}
