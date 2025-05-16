@@ -5,8 +5,8 @@ import { Truck, Package, BarChart3, ArrowRight } from "lucide-react";
 const HeroSection = () => {
   const navigate = useNavigate();
   return (
-    <section className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-20">
-      <div className="container mx-auto px-4">
+    <section className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-10 ">
+      <div className="w-full max-w-7xl mx-auto px-4 py-4 flex justify-between items-center flex flex-col">
         <div className="flex flex-col md:flex-row items-center">
           <div className="md:w-1/2 mb-10 md:mb-0">
             <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-6">

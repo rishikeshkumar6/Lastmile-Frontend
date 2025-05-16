@@ -34,7 +34,7 @@ const testimonials = [
 const TestimonialSection = () => {
   return (
     <section id="testimonials" className="py-20 bg-white">
-      <div className="container mx-auto px-4">
+      <div className="w-full max-w-7xl mx-auto px-4 py-4 flex justify-between items-center flex-col">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
             Trusted by E-commerce Sellers

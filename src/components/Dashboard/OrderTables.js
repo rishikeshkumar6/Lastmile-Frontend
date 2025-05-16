@@ -1,8 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ChevronDown, ChevronUp, Filter, Download } from "lucide-react";
+import { useShippingOrderMutation } from "../../Redux/Action";
+import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 
-const OrdersTable = ({ orders, isSubscribed = false }) => {
+const OrdersTable = ({ orders, isSubscribed = false, shipmentRowData }) => {
+  const [shippingOrder, { isLoading, isSuccess, isError, data, error }] =
+    useShippingOrderMutation();
+  const navigate = useNavigate();
   const [sortField, setSortField] = useState("date");
   const [sortDirection, setSortDirection] = useState("desc");
   const [expandedOrder, setExpandedOrder] = useState(null);
@@ -22,6 +27,7 @@ const OrdersTable = ({ orders, isSubscribed = false }) => {
         ? new Date(a.date) - new Date(b.date)
         : new Date(b.date) - new Date(a.date);
     }
+    console.log("sortedOrders", sortedOrders);
 
     if (sortField === "amount") {
       return sortDirection === "asc"
@@ -41,6 +47,12 @@ const OrdersTable = ({ orders, isSubscribed = false }) => {
     setExpandedOrder(expandedOrder === orderId ? null : orderId);
   };
 
+  useEffect(() => {
+    if (isSuccess === true && data.statusCode === 200) {
+      navigate("/invoice_details");
+    }
+  }, [data]);
+
   const getStatusColor = (status) => {
     const statusColors = {
       Delivered: "bg-green-100 text-green-800",
@@ -54,61 +66,67 @@ const OrdersTable = ({ orders, isSubscribed = false }) => {
 
     return statusColors[status] || "bg-gray-100 text-gray-800";
   };
+  const handleClick = () => {
+    shippingOrder(shipmentRowData);
+  };
 
   return (
     <div className="bg-white shadow-md rounded-lg overflow-hidden">
-      <div className="p-4 flex justify-between items-center border-b">
-        <h2 className="text-lg font-semibold text-gray-800">Recent Orders</h2>
-        <div className="flex space-x-2">
-          <button className="flex items-center px-3 py-1 bg-gray-100 rounded-md text-gray-700 text-sm hover:bg-gray-200">
-            <Filter size={16} className="mr-1" />
-            Filter
-          </button>
-          <button className="flex items-center px-3 py-1 bg-gray-100 rounded-md text-gray-700 text-sm hover:bg-gray-200">
-            <Download size={16} className="mr-1" />
-            Export
-          </button>
-        </div>
-      </div>
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              {["id", "customer", "date", "status", "platform", "amount"].map(
-                (field) => (
-                  <th
-                    key={field}
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              {[
+                "Courier Partner",
+                "Expected Pickup",
+                "Estimited Delivery",
+                "Chargeable Weight ",
+                "Charges",
+                "Action",
+              ].map((field) => (
+                <th
+                  key={field}
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  <button
+                    className="flex items-center focus:outline-none"
+                    onClick={() => handleSort(field)}
                   >
-                    <button
-                      className="flex items-center focus:outline-none"
-                      onClick={() => handleSort(field)}
-                    >
-                      {field.charAt(0).toUpperCase() + field.slice(1)}
-                      {sortField === field &&
-                        (sortDirection === "asc" ? (
-                          <ChevronUp size={16} />
-                        ) : (
-                          <ChevronDown size={16} />
-                        ))}
-                    </button>
-                  </th>
-                )
-              )}
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
-              </th>
+                    {field.charAt(0).toUpperCase() + field.slice(1)}
+                    {sortField === field &&
+                      (sortDirection === "asc" ? (
+                        <ChevronUp size={16} />
+                      ) : (
+                        <ChevronDown size={16} />
+                      ))}
+                  </button>
+                </th>
+              ))}
             </tr>
           </thead>
+          {console.log("check sorted order data", sortedOrders)}
           <tbody className="bg-white divide-y divide-gray-200">
             {sortedOrders.map((order) => (
-              <React.Fragment key={order.id}>
+              <React.Fragment key={order.date}>
                 <tr className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {order.id}
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 w-[30%]">
+                    <div className="flex gap-2 items-center">
+                      <img src={order.img_url} className="w-[15%]" />
+                      <div className="flex flex-col ">
+                        <span className="font-medium text-sm">
+                          {order.courier}
+                        </span>
+                        <span className="font-normal text-sm/6">
+                          Surface | Min-weight: {order.min_weight}
+                        </span>
+                        <span className="font-normal text-sm/6">
+                          RTO Charges: ₹{order.rto_charges}
+                        </span>
+                      </div>
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {order.customer}
+                    {order.day}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {format(new Date(order.date), "MMM dd, yyyy")}
@@ -119,23 +137,18 @@ const OrdersTable = ({ orders, isSubscribed = false }) => {
                         order.status
                       )}`}
                     >
-                      {order.status}
+                      {order.weight} kg
                     </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {order.platform}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     ₹{order.amount.toFixed(2)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <button
-                      onClick={() => toggleOrderDetails(order.id)}
-                      className="text-indigo-600 hover:text-indigo-900"
+                      className="flex gap-2 items-center justify-center text-white bg-[#4285F4] hover:bg-[#4285F4]/90 focus:ring-4 focus:outline-none focus:ring-[#4285F4]/50 font-medium text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#4285F4]/55"
+                      onClick={handleClick}
                     >
-                      {expandedOrder === order.id
-                        ? "Hide Details"
-                        : "View Details"}
+                      Ship Now
                     </button>
                   </td>
                 </tr>

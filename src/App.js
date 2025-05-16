@@ -29,6 +29,11 @@ import ErrorPage from "./components/RouterErrorPage.js";
 import Map from "./pages/Map.js";
 import DateRangePicker from "./components/OrderForm/DatePicker.js";
 import ReactSelect from "./components/userDashboardComponents/ReactSelect.js";
+import WebSocket from "./pages/WebSocket.js";
+import Navbar from "./pages/Navbar.js";
+import ImgGrid from "./pages/Navbar.js";
+import ReactPopup from "./pages/ReactPopup.js";
+import ShippingDetailsPage from "./components/ShippingComponents/ShippingDetailsPage.js";
 
 const Home = lazy(() => import("./pages/Home.js"));
 const Order = lazy(() => import("./pages/OrderDashboard.js"));
@@ -68,7 +73,10 @@ function App() {
             <Route path="/barcode-scanner" element={<Barcode />} />
             <Route path="/google-map" element={<Map />} />
             <Route path="*" element={<ErrorPage />} />
-            <Route path="/react-select" element={<ReactSelect />} />
+            <Route path="/chat" element={<WebSocket />} />
+            <Route path="/css_grid" element={<ImgGrid />} />
+            <Route path="/react_popup" element={<ReactPopup />} />
+            <Route path="invoice_details" element={<ShippingDetailsPage />} />
             <Route
               path="/order/ordercreate/:orderid/:slug"
               element={<OrderCreation />}

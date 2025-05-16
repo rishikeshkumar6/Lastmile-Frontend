@@ -21,7 +21,7 @@ function App() {
   return (
     <div className="min-h-screen bg-white">
       <header className="bg-white shadow-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+        <div className="w-full max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-2">
             <Truck className="h-8 w-8 text-indigo-600" />
             <span className="text-xl font-bold text-gray-800">

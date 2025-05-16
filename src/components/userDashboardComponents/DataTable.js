@@ -4,18 +4,31 @@ import { useDispatch, useSelector } from "react-redux";
 import html2pdf from "html2pdf.js";
 import { createPopper } from "@popperjs/core";
 import { RxDotsVertical } from "react-icons/rx";
+import { Menu, MenuItem, MenuButton, SubMenu } from "@szhsin/react-menu";
+import Popup from "reactjs-popup";
+import "reactjs-popup/dist/index.css";
 import { filterOrder, insertSingleOrder } from "../../Redux/exportOrderSlice";
+import CancelCardPopup from "../CancelCardPopup";
 
-const DataTable = ({ data, row, index, selectAll, setSelectAll }) => {
+const DataTable = ({
+  data,
+  row,
+  index,
+  selectAll,
+  setSelectAll,
+  shipmentPopup,
+  setShipmentPopup,
+  setShipmentRowData,
+}) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const Data = useSelector(
     (state) => state["rootReducer"]["orderSlice"]["exportOrder"]
   );
-  const [Id, setId] = useState(null);
   const [selectedOrders, setSelectedOrders] = useState([]);
-  const [Index, setIndex] = useState(null);
   const [toolkit, setToolKit] = useState(null);
+  const [cancelOrderState, setCancelOrderState] = useState(false);
+  const [drawer, setDrawer] = useState(true);
   const buttonRef = useRef(null);
   const tooltipRef = useRef(null);
   const labelRef = useRef(null);
@@ -94,6 +107,7 @@ const DataTable = ({ data, row, index, selectAll, setSelectAll }) => {
   const {
     id,
     order_status,
+    shippingInfo,
     consigneeDetails: consignee_details,
     pickupDetails: pickup_details,
     packageDetails: package_details,
@@ -110,6 +124,11 @@ const DataTable = ({ data, row, index, selectAll, setSelectAll }) => {
         setSelectAll(true);
       }
     }
+  };
+
+  const handleShipment = () => {
+    setShipmentPopup(!shipmentPopup);
+    setShipmentRowData(row);
   };
   return (
     <tr className={`${(index + 1) % 2 === 0 ? "bg-gray-100" : "bg-white"}`}>
@@ -129,28 +148,60 @@ const DataTable = ({ data, row, index, selectAll, setSelectAll }) => {
         </span>
       </td>
       <td className="p-3 text-[0.8rem]">
-        {pickup_details !== null ? (
-          <div className="flex flex-col gap-1">
-            <span className="font-[500]">
-              {pickup_details.pickup_person_name !== ""
-                ? pickup_details.pickup_person_name
-                : ""}
-            </span>
-            <div className="flex flex-col ">
-              <span>
-                {pickup_details.pickup_person_phone !== ""
-                  ? pickup_details.pickup_person_phone
-                  : ""}
+        {order_status !== "" ? (
+          order_status === "new" ? (
+            pickup_details !== null ? (
+              <div className="flex flex-col gap-1">
+                <span className="font-[500]">
+                  {pickup_details.pickup_person_name !== ""
+                    ? pickup_details.pickup_person_name
+                    : ""}
+                </span>
+                <div className="flex flex-col ">
+                  <span>
+                    {pickup_details.pickup_person_phone !== ""
+                      ? pickup_details.pickup_person_phone
+                      : ""}
+                  </span>
+                  <span>
+                    {pickup_details.pickup_person_email !== ""
+                      ? pickup_details.pickup_person_email
+                      : ""}
+                  </span>
+                </div>
+              </div>
+            ) : (
+              "N/A"
+            )
+          ) : shippingInfo !== undefined ? (
+            <div className="flex flex-col gap-1">
+              <span className="font-[500]">
+                {` ${
+                  shippingInfo?.courier_partner !== ""
+                    ? shippingInfo?.courier_partner
+                    : ""
+                }`}
               </span>
               <span>
-                {pickup_details.pickup_person_email !== ""
-                  ? pickup_details.pickup_person_email
-                  : ""}
+                {`AWB - ${
+                  shippingInfo?.awb_number !== ""
+                    ? shippingInfo?.awb_number
+                    : ""
+                }`}
+              </span>
+              <span>
+                {` ${
+                  shippingInfo?.booking_date !== ""
+                    ? shippingInfo?.booking_date
+                    : ""
+                }`}
               </span>
             </div>
-          </div>
+          ) : (
+            ""
+          )
         ) : (
-          "N/A"
+          ""
         )}
       </td>
       <td className="p-3 text-[0.8rem]">
@@ -191,37 +242,41 @@ const DataTable = ({ data, row, index, selectAll, setSelectAll }) => {
             <span className="text-blue-500 font-[500]">
               {order_details["productDetails"].length > 1 ? (
                 <div className="relative inline-block">
-                  <span
-                    ref={buttonRef}
-                    className="text-secondary hover:cursor-pointer"
-                    onMouseEnter={handleMouseEnter}
-                    onMouseLeave={handleMouseLeave}
+                  <Popup
+                    trigger={<button className="button"> +2 Products </button>}
+                    position="bottom center"
+                    on="hover"
+                    arrow={false}
+                    offsetY={-10}
+                    contentStyle={{
+                      backgroundColor: "#333",
+                      width: "16%",
+                      height: "30%",
+                      color: "#fff",
+                      borderRadius: "6px",
+                      padding: "8px 12px",
+                      fontSize: "12px",
+                      overflow: "auto",
+                    }}
                   >
-                    {`+2 products`}
-                  </span>
-                  {toolkit && (
-                    <div
-                      ref={tooltipRef}
-                      role="tooltip"
-                      className="absolute z-50 inline-block px-3 py-2 text-sm font-normal text-white bg-gray-900 rounded-lg shadow-lg dark:bg-gray-700 w-[200px]"
-                    >
+                    <>
                       {order_details["productDetails"].map((elem, index) => {
                         const { name, price, quantity, sku_code } = elem;
                         return (
                           <>
-                            <div className="flex flex-col gap-1">
+                            <div className="flex flex-col gap-1 font-medium">
                               <span>{`${index + 1} ${name}`}</span>
                               <span>{`price: ${price}`}</span>
                               <span>{`SKU: ${sku_code}`}</span>
                               <span>{`Qty: ${quantity}`}</span>
                             </div>
-                            <hr className="my-5" />
+                            <hr className="my-3" />
                           </>
                         );
                       })}
                       <div className="tooltip-arrow" data-popper-arrow></div>
-                    </div>
-                  )}
+                    </>
+                  </Popup>
                 </div>
               ) : (
                 ""
@@ -272,19 +327,34 @@ const DataTable = ({ data, row, index, selectAll, setSelectAll }) => {
         {order_status !== "" ? order_status : ""}
       </td>
       <td className="px-3 py-5 text-[0.8rem] flex items-center gap-2">
-        <button className="flex gap-2 items-center justify-center text-white bg-[#4285F4] hover:bg-[#4285F4]/90 focus:ring-4 focus:outline-none focus:ring-[#4285F4]/50 font-medium text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#4285F4]/55">
-          Ship Now
-        </button>
+        {order_status !== "" && order_status === "new" ? (
+          <button
+            className="flex gap-2 items-center justify-center text-white bg-[#4285F4] hover:bg-[#4285F4]/90 focus:ring-4 focus:outline-none focus:ring-[#4285F4]/50 font-medium text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#4285F4]/55"
+            onClick={handleShipment}
+          >
+            Ship Now
+          </button>
+        ) : (
+          <button
+            className="flex gap-2 items-center justify-center text-white bg-[#4285F4] hover:bg-[#4285F4]/90 focus:ring-4 focus:outline-none focus:ring-[#4285F4]/50 font-medium text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#4285F4]/55"
+            onClick={() => navigate("/orderDetails")}
+          >
+            Track
+          </button>
+        )}
         <div className="relative">
-          <RxDotsVertical
-            className="cursor-pointer"
-            onClick={() => {
-              setId(id);
-            }}
-          />
-
-          {id === Id && (
-            <div class="z-10 absolute bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-40 dark:bg-gray-700 dark:divide-gray-600">
+          <Menu
+            menuButton={
+              <MenuButton>
+                {" "}
+                <RxDotsVertical className="cursor-pointer" />
+              </MenuButton>
+            }
+          >
+            <div
+              class="z-10 absolute bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-40 dark:bg-gray-700 dark:divide-gray-600"
+              onClose={() => setDrawer(false)}
+            >
               <ul
                 class="py-2 text-sm text-gray-700 dark:text-gray-200"
                 aria-labelledby="dropdownMenuIconButton"
@@ -298,35 +368,73 @@ const DataTable = ({ data, row, index, selectAll, setSelectAll }) => {
                     View Order
                   </span>
                 </li>
-                <li>
-                  <span
-                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white hover:cursor-pointer"
-                    onClick={() =>
-                      navigate(`/order/ordercreate/${id}/consignee-details`)
-                    }
-                  >
-                    Edit Order
-                  </span>
-                </li>
-                <li>
-                  <span
-                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white hover:cursor-pointer"
-                    onClick={() => navigate(`/label/${id}`)}
-                  >
-                    Generate Label
-                  </span>
-                </li>
-                <li>
-                  <span
-                    href="#"
-                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white hover:cursor-pointer text-red-600"
-                  >
-                    Cancel Order
-                  </span>
-                </li>
+                {order_status === "new" && (
+                  <li>
+                    <span
+                      class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white hover:cursor-pointer"
+                      onClick={() =>
+                        navigate(`/order/ordercreate/${id}/consignee-details`)
+                      }
+                    >
+                      Edit Order
+                    </span>
+                  </li>
+                )}
+                {order_status === "booked" && (
+                    <li>
+                      <span
+                        class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white hover:cursor-pointer"
+                        onClick={() => navigate(`/label/${id}`)}
+                      >
+                        Generate Label
+                      </span>
+                    </li>
+                  ) && (
+                    <li>
+                      <span
+                        class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white hover:cursor-pointer"
+                        onClick={() => navigate(`/label/${id}`)}
+                      >
+                        Generate Invoice
+                      </span>
+                    </li>
+                  )}
+                {order_status === "booked" && (
+                  <li>
+                    <span
+                      class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white hover:cursor-pointer"
+                      onClick={() => navigate(`/label/${id}`)}
+                    >
+                      Generate Label
+                    </span>
+                  </li>
+                )}
+                {order_status === "booked" && (
+                  <li>
+                    <span
+                      class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white hover:cursor-pointer"
+                      onClick={() => navigate(`/label/${id}`)}
+                    >
+                      Download Manifest
+                    </span>
+                  </li>
+                )}
+                {order_status === "new" && (
+                  <li>
+                    <span
+                      href="#"
+                      class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white hover:cursor-pointer text-red-600"
+                    >
+                      <CancelCardPopup
+                        popup={cancelOrderState}
+                        setPopup={setCancelOrderState}
+                      />
+                    </span>
+                  </li>
+                )}
               </ul>
             </div>
-          )}
+          </Menu>
         </div>
       </td>
       {console.log(selectedOrders)}

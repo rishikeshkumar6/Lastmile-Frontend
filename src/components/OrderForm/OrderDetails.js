@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import { useUpdateOrderMutation } from "../../Redux/Action";
+import { api } from "../../Redux/Action";
 import { MdDelete } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
@@ -79,6 +80,7 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
   const prevDataRef = useRef();
 
   useEffect(() => {
+    console.log("useEffect is called");
     if (
       Success === true &&
       Object.keys(Data).length > 0 &&
@@ -86,6 +88,7 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
       Object.keys(Data.orderRes.orderDetails).length > 0
     ) {
       // Check if the order details are different from the previous ones
+      console.log("useEffect inner condition is executed");
       if (prevDataRef.current !== Data.orderRes.orderDetails) {
         setOrderDetailsForm(Data.orderRes.orderDetails);
         prevDataRef.current = Data.orderRes.orderDetails; // Update the previous value
@@ -410,10 +413,16 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
                   Next
                 </Button>
               </div>
-              {console.log(values)}
-              {console.log("errors", errors)}
-              {console.log("touched", touched)}
-              {console.log("values", values)}
+              {console.log(
+                "rtk query data",
+                Loading,
+                Success,
+                Error,
+                Data,
+                Errors,
+                slug,
+                id
+              )}
             </div>
           </Form>
         );

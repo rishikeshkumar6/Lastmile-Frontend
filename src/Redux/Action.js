@@ -102,13 +102,14 @@ export const orderApi = api.injectEndpoints({
         url: `/api/v1/getAllOrder?page=${payload.page}&batchSize=10&order_status=${payload.activeButton}&searchTerm=${payload.searchInput}&start_date=${payload.dates.start_date}&end_date=${payload.dates.end_date}`,
         method: "GET",
       }),
-      providesTags: ["order"],
+      providesTags: ["getAllOrders"],
     }),
     getOrder: builder.query({
       query: (obj) => ({
         url: `/api/v1/getorder?id=${obj.orderid}&slug=${obj.slug}`,
         method: "GET",
       }),
+      providesTags: ["order"],
     }),
 
     createOrder: builder.mutation({
@@ -125,7 +126,7 @@ export const orderApi = api.injectEndpoints({
         method: "POST",
         body: payload,
       }),
-      invalidatesTags: ["order"],
+      invalidatesTags: ["getAllOrders"],
     }),
     updateOrder: builder.mutation({
       query: (body) => ({
@@ -133,11 +134,18 @@ export const orderApi = api.injectEndpoints({
         method: "PUT",
         body: body,
       }),
-      invalidatesTags: ["order"],
+      invalidatesTags: ["order", "getAllOrders"],
     }),
     generateLabel: builder.mutation({
       query: (payload) => ({
         url: "/api/v1/generateLabel",
+        method: "POST",
+        body: payload,
+      }),
+    }),
+    shippingOrder: builder.mutation({
+      query: (payload) => ({
+        url: "/api/v1/shipping_order",
         method: "POST",
         body: payload,
       }),
@@ -166,4 +174,5 @@ export const {
   useUpdateOrderMutation,
   useBulkUploadOrderMutation,
   useGenerateLabelMutation,
+  useShippingOrderMutation,
 } = orderApi;
