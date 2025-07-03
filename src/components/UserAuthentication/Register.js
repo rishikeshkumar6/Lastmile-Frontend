@@ -6,7 +6,7 @@ import { useRegisterMutation } from "../../Redux/Action";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
-import { userManageState } from "../../Redux/userSlice";
+import { userManageId, userManageState } from "../../Redux/userSlice";
 
 const SignupForm = () => {
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ const SignupForm = () => {
   useEffect(() => {
     if (isSuccess === true) {
       dispatch(
-        userManageState({
+        userManageId({
           type: "userid",
           userId: data.id,
         })

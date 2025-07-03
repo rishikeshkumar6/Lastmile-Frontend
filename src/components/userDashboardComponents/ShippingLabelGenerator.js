@@ -100,7 +100,10 @@ const ShippingLabel = ({
           <tbody>
             {products.map((product, index) => (
               <tr key={index}>
-                <td className="px-5 py-4">{product.name}</td>
+                <td className="px-5 py-4">{`${product.name.slice(
+                  0,
+                  15
+                )}...`}</td>
                 <td className="px-5">{product.quantity}</td>
                 <td className="text-right py-4 px-5">₹{product.price}</td>
               </tr>

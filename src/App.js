@@ -21,19 +21,20 @@ import WalletHistory from "./components/Payment/WalletHistory.js";
 import Dashboard from "./pages/Dashboard.js";
 import Label from "./pages/Label.js";
 import Barcode from "./pages/BarcodeScanner.js";
-import { LoadingScreen } from "./components/LoadingUi.js";
 import Loader from "./components/Loader.jsx";
 import ResetPassword from "./components/UserAuthentication/ResetPassword.js";
 import ForgotPasswordOtpVerifications from "./components/UserAuthentication/ForgotPasswordOtpVerification.js";
 import ErrorPage from "./components/RouterErrorPage.js";
 import Map from "./pages/Map.js";
-import DateRangePicker from "./components/OrderForm/DatePicker.js";
-import ReactSelect from "./components/userDashboardComponents/ReactSelect.js";
 import WebSocket from "./pages/WebSocket.js";
 import Navbar from "./pages/Navbar.js";
 import ImgGrid from "./pages/Navbar.js";
 import ReactPopup from "./pages/ReactPopup.js";
 import ShippingDetailsPage from "./components/ShippingComponents/ShippingDetailsPage.js";
+import ManageLocation from "./pages/ManageLocation.js";
+import ManageProduct from "./pages/ManageProduct.js";
+import RateCard from "./components/OrderForm/RateCard.js";
+import ComingSoonui from "./components/ComingSoonModule.js";
 
 const Home = lazy(() => import("./pages/Home.js"));
 const Order = lazy(() => import("./pages/OrderDashboard.js"));
@@ -73,13 +74,24 @@ function App() {
             <Route path="/barcode-scanner" element={<Barcode />} />
             <Route path="/google-map" element={<Map />} />
             <Route path="*" element={<ErrorPage />} />
-            <Route path="/chat" element={<WebSocket />} />
+            <Route path="/chat" element={<ComingSoonui />} />
+            <Route path="/rate-calculator" element={<ComingSoonui />} />
+            <Route path="/saved" element={<ComingSoonui />} />
+
             <Route path="/css_grid" element={<ImgGrid />} />
             <Route path="/react_popup" element={<ReactPopup />} />
             <Route path="invoice_details" element={<ShippingDetailsPage />} />
+            <Route path="rate_card" element={<RateCard />} />
+
             <Route
               path="/order/ordercreate/:orderid/:slug"
               element={<OrderCreation />}
+            />
+            <Route path="/manage_location" element={<ManageLocation />} />
+            <Route path="/manage_product" element={<ManageProduct />} />
+            <Route
+              path="/reacharge_details"
+              element={<h1>hey i am recharge details page</h1>}
             />
           </Route>
         </Routes>

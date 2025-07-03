@@ -4,6 +4,7 @@ import { useUpdateOrderMutation } from "../../Redux/Action";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
 import * as Yup from "yup";
+import { toast } from "react-toastify";
 
 const PackageDetails = ({
   Loading,
@@ -86,6 +87,25 @@ const PackageDetails = ({
                         type="number"
                         name="dead_weigth"
                         className="px-3 py-1 customInputBorder w-[80%]"
+                        onInput={(e) => {
+                          if (e.target.value === "") return;
+                          const deadweight = e.target.value.split(".");
+                          console.log("-----deadweight----", deadweight);
+                          if (deadweight[1] && deadweight[1].length > 3) {
+                            e.target.value = `${
+                              deadweight[0]
+                            }.${deadweight[1].slice(0, 3)}`;
+                          }
+                          if (e.target.value < 0) {
+                            e.target.value = 0;
+                            toast.error("negative value is not allowed", {
+                              autoClose: "2000",
+                            });
+                          }
+                          if (e.target.value > 1000) {
+                            e.target.value = 1000;
+                          }
+                        }}
                         placeholder="Enter Weight"
                       />
                       <ErrorMessage
@@ -113,6 +133,21 @@ const PackageDetails = ({
                     name="length"
                     className="px-3 py-1 customInputBorder "
                     placeholder="Enter length"
+                    onInput={(e) => {
+                      if (e.target.value === "") return;
+                      if (e.target.value > 100) {
+                        e.target.value = 100;
+                      }
+                      if (e.target.value.includes(".")) {
+                        e.target.value = parseInt(e.target.value); // trim to integer
+                      }
+                      if (e.target.value < 0) {
+                        e.target.value = 0;
+                        toast.error("negative value is not allowed", {
+                          autoClose: "2000",
+                        });
+                      }
+                    }}
                   />
                   <ErrorMessage
                     name={`length`}
@@ -127,6 +162,21 @@ const PackageDetails = ({
                     name="breath"
                     className="px-3 py-1 customInputBorder "
                     placeholder="Enter length"
+                    onInput={(e) => {
+                      if (e.target.value === "") return;
+                      if (e.target.value > 100) {
+                        e.target.value = 100;
+                      }
+                      if (e.target.value.includes(".")) {
+                        e.target.value = parseInt(e.target.value); // trim to integer
+                      }
+                      if (e.target.value < 0) {
+                        e.target.value = 0;
+                        toast.error("negative value is not allowed", {
+                          autoClose: "2000",
+                        });
+                      }
+                    }}
                   />
                   <ErrorMessage
                     name={`breath`}
@@ -141,6 +191,21 @@ const PackageDetails = ({
                     name="height"
                     className="px-3 py-1 customInputBorder "
                     placeholder="Enter length"
+                    onInput={(e) => {
+                      if (e.target.value === "") return;
+                      if (e.target.value > 500) {
+                        e.target.value = 500;
+                      }
+                      if (e.target.value.includes(".")) {
+                        e.target.value = parseInt(e.target.value); // trim to integer
+                      }
+                      if (e.target.value < 0) {
+                        e.target.value = 0;
+                        toast.error("negative value is not allowed", {
+                          autoClose: "2000",
+                        });
+                      }
+                    }}
                   />
                   <ErrorMessage
                     name={`height`}

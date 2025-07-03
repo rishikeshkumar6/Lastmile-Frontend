@@ -18,7 +18,7 @@ const Footer = () => {
           <div>
             <div className="flex items-center space-x-2 mb-6">
               <Truck className="h-8 w-8 text-indigo-400" />
-              <span className="text-xl font-bold">LogiTrack</span>
+              <span className="text-xl font-bold">Logistic Solutions</span>
             </div>
             <p className="text-gray-400 mb-6">
               Empowering e-commerce sellers with complete order visibility and

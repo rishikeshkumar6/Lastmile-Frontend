@@ -25,6 +25,7 @@ export const userApi = api.injectEndpoints({
         url: "/api/v1/read",
         method: "GET",
       }),
+      providesTags: ["walletRefetch"],
     }),
     register: builder.mutation({
       query: (payload) => ({
@@ -92,6 +93,12 @@ export const paymentApi = api.injectEndpoints({
         body: body,
       }),
     }),
+    walletHistory: builder.query({
+      query: (payload) => ({
+        url: `/api/v1/walletHistory?page=${payload.currentPage}&batchSize=${payload.batchSize}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -111,7 +118,29 @@ export const orderApi = api.injectEndpoints({
       }),
       providesTags: ["order"],
     }),
-
+    getAllProduct: builder.query({
+      query: (payload) => ({
+        url: `/api/v1/getAllProduct?page=${payload.page}&batchSize=${10}`,
+        method: "GET",
+      }),
+      providesTags: ["getAllProduct"],
+    }),
+    updateProduct: builder.mutation({
+      query: (payload) => ({
+        url: "/api/v1/updateProduct",
+        method: "POST",
+        body: payload,
+      }),
+      invalidatesTags: ["getAllProduct"],
+    }),
+    deleteProduct: builder.mutation({
+      query: (payload) => ({
+        url: "/api/v1/deleteProduct",
+        method: "POST",
+        body: payload,
+      }),
+      invalidatesTags: ["getAllProduct"],
+    }),
     createOrder: builder.mutation({
       query: (data) => ({
         url: "/api/v1/ordercreate",
@@ -134,7 +163,20 @@ export const orderApi = api.injectEndpoints({
         method: "PUT",
         body: body,
       }),
-      invalidatesTags: ["order", "getAllOrders"],
+      invalidatesTags: [
+        "order",
+        "getAllOrders",
+        "getAllPickup",
+        "getAllPickupForm",
+      ],
+    }),
+    deleteOrder: builder.mutation({
+      query: (payload) => ({
+        url: "/api/v1/deleteOrder",
+        method: "POST",
+        body: payload,
+      }),
+      invalidatesTags: ["getAllOrders"],
     }),
     generateLabel: builder.mutation({
       query: (payload) => ({
@@ -149,6 +191,91 @@ export const orderApi = api.injectEndpoints({
         method: "POST",
         body: payload,
       }),
+      invalidatesTags: ["getAllOrders", "walletRefetch"],
+    }),
+    pickupCreate: builder.mutation({
+      query: (payload) => ({
+        url: "/api/v1/pickupcreate",
+        method: "POST",
+        body: payload,
+      }),
+      invalidatesTags: ["getAllPickup"],
+    }),
+    getAllPickup: builder.query({
+      query: (payload) => ({
+        url: `/api/v1/getAllPickup?page=${payload.page}&batchSize=10&searchTerm=${payload.searchInput}`,
+        method: "GET",
+      }),
+      providesTags: ["getAllPickup"],
+    }),
+    getAllPickupForm: builder.query({
+      query: () => ({
+        url: "/api/v1/getAllPickup",
+        method: "GET",
+      }),
+      providesTags: ["getAllPickupForm"],
+    }),
+    updatePickupStatus: builder.mutation({
+      query: (payload) => ({
+        url: "/api/v1/updatePickupStatus",
+        method: "POST",
+        body: payload,
+      }),
+      invalidatesTags: ["getAllPickup"],
+    }),
+    updatePickup: builder.mutation({
+      query: (payload) => ({
+        url: "/api/v1/updatePickup",
+        method: "POST",
+        body: payload,
+      }),
+      invalidatesTags: ["getAllPickup"],
+    }),
+    deletePickup: builder.mutation({
+      query: (payload) => ({
+        url: "/api/v1/deletePickup",
+        method: "POST",
+        body: payload,
+      }),
+      invalidatesTags: ["getAllPickup"],
+    }),
+    imageUpload: builder.mutation({
+      query: (payload) => ({
+        url: "/api/v1/productimage",
+        method: "POST",
+        body: payload,
+      }),
+    }),
+    freightRate: builder.mutation({
+      query: (payload) => ({
+        url: "/api/v1/freight_rate",
+        method: "POST",
+        body: payload,
+      }),
+      transformResponse: (response, meta, arg) => {
+        const obj = response.freightResponse;
+        const ArrKey = Object.keys(obj);
+        const newArray = ArrKey.map((elem, index) => {
+          const freight_rate = obj[elem]["freight_rate"];
+          const rto_rate = obj[elem]["rto_rate"];
+          const img_url = obj[elem]["img_url"];
+          const min_weight = obj[elem]["min_weight"];
+          const estimate_delivey_date = obj[elem]["estimate_delivey_date"];
+          const estimated_pickup_date = obj[elem]["estimated_pickup_date"];
+          const weight = (obj[elem]["weight"] = obj[elem]["weight"]);
+          return {
+            courierName: elem,
+            freight_rate,
+            rto_rate,
+            img_url,
+            min_weight,
+            estimate_delivey_date,
+            estimated_pickup_date,
+            weight,
+          };
+        });
+        return newArray;
+      },
     }),
   }),
 });
@@ -164,8 +291,11 @@ export const {
   useLogoutMutation,
 } = userApi;
 
-export const { useOrderCreationMutation, useLazySubscriptionsCreationQuery } =
-  paymentApi;
+export const {
+  useOrderCreationMutation,
+  useLazySubscriptionsCreationQuery,
+  useLazyWalletHistoryQuery,
+} = paymentApi;
 
 export const {
   useGetOrderQuery,
@@ -175,4 +305,16 @@ export const {
   useBulkUploadOrderMutation,
   useGenerateLabelMutation,
   useShippingOrderMutation,
+  usePickupCreateMutation,
+  useLazyGetAllPickupQuery,
+  useLazyGetAllProductQuery,
+  useUpdateProductMutation,
+  useDeleteProductMutation,
+  useUpdatePickupStatusMutation,
+  useGetAllPickupFormQuery,
+  useDeleteOrderMutation,
+  useUpdatePickupMutation,
+  useDeletePickupMutation,
+  useImageUploadMutation,
+  useFreightRateMutation,
 } = orderApi;

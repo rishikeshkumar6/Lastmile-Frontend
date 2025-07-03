@@ -2,69 +2,37 @@ import { Button } from "@mui/material";
 import React, { useState, useEffect, useRef } from "react";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import { MdOutlineLocalPhone } from "react-icons/md";
-import { useUpdateOrderMutation } from "../../Redux/Action";
+import { CgMail } from "react-icons/cg";
+import {
+  useUpdateOrderMutation,
+  useGetAllPickupFormQuery,
+} from "../../Redux/Action";
 import { useNavigate } from "react-router-dom";
 import { HiOutlineMail } from "react-icons/hi";
 import { FiPlus } from "react-icons/fi";
 import Drawers from "./PickupDrawer";
+import ErrorTable from "../userDashboardComponents/ErrorTable";
 
 const PickupDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
   const [open, setOpen] = useState(false);
-  const [pickupFormPayload, setPickupFormPayload] = useState({
-    pickup_location_name: "Rishikesh Kumar Singh",
-    pickup_person_name: "Rishikesh Kumar Singh",
-    pickup_person_phone: 6207654176,
-    pickup_person_email: "rishu@gmail.com",
-    pickup_alternate_phone: "",
-    pickup_address:
-      "Sector 6 Road, 3rd Floor, Plot No. 10, LSC-02, Sector 06, Dwarka, Delhi 110075, IN",
-    pickup_landmark: "NEAR HDFC BANK",
-    pickup_pincode: 110075,
-    pickup_city: "NEW DELHI",
-    pickup_state: "DELHI",
-    pickup_country: "India",
-    pickup_location_type: "warehouse",
-    pikcup_location_code: "0029",
-    slug: slug,
-    id: id,
-  });
+  const {
+    isLoading: pickup_loading,
+    isSuccess: pickup_success,
+    isError: pickup_isError,
+    error: pickup_error,
+    data: pickup_data,
+  } = useGetAllPickupFormQuery();
+  const [pickupData, setPickupData] = useState(null);
+
+  useEffect(() => {
+    if (pickup_success === true) setPickupData(pickup_data);
+  }, [pickup_data]);
+  const [pickupFormPayload, setPickupFormPayload] = useState(null);
   const [ID, setId] = useState(0);
   const navigate = useNavigate();
-  const [pickupDetailsForm, setPickupDetailsForm] = useState([
-    {
-      pickup_location_name: "Rishikesh Kumar Singh",
-      pickup_person_name: "Rishikesh Kumar Singh",
-      pickup_person_phone: 6207654176,
-      pickup_person_email: "rishu@gmail.com",
-      pickup_alternate_phone: "",
-      pickup_address:
-        "Sector 6 Road, 3rd Floor, Plot No. 10, LSC-02, Sector 06, Dwarka, Delhi 110075, IN",
-      pickup_landmark: "NEAR HDFC BANK",
-      pickup_pincode: 110075,
-      pickup_city: "NEW DELHI",
-      pickup_state: "DELHI",
-      pickup_country: "India",
-      pickup_location_type: "warehouse",
-      pikcup_location_code: "0029",
-    },
-    {
-      pickup_location_name: "Rishikesh Kumar Singh",
-      pickup_person_name: "Rishikesh Kumar Singh",
-      pickup_person_phone: 6207654176,
-      pickup_person_email: "rishu@gmail.com",
-      pickup_alternate_phone: "",
-      pickup_address:
-        "Sector 6 Road, 3rd Floor, Plot No. 10, LSC-02, Sector 06, Dwarka, Delhi 110075, IN",
-      pickup_landmark: "NEAR HDFC BANK",
-      pickup_pincode: 110075,
-      pickup_city: "NEW DELHI",
-      pickup_state: "DELHI",
-      pickup_country: "India",
-      pickup_location_type: "warehouse",
-      pikcup_location_code: "0029",
-    },
-  ]);
+  const [pickupDetailsForm, setPickupDetailsForm] = useState(null);
   const [overflowStates, setOverflowStates] = useState([]);
+
   const cardRefs = useRef([]);
   const [updateOrder, { isLoading, isSuccess, isError, data, error }] =
     useUpdateOrderMutation();
@@ -95,21 +63,46 @@ const PickupDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
     }
   }, [data]);
 
-  const handleCLick = (index, elem) => {
-    setId(index);
+  useEffect(() => {
+    if (
+      pickup_success === true &&
+      Object.keys(pickup_data).length > 0 &&
+      pickup_data.pickupResponse.length > 0
+    ) {
+      const { pickup_location_code } = pickup_data.pickupResponse[0];
+      const { pickupResponse } = pickup_data;
+      const response = pickupResponse.filter((elem) => elem.isActive === true);
+      console.log("----------response pickup records data-------", response);
+      setPickupFormPayload(response[0]);
+      console.log("pickup data", pickup_data);
+      setId(pickup_location_code);
+    }
+  }, [pickup_data]);
+
+  const handleCLick = (ID, elem, data) => {
+    const obj = JSON.parse(JSON.stringify(data));
+    obj.pickupResponse.forEach((item) => {
+      item.isActive = item.pickup_location_code === ID;
+    });
+    setPickupData(obj);
+
+    setId(ID);
+    console.log("---------", slug, id, "---------");
     if (slug !== undefined && id !== undefined) {
       const newElem = { ...elem };
-      newElem["id"] = id;
-      newElem["slug"] = slug;
+
       setPickupFormPayload(newElem);
-      alert(JSON.stringify(newElem, null, 2));
     }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (pickupFormPayload !== null) {
-      updateOrder(pickupFormPayload);
+      const editPayload = { ...pickupFormPayload };
+      editPayload["id"] = id;
+      editPayload["slug"] = slug;
+      console.log("---------pickup location payload-------", pickupFormPayload);
+      updateOrder(editPayload);
     }
   };
   return (
@@ -123,35 +116,39 @@ const PickupDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
               Where your order is being sent from ?
             </span>
           </div>
-          <Button
+          <button
             variant="contained"
-            className="flex gap-2 items-center"
+            className="text-sm  px-2 font-normal py-3 w-[20%] rounded-sm  cursor-pointer flex gap-2 items-center justify-center bg-slate-900  text-white"
             onClick={() => setOpen(!open)}
           >
             <FiPlus /> Add Pickup Location
-          </Button>
+          </button>
         </div>
         <div className="flex flex-wrap gap-5">
-          {Object.keys(pickupDetailsForm).length > 0 &&
-            pickupDetailsForm.map((elem, index) => (
+          {pickupData !== null &&
+          Object.keys(pickup_data).length > 0 &&
+          pickupData.pickupResponse.length > 0 ? (
+            pickupData.pickupResponse.map((elem, index) => (
               <div
                 ref={(el) => (cardRefs.current[index] = el)}
-                className={`border rounded-md px-8 py-6 w-[30%] flex flex-col gap-2  overflow-hidden relative box-border cursor-pointer ${
-                  index === ID ? "border-green-500" : ""
+                className={`border rounded-md px-8 py-6 w-[30%] flex flex-col gap-2  overflow-hidden relative box-border cursor-pointer  ${
+                  elem.isActive === true ? "border-green-500" : ""
                 }`}
                 key={index}
-                onClick={() => handleCLick(index, elem)}
+                onClick={() =>
+                  handleCLick(elem.pickup_location_code, elem, pickupData)
+                }
               >
-                <h1 className="font-[500]">{elem.pickup_person_name}</h1>
-                <span className="text-sm font-normal ">
-                  {elem.pickup_address}
-                </span>
-                <span className="text-sm font-normal ">{elem.pickup_city}</span>
+                <h1 className="font-[500]">{elem.pickup_location_name}</h1>
+                <span className="text-sm font-normal ">{`${elem.pickup_city}, ${elem.pickup_state}`}</span>
+                <span className="text-sm font-normal ">{`${elem.pickup_address}`}</span>
                 <div className="text-sm font-[400] flex flex-col gap-2 ">
                   <span className="flex gap-2 items-center">
-                    <HiOutlineMail className="text-[15px]" />
+                    <CgMail className="text-[15px]" />
                     {elem.pickup_person_email}
                   </span>
+                </div>
+                <div className="text-sm font-[400] flex flex-col gap-2 ">
                   <span className="flex gap-2 items-center">
                     <MdOutlineLocalPhone className="text-[15px]" />
                     {elem.pickup_person_phone}
@@ -169,7 +166,16 @@ const PickupDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
                   </button>
                 )}
               </div>
-            ))}
+            ))
+          ) : (
+            <div className="m-[auto]">
+              <ErrorTable
+                className="h-[400px] flex items-center justify-center bg-white flex-col gap-5"
+                w={["50%"]}
+                errorMessage={"No Pickup Found"}
+              />
+            </div>
+          )}
         </div>
         <div className="w-[100%] flex justify-end gap-5 py-16">
           <Button
@@ -190,7 +196,6 @@ const PickupDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
             Next
           </Button>
         </div>
-        {console.log("rtk query", isLoading, isSuccess, isError, data, error)}
       </div>
     </>
   );

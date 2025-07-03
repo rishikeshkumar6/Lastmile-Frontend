@@ -61,11 +61,11 @@ const OTPVerification = ({ onBackClick }) => {
       });
       return;
     }
-    if (data.userRegisterId !== "") {
+    if (data.userId) {
       console.log("data", data);
       otpverification({
         otp: parseInt(checkOtpLength.join("")),
-        id: data.userRegisterId,
+        id: data.userId,
       });
     } else toast.error("otp is not valid", { autoClose: "2000s" });
 

@@ -4,6 +4,7 @@ import { useGetUserQuery } from "../Redux/Action";
 import { useDispatch } from "react-redux";
 import { isLoggedin } from "../Redux/userSlice";
 import { useEffect } from "react";
+import LoadingScreen from "../components/Loader.jsx";
 
 const PublicRoutes = () => {
   // const data = useSelector((state) => state.userSlice.token);
@@ -20,7 +21,7 @@ const PublicRoutes = () => {
   console.log("public routes", isLoading, isSuccess, isError);
   const location = useLocation();
   console.log("url location", location.pathname);
-
+  if (isLoading) return <LoadingScreen />;
   if (isSuccess) return <Navigate to="/dashboard" />;
   // Redirect to dashboard if authenticated
 

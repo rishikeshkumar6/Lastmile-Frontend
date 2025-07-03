@@ -7,8 +7,14 @@ import { RxDotsVertical } from "react-icons/rx";
 import { Menu, MenuItem, MenuButton, SubMenu } from "@szhsin/react-menu";
 import Popup from "reactjs-popup";
 import "reactjs-popup/dist/index.css";
-import { filterOrder, insertSingleOrder } from "../../Redux/exportOrderSlice";
+import {
+  filterOrder,
+  freightRateAction,
+  insertSingleOrder,
+} from "../../Redux/exportOrderSlice";
+import { useFreightRateMutation } from "../../Redux/Action";
 import CancelCardPopup from "../CancelCardPopup";
+import DeleteCardPopup from "./DeleteOrderPopup";
 
 const DataTable = ({
   data,
@@ -25,6 +31,10 @@ const DataTable = ({
   const Data = useSelector(
     (state) => state["rootReducer"]["orderSlice"]["exportOrder"]
   );
+  const [
+    freightRate,
+    { isLoading, isSuccess, data: freight_rate_data, isError, error },
+  ] = useFreightRateMutation();
   const [selectedOrders, setSelectedOrders] = useState([]);
   const [toolkit, setToolKit] = useState(null);
   const [cancelOrderState, setCancelOrderState] = useState(false);
@@ -127,9 +137,27 @@ const DataTable = ({
   };
 
   const handleShipment = () => {
+    console.log("----------row data tesitng-------", row);
+    const { consigneeDetails, pickupDetails, packageDetails } = row;
+    const { pincode: consignee_pincode } = consigneeDetails;
+    const { pickup_pincode: pickup_pincode } = pickupDetails;
+    const { dead_weigth: weight } = packageDetails;
+    freightRate({ pickup_pincode, consignee_pincode, weight });
     setShipmentPopup(!shipmentPopup);
     setShipmentRowData(row);
   };
+
+  useEffect(() => {
+    console.log("---freight rate useEffect hook----");
+    if (
+      isSuccess === true &&
+      freight_rate_data !== null &&
+      freight_rate_data !== undefined
+    ) {
+      dispatch(freightRateAction(freight_rate_data));
+    }
+  }, [freight_rate_data]);
+
   return (
     <tr className={`${(index + 1) % 2 === 0 ? "bg-gray-100" : "bg-white"}`}>
       <td className="p-3 text-[0.8rem]  font-[500]">
@@ -149,7 +177,7 @@ const DataTable = ({
       </td>
       <td className="p-3 text-[0.8rem]">
         {order_status !== "" ? (
-          order_status === "new" ? (
+          order_status === "new" || order_status === "supicious_order" ? (
             pickup_details !== null ? (
               <div className="flex flex-col gap-1">
                 <span className="font-[500]">
@@ -224,19 +252,20 @@ const DataTable = ({
         </div>
       </td>
       <td className="p-3 text-[0.8rem]">
-        {order_details !== null ? (
+        {order_details !== null &&
+        order_details["productDetails"].length > 0 ? (
           <div className="flex flex-col">
             <span>
               {order_details["productDetails"][0]["name"] !== ""
-                ? order_details["productDetails"][0]["name"]
+                ? `${order_details["productDetails"][0]["name"].slice(
+                    0,
+                    20
+                  )}....`
                 : ""}
             </span>
             <span>
               {order_details["productDetails"][0]["quantity"] !== ""
-                ? `quantity: ${order_details["productDetails"][0]["name"].slice(
-                    0,
-                    25
-                  )}`
+                ? `quantity: ${order_details["productDetails"][0]["quantity"]}`
                 : ""}
             </span>
             <span className="text-blue-500 font-[500]">
@@ -264,7 +293,7 @@ const DataTable = ({
                         const { name, price, quantity, sku_code } = elem;
                         return (
                           <>
-                            <div className="flex flex-col gap-1 font-medium">
+                            <div className="flex flex-col gap-2 font-medium">
                               <span>{`${index + 1} ${name}`}</span>
                               <span>{`price: ${price}`}</span>
                               <span>{`SKU: ${sku_code}`}</span>
@@ -368,7 +397,8 @@ const DataTable = ({
                     View Order
                   </span>
                 </li>
-                {order_status === "new" && (
+                {(order_status === "new" ||
+                  order_status === "supicious_order") && (
                   <li>
                     <span
                       class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white hover:cursor-pointer"
@@ -419,15 +449,17 @@ const DataTable = ({
                     </span>
                   </li>
                 )}
-                {order_status === "new" && (
+                {(order_status === "new" ||
+                  order_status === "supicious_order") && (
                   <li>
                     <span
                       href="#"
                       class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white hover:cursor-pointer text-red-600"
                     >
-                      <CancelCardPopup
+                      <DeleteCardPopup
                         popup={cancelOrderState}
                         setPopup={setCancelOrderState}
+                        row={row}
                       />
                     </span>
                   </li>
@@ -437,7 +469,11 @@ const DataTable = ({
           </Menu>
         </div>
       </td>
-      {console.log(selectedOrders)}
+      {console.log(
+        isLoading === true &&
+          freight_rate_data !== null &&
+          freight_rate_data !== undefined
+      )}{" "}
     </tr>
   );
 };

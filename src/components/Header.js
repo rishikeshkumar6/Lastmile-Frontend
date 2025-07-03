@@ -7,19 +7,44 @@ import Popup from "./Payment/OrderCreation";
 import Avatar from "@mui/material/Avatar";
 import Stack from "@mui/material/Stack";
 import { Menu, MenuItem, MenuButton, SubMenu } from "@szhsin/react-menu";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+import { userLogout } from "../Redux/rootReducer";
 import { useNavigate } from "react-router-dom";
 import { useOrderCreationMutation } from "../Redux/Action";
 import CancelCardPopup from "./CancelCardPopup";
+import { toast } from "react-toastify";
+import { useLogoutMutation } from "../Redux/Action";
 
 const Header = () => {
   const [orderCreation, { isLoading, isSuccess, isError, data, error }] =
     useOrderCreationMutation();
+  const dispatch = useDispatch();
+  const [
+    logout,
+    {
+      isLoading: isLogoutLoading,
+      isSuccess: isLogoutSuccess,
+      isError: isLogoutError,
+      data: logoutData,
+      error: logoutError,
+    },
+  ] = useLogoutMutation();
+
+  const Data = useSelector((state) => state.rootReducer.userSlice);
   const [popup, setPopup] = useState(false);
   const [avatarDrawerPopup, setAvatarDrawerPopup] = useState(false);
   const [isButtonHovered, setIsButtonHovered] = useState(false);
   const [isMenuHovered, setIsMenuHovered] = useState(false);
   const navigate = useNavigate();
   const hover = isButtonHovered || isMenuHovered;
+
+  useEffect(() => {
+    if (isLogoutSuccess === true && logoutData) {
+      dispatch(userLogout());
+      window.location.href = "/";
+    }
+  }, [logoutData]);
 
   // const orderCreation = async (callback) => {
   //   console.log("------orders----", orders);
@@ -44,6 +69,7 @@ const Header = () => {
   useEffect(() => {
     console.log("useEffect hook is called");
     if (data !== undefined && Object.keys(data).length > 0) {
+      setPopup(!popup);
       const options = {
         key: isSuccess !== false && data.paymentRes.key,
         amount: isSuccess !== false && data.paymentRes.amount,
@@ -55,11 +81,21 @@ const Header = () => {
           try {
             const response = await axios.post(
               `${process.env.REACT_APP_DEVELOPEMENT_URL}/api/v1/paymentverification`,
-              res
+              { ...res, ...data }
             );
+            if (
+              Object.keys(response.data).length > 0 &&
+              response.data.success
+            ) {
+              setPopup(!popup);
+              toast.success(response.data.message, { autoClose: "2000" });
+            }
             console.log("payment verification reponse", response);
           } catch (err) {
             console.log("errors", err);
+            if (err.response.data.statusCode === 500) {
+              toast.error(err.response.data["error"], { autoClose: "2000" });
+            }
           }
         },
         prefill: {
@@ -86,7 +122,9 @@ const Header = () => {
         className={`bg-white shadow-md py-2 flex flex-row justify-between px-5 sticky top-0 left-0 right-0 z-10 
         }`}
       >
-        <div className="items-center text-[20px] font-bold">LogiTrack</div>
+        <div className="items-center text-[20px] font-bold">
+          Logistic Solutions
+        </div>
         <div className="flex gap-4 items-center">
           {/* <button
           className="text-white bg-sky-400 px-2"
@@ -181,8 +219,19 @@ const Header = () => {
             <FaWallet className="text-[15px]" />
             Recharge
           </button>
-
-          <span className="">₹100</span>
+          {console.log("-----useselector state------", Data)}
+          <span className="">{`${
+            Data.walletInfo !== null
+              ? Data?.walletInfo?.response !== undefined
+                ? Data?.walletInfo?.response.walletResponse !== undefined &&
+                  Data?.walletInfo?.response.walletResponse !== null &&
+                  Object.keys(Data.walletInfo.response.walletResponse).length >
+                    0
+                  ? Data.walletInfo.response.walletResponse.amount.toFixed(2)
+                  : 0
+                : 0
+              : 0
+          }`}</span>
           <span>
             <HiOutlineRefresh />
           </span>
@@ -211,7 +260,16 @@ const Header = () => {
                     href="#"
                     class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                   >
-                    Rishikesh Kumar Singh
+                    {`${
+                      Data.walletInfo !== null
+                        ? Data.walletInfo !== null &&
+                          Object.keys(Data.walletInfo).length > 0
+                          ? Data.walletInfo.response !== undefined
+                            ? Data.walletInfo.response.name
+                            : "cannot fetch name"
+                          : "cannot fetch name"
+                        : "cannot fetch name"
+                    }`}
                   </a>
                 </li>
                 <li>
@@ -232,12 +290,13 @@ const Header = () => {
                 </li>
               </ul>
               <div class="py-2">
-                <a
+                <span
                   href="#"
                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                  onClick={() => logout()}
                 >
                   Logout
-                </a>
+                </span>
               </div>
             </div>
           </Menu>

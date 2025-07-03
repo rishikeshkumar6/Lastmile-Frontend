@@ -1,31 +1,32 @@
 import React, { useEffect } from "react";
-import Sidebar from "../components/Sidebar";
-import { useDeletePickupMutation } from "../Redux/Action";
 import Popup from "reactjs-popup";
 import { toast } from "react-toastify";
+import { useDeleteOrderMutation } from "../../Redux/Action";
 
-const CancelCardPopup = ({ popup, setPopup, row }) => {
-  const [deletePickup, { isLoading, isSuccess, data, isError, error }] =
-    useDeletePickupMutation();
+const DeleteCardPopup = ({ popup, setPopup, row }) => {
+  const { id } = row;
+  console.log("Row Data", row);
+  const [deleteOrder, { isLoading, isSuccess, data, isError, error }] =
+    useDeleteOrderMutation();
   const closeModal = () => setPopup(false);
-  const { pickup_location_code } = row;
   const handleDelete = () => {
-    deletePickup({ pickup_location_code });
+    deleteOrder({ orderid: id });
   };
   useEffect(() => {
-    if (isSuccess === true && data.statusCode === 200) {
+    if (isSuccess && data.statusCode === 200) {
       toast.success(data.message, { autoClose: "2000" });
-      setPopup(!popup);
     }
-    if (isError === true && data.statusCode === 401) {
-      toast.error(data.errorMessage, { autoClose: "2000" });
-      setPopup(!popup);
+    if (isError && error.data.statusCode === 401) {
+      toast.error(error.data.message, { autoClose: "2000" });
     }
-  }, [data]);
+    if (isError && error.data.statusCode === 500) {
+      toast.error(error.data.errorMessage, { autoClose: "2000" });
+    }
+  }, [data, error]);
   return (
     <>
       <button type="button" className="button" onClick={() => setPopup(!popup)}>
-        Delete Pickup
+        Delete Order
       </button>
       <Popup
         open={popup}
@@ -83,7 +84,7 @@ const CancelCardPopup = ({ popup, setPopup, row }) => {
               d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
             />
           </svg>
-          Are you sure you want to delete this pickup
+          Are you sure you want to delete this Order
           <div>
             <button
               data-modal-hide="popup-modal"
@@ -91,7 +92,7 @@ const CancelCardPopup = ({ popup, setPopup, row }) => {
               class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
               onClick={handleDelete}
             >
-              {isLoading ? "Loading..." : " Yes, I am sure"}
+              {`${isLoading ? "Loading..." : "Yes, I am sure"}`}
             </button>
             <button
               data-modal-hide="popup-modal"
@@ -108,4 +109,4 @@ const CancelCardPopup = ({ popup, setPopup, row }) => {
   );
 };
 
-export default CancelCardPopup;
+export default DeleteCardPopup;

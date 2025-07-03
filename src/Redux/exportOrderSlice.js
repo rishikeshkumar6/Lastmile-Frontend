@@ -4,6 +4,7 @@ const exportOrderSlice = createSlice({
   name: "order",
   initialState: {
     exportOrder: [],
+    freightResponse: [],
   },
   reducers: {
     order: (state, action) => {
@@ -19,8 +20,11 @@ const exportOrderSlice = createSlice({
     insertSingleOrder: (state, action) => {
       state["exportOrder"].push(action.payload);
     },
+    freightRateAction: (state, action) => {
+      state["freightResponse"].push(action.payload);
+    },
   },
 });
 export default exportOrderSlice.reducer;
-export const { order, filterOrder, insertSingleOrder } =
+export const { order, filterOrder, insertSingleOrder, freightRateAction } =
   exportOrderSlice.actions;

@@ -142,7 +142,7 @@ const Dashboard = () => {
           <StatusChart data={pieChartData} />
           <TrendChart data={trendData} title="Weekly Order Trends" />
         </div>
-        <OrdersTable orders={recentOrders} isSubscribed={true} />
+
         <div className="mt-6">
           <ActivityFeed activities={activities} />
         </div>

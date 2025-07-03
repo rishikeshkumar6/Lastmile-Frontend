@@ -1,12 +1,22 @@
-import React, { useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "../Sidebar";
+import { useLazyWalletHistoryQuery } from "../../Redux/Action";
+import Pagination from "@mui/material/Pagination";
+import Stack from "@mui/material/Stack";
 import { mockTransactions } from "./mockData";
+import ErrorTable from "../userDashboardComponents/ErrorTable";
+import LoadingTable from "../userDashboardComponents/LoadingTable";
 
 const ITEMS_PER_PAGE = 10;
 
 export default function WalletHistory() {
   const [currentPage, setCurrentPage] = useState(1);
+  const [walletHistory, { isLoading, isSuccess, data, isError, error }] =
+    useLazyWalletHistoryQuery();
+
+  useEffect(() => {
+    walletHistory({ currentPage, batchSize: 10 });
+  }, [currentPage]);
 
   const totalPages = Math.ceil(mockTransactions.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -68,89 +78,104 @@ export default function WalletHistory() {
                   Balance
                 </th>
                 <th className="px-6 py-3 border-b border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Reference
-                </th>
-                <th className="px-6 py-3 border-b border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Description
+                  Status
                 </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {currentTransactions.map((transaction, index) => (
-                <tr key={transaction.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {startIndex + index + 1}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {formatDateTime(transaction.dateTime)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">
-                    {transaction.transactionId}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <span
-                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        transaction.type === "CREDIT"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
+              {isSuccess === true &&
+                data.walletResponse.length > 0 &&
+                data?.walletResponse?.map((transaction, index) => (
+                  <tr key={transaction.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {startIndex + index + 1}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {`${transaction.date ? transaction.date : "N/A"}`}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">
+                      {`${
+                        transaction.transaction_id
+                          ? transaction.transaction_id
+                          : "N/A"
                       }`}
-                    >
-                      {transaction.type}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600">
-                    {formatCurrency(transaction.credit)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600">
-                    {formatCurrency(transaction.debit)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {formatCurrency(transaction.balance)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {transaction.reference}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">
-                    {transaction.description}
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <span
+                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                          transaction.transaction_type &&
+                          transaction.transaction_type === "WALLET_RECHARGE"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
+                      >
+                        {`${
+                          transaction.transaction_type
+                            ? transaction.transaction_type
+                            : "N/A"
+                        }`}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600">
+                      {`${
+                        transaction.credit_amount
+                          ? transaction.credit_amount.toFixed(2)
+                          : 0
+                      }`}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600">
+                      {`${
+                        transaction.debit_amount
+                          ? transaction.debit_amount.toFixed(2)
+                          : 0
+                      }`}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      {`${
+                        transaction.wallet_balance
+                          ? transaction.wallet_balance.toFixed(2)
+                          : "N/A"
+                      }`}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <span
+                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                          transaction.payment_status &&
+                          transaction.payment_status === "SUCCESS"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
+                      >
+                        {`${
+                          transaction.payment_status
+                            ? transaction.payment_status
+                            : "N/A"
+                        }`}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>
-
-        <div className="flex items-center justify-between px-4 py-3 bg-white border-t border-gray-200 sm:px-6">
-          <div className="flex items-center">
-            <p className="text-sm text-gray-700">
-              Showing <span className="font-medium">{startIndex + 1}</span> to{" "}
-              <span className="font-medium">
-                {Math.min(startIndex + ITEMS_PER_PAGE, mockTransactions.length)}
-              </span>{" "}
-              of <span className="font-medium">{mockTransactions.length}</span>{" "}
-              results
-            </p>
-          </div>
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-              disabled={currentPage === 1}
-              className="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <ChevronLeft className="w-4 h-4 mr-1" />
-              Previous
-            </button>
-            <button
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(totalPages, prev + 1))
-              }
-              disabled={currentPage === totalPages}
-              className="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Next
-              <ChevronRight className="w-4 h-4 ml-1" />
-            </button>
-          </div>
-        </div>
+        {isSuccess === true && data.walletResponse.length > 0 && (
+          <Stack spacing={2} className="py-5 m-[auto]">
+            <Pagination
+              count={data.totalPage}
+              variant="outlined"
+              shape="rounded"
+              onChange={(event, value) => setCurrentPage(value)}
+            />
+          </Stack>
+        )}
+        {isError === true && (
+          <ErrorTable
+            className="h-[400px] flex items-center justify-center bg-white flex-col gap-5"
+            w={["20%"]}
+            errorMessage={"No Transation available"}
+          />
+        )}
+        {isLoading === true && <LoadingTable />}
       </div>
     </section>
   );

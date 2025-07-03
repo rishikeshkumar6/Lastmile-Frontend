@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form, Field, ErrorMessage, useFormikContext } from "formik";
+import axios from "axios";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { useCreateOrderMutation } from "../../Redux/Action";
 import { useUpdateOrderMutation } from "../../Redux/Action";
 import Button from "@mui/material/Button";
+import AutoFillFromPincode from "./AutoFillFromPincode";
+import { toast } from "react-toastify";
 
 const ConsigneeDetails = ({
   Loading,
@@ -42,6 +45,16 @@ const ConsigneeDetails = ({
     state: "",
     city: "",
     pincode: "",
+    billing_is_same_as_consignee: true,
+    billing_full_name: "",
+    billing_phone: "",
+    billing_email: "",
+    billing_address: "",
+    billing_landmark: "",
+    billing_pincode: "",
+    billing_city: "",
+    billing_state: "",
+    billing_country: "",
   });
 
   useEffect(() => {
@@ -61,7 +74,11 @@ const ConsigneeDetails = ({
       );
       navigate(`/order/ordercreate/${createData.orderRes.id}/order-details`);
     }
-  }, [createData]);
+    if (isCreatingError === true) {
+      console.log("error", createError);
+      toast.error(createError.data.errorMessage, { autoClose: "2000" });
+    }
+  }, [createData, createError]);
 
   useEffect(() => {
     if (
@@ -89,9 +106,111 @@ const ConsigneeDetails = ({
     email: Yup.string()
       .email("Must be a valid email")
       .required("Email is a required field"),
+    gstin: Yup.string()
+      .matches(
+        /\d{2}[A-Z]{5}\d{4}[A-Z]{1}[A-Z\d]{1}[Z]{1}[A-Z\d]{1}/,
+        "gstin must be that format 11XXXXX0000A1ZX"
+      )
+      .required("gstin is a required field"),
     fulladdress: Yup.string().required("Full Address is a required field"),
     landmark: Yup.string().required("Landmark is a required field"),
     pincode: Yup.string().required("Pincode is a required field"),
+    country: Yup.string()
+      .matches(
+        /^[a-zA-Z\s]+$/,
+        "country can only contain alphabetic characters"
+      )
+      .required("Country is required field"),
+    state: Yup.string()
+      .matches(/^[a-zA-Z\s]+$/, "state can only contain alphabetic characters")
+      .required("State is required field"),
+    city: Yup.string()
+      .matches(/^[a-zA-Z\s]+$/, "city can only contain alphabetic characters")
+      .required("City is required field"),
+    billing_is_same_as_consignee: Yup.boolean().required(),
+
+    billing_full_name: Yup.string().when("billing_is_same_as_consignee", {
+      is: false,
+      then: (schema) =>
+        schema
+          .matches(
+            /^[a-zA-Z\s]+$/,
+            "full name can only contain alphabetic characters"
+          )
+          .required("Billing full name is required"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+
+    billing_phone: Yup.string().when("billing_is_same_as_consignee", {
+      is: false,
+      then: (schema) =>
+        schema
+          .matches(/^\d{10}$/, "Phone number must be exactly 10 digits")
+          .required("Billing phone is required"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+
+    billing_email: Yup.string()
+      .email("Invalid email")
+      .when("billing_is_same_as_consignee", {
+        is: false,
+        then: (schema) => schema.required("Billing email is required"),
+        otherwise: (schema) => schema.notRequired(),
+      }),
+
+    billing_address: Yup.string().when("billing_is_same_as_consignee", {
+      is: false,
+      then: (schema) => schema.required("Billing address is required"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+
+    billing_landmark: Yup.string().when("billing_is_same_as_consignee", {
+      is: false,
+      then: (schema) => schema.required("Billing landmark is required"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+
+    billing_pincode: Yup.string().when("billing_is_same_as_consignee", {
+      is: false,
+      then: (schema) => schema.required("Billing pincode is required"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+
+    billing_city: Yup.string().when("billing_is_same_as_consignee", {
+      is: false,
+      then: (schema) =>
+        schema
+          .matches(
+            /^[a-zA-Z\s]+$/,
+            "city can only contain alphabetic characters"
+          )
+          .required("Billing city is required"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+
+    billing_state: Yup.string().when("billing_is_same_as_consignee", {
+      is: false,
+      then: (schema) =>
+        schema
+          .matches(
+            /^[a-zA-Z\s]+$/,
+            "State can only contain alphabetic characters"
+          )
+          .required("Billing state is required"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+
+    billing_country: Yup.string().when("billing_is_same_as_consignee", {
+      is: false,
+      then: (schema) =>
+        schema
+          .matches(
+            /^[a-zA-Z\s]+$/,
+            "Country can only contain alphabetic characters"
+          )
+          .required("Billing country is required"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
   });
 
   return (
@@ -114,7 +233,6 @@ const ConsigneeDetails = ({
           newField["id"] = id;
           newField["slug"] = slug;
           updateOrder(newField);
-          alert(JSON.stringify(newField, 2, null));
           console.log(newField);
         }
 
@@ -126,10 +244,12 @@ const ConsigneeDetails = ({
         values,
         errors,
         touched,
+        handleChange,
         setFieldValue,
         setFieldTouched,
       }) => (
         <Form>
+          <AutoFillFromPincode />
           <div className="w-[82%] m-[auto] flex flex-col gap-5">
             <div className="font-[500]">
               Contact Details{" "}
@@ -199,7 +319,7 @@ const ConsigneeDetails = ({
                   type="number"
                   name="alternatephonenumber"
                   className="customInputBorder px-3  py-1 text-[0.875rem]"
-                  placeholder="Enter Consignee Alternate Phone Number text-sm"
+                  placeholder="Enter Consignee Alternate Phone Number"
                 />
               </div>
               <div className="flex flex-col w-[32%]">
@@ -211,11 +331,20 @@ const ConsigneeDetails = ({
                 />
               </div>
               <div className="flex flex-col w-[32%]">
-                GSTIN
+                GSTIN*
                 <Field
                   name="gstin"
-                  className="customInputBorder px-3  py-1 text-[0.875rem]"
+                  className={` px-3 py-1 text-[0.875rem] ${
+                    touched.gstin && errors.gstin
+                      ? "customInputBorderError"
+                      : "customInputBorder"
+                  }`}
                   placeholder="Enter Consignee GSTIN"
+                />
+                <ErrorMessage
+                  name="gstin"
+                  component="div"
+                  className="text-red-600 text-sm"
                 />
               </div>
             </div>
@@ -263,12 +392,19 @@ const ConsigneeDetails = ({
               <div className="flex flex-col w-[32%]">
                 Pincode*
                 <Field
+                  type="number"
                   name="pincode"
                   className={` px-3 py-1 text-[0.875rem] ${
                     touched.pincode && errors.pincode
                       ? "customInputBorderError"
                       : "customInputBorder"
                   }`}
+                  onInput={(e) => {
+                    if (e.target.value.length > 6) {
+                      console.log("inner condition value");
+                      e.target.value = e.target.value.slice(0, 6);
+                    }
+                  }}
                   placeholder="Enter Consignee Pincode"
                 />
                 <ErrorMessage
@@ -278,30 +414,246 @@ const ConsigneeDetails = ({
                 />
               </div>
               <div className="flex flex-col w-[32%]">
-                City
+                City*
                 <Field
                   name="city"
-                  className="customInputBorder px-3  py-1 text-[0.875rem]"
+                  className={` px-3 py-1 text-[0.875rem] ${
+                    touched.city && errors.city
+                      ? "customInputBorderError"
+                      : "customInputBorder"
+                  }`}
                   placeholder="Enter Consignee City"
                 />
-              </div>
-              <div className="flex flex-col w-[32%]">
-                State
-                <Field
-                  name="state"
-                  className="customInputBorder px-3  py-1 text-[0.875rem]"
-                  placeholder="Enter Consignee State"
+                <ErrorMessage
+                  name="city"
+                  component="div"
+                  className="text-red-600 text-sm"
                 />
               </div>
               <div className="flex flex-col w-[32%]">
-                Country
+                State*
+                <Field
+                  name="state"
+                  className={` px-3 py-1 text-[0.875rem] ${
+                    touched.state && errors.state
+                      ? "customInputBorderError"
+                      : "customInputBorder"
+                  }`}
+                  placeholder="Enter Consignee State"
+                />
+                <ErrorMessage
+                  name="state"
+                  component="div"
+                  className="text-red-600 text-sm"
+                />
+              </div>
+              <div className="flex flex-col w-[32%]">
+                Country*
                 <Field
                   name="country"
-                  className="customInputBorder px-3  py-1 text-[0.875rem]"
+                  className={` px-3 py-1 text-[0.875rem] ${
+                    touched.country && errors.country
+                      ? "customInputBorderError"
+                      : "customInputBorder"
+                  }`}
                   placeholder="Enter Consignee Country"
+                />
+                <ErrorMessage
+                  name="country"
+                  component="div"
+                  className="text-red-600 text-sm"
                 />
               </div>
             </div>
+            <div className="text-sm font-normal flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={values.billing_is_same_as_consignee}
+                className="mt-1"
+                onClick={() =>
+                  setFieldValue(
+                    "billing_is_same_as_consignee",
+                    !values.billing_is_same_as_consignee
+                  )
+                }
+              />
+              <span>Is billing address the same as Shipping address</span>
+            </div>
+
+            {!values.billing_is_same_as_consignee && (
+              <>
+                {" "}
+                <div className="font-[500]">Billing Details </div>
+                <div className="text-[15px] font-normal flex flex-wrap gap-5">
+                  {" "}
+                  <div className="flex flex-col w-[32%] relative">
+                    Full Name*
+                    <Field
+                      name="billing_full_name"
+                      className={` px-3 py-1 text-[0.875rem] ${
+                        touched.billing_full_name && errors.billing_full_name
+                          ? "customInputBorderError"
+                          : "customInputBorder"
+                      }`}
+                      placeholder="Enter Consignee Full Name"
+                    />
+                    <ErrorMessage
+                      name="billing_full_name"
+                      component="div"
+                      className="text-red-600 text-sm"
+                    />
+                  </div>
+                  <div className="flex flex-col w-[32%]">
+                    Phone Number*
+                    <Field
+                      type="number"
+                      name="billing_phone"
+                      className={` px-3 py-1 text-[0.875rem] ${
+                        touched.billing_phone && errors.billing_phone
+                          ? "customInputBorderError"
+                          : "customInputBorder"
+                      }`}
+                      placeholder="Enter Consignee Phone Number"
+                    />
+                    <ErrorMessage
+                      name="billing_phone"
+                      component="div"
+                      className="text-red-600 text-sm"
+                    />
+                  </div>
+                  <div className="flex flex-col w-[32%]">
+                    Email*
+                    <Field
+                      type="email"
+                      name="billing_email"
+                      className={` px-3 py-1 text-[0.875rem] ${
+                        touched.billing_email && errors.billing_email
+                          ? "customInputBorderError"
+                          : "customInputBorder"
+                      }`}
+                      placeholder="Enter Consignee Email Address"
+                    />
+                    <ErrorMessage
+                      name="billing_email"
+                      component="div"
+                      className="text-red-600 text-sm"
+                    />
+                  </div>
+                </div>
+                <div className="font-[500] w-[100%]">Billing Address </div>
+                <div className="text-[15px] font-normal flex flex-wrap gap-5">
+                  <div className="flex flex-col w-[50%]">
+                    Full Address*
+                    <Field
+                      name="billing_address"
+                      className={` px-3 py-1 text-[0.875rem] ${
+                        touched.billing_address && errors.billing_address
+                          ? "customInputBorderError"
+                          : "customInputBorder"
+                      }`}
+                      placeholder="Enter Consignee Full Address"
+                    />
+                    <ErrorMessage
+                      name="billing_address"
+                      component="div"
+                      className="text-red-600 text-sm"
+                    />
+                  </div>
+                  <div className="flex flex-col w-[48%]">
+                    Landmark*
+                    <Field
+                      name="billing_landmark"
+                      className={` px-3 py-1 text-[0.875rem] ${
+                        touched.billing_landmark && errors.billing_landmark
+                          ? "customInputBorderError"
+                          : "customInputBorder"
+                      }`}
+                      placeholder="Enter Consignee Landmark"
+                    />
+                    <ErrorMessage
+                      name="billing_landmark"
+                      component="div"
+                      className="text-red-600 text-sm"
+                    />
+                  </div>
+                  <div className="flex flex-col w-[32%]">
+                    Pincode*
+                    <Field
+                      type="number"
+                      name="billing_pincode"
+                      className={` px-3 py-1 text-[0.875rem] ${
+                        touched.billing_pincode && errors.billing_pincode
+                          ? "customInputBorderError"
+                          : "customInputBorder"
+                      }`}
+                      onInput={(e) => {
+                        if (e.target.value.length > 6) {
+                          console.log("inner condition value");
+                          e.target.value = e.target.value.slice(0, 6);
+                        }
+                      }}
+                      placeholder="Enter Consignee Pincode"
+                    />
+                    <ErrorMessage
+                      name="billing_pincode"
+                      component="div"
+                      className="text-red-600 text-sm"
+                    />
+                  </div>
+                  <div className="flex flex-col w-[32%]">
+                    City*
+                    <Field
+                      name="billing_city"
+                      className={` px-3 py-1 text-[0.875rem] ${
+                        touched.billing_city && errors.billing_city
+                          ? "customInputBorderError"
+                          : "customInputBorder"
+                      }`}
+                      placeholder="Enter Consignee City"
+                    />
+                    <ErrorMessage
+                      name="billing_city"
+                      component="div"
+                      className="text-red-600 text-sm"
+                    />
+                  </div>
+                  <div className="flex flex-col w-[32%]">
+                    State*
+                    <Field
+                      name="billing_state"
+                      className={` px-3 py-1 text-[0.875rem] ${
+                        touched.billing_state && errors.billing_state
+                          ? "customInputBorderError"
+                          : "customInputBorder"
+                      }`}
+                      placeholder="Enter Consignee State"
+                    />
+                    <ErrorMessage
+                      name="billing_state"
+                      component="div"
+                      className="text-red-600 text-sm"
+                    />
+                  </div>
+                  <div className="flex flex-col w-[32%]">
+                    Country*
+                    <Field
+                      name="billing_country"
+                      className={` px-3 py-1 text-[0.875rem] ${
+                        touched.billing_country && errors.billing_country
+                          ? "customInputBorderError"
+                          : "customInputBorder"
+                      }`}
+                      placeholder="Enter Consignee Country"
+                    />
+                    <ErrorMessage
+                      name="billing_country"
+                      component="div"
+                      className="text-red-600 text-sm"
+                    />
+                  </div>
+                </div>
+              </>
+            )}
 
             <div className="flex justify-end py-16">
               <Button
@@ -313,13 +665,6 @@ const ConsigneeDetails = ({
                 Next
               </Button>
             </div>
-            {console.log("formik errors field", errors)}
-            {console.log("values field", values)}
-            {console.log("errors field", createError)}
-            {console.log("is Create Error", isCreatingError)}
-            {console.log("touched field", touched)}
-            {console.log("state", consigneeForm)}
-            {console.log("put request data check", data)}
           </div>
         </Form>
       )}

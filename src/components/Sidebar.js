@@ -51,7 +51,9 @@ const Sidebar = () => {
       >
         {/* Header Section - Non-scrolling */}
         <div className="py-3 flex justify-between flex-shrink-0">
-          {open && <h1 className="text-[20px] font-bold"> Rishu Logistic</h1>}
+          {open && (
+            <h1 className="text-[20px] font-bold"> Logistic Solutions</h1>
+          )}
           <HiMenuAlt3
             size={26}
             className="cursor-pointer"

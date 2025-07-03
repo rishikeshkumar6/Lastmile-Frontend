@@ -9,30 +9,30 @@ import Papa from "papaparse";
 import * as XLSX from "xlsx";
 
 const expectedHeaders = [
-  "consignee_person_name",
-  "consignee_person_phone",
-  "consignee_person_alterPhonenumber",
-  "consignee_person_consigneecompany",
-  "consignee_person_gstin",
-  "consignee_person_email",
-  "consignee_person_fulladdress",
-  "consignee_person_landmark",
-  "consignee_person_country",
-  "consignee_person_state",
-  "consignee_person_city",
-  "consignee_person_pincode",
-  "orderid",
-  "channel",
-  "productDetails",
-  "payment_mode",
-  "shipping_charges",
-  "cod_charges",
-  "discount",
-  "gift_wrap_charges",
-  "other_charges",
-  "total_amount",
-  "order_value",
-  "tax_amount",
+  "order_id",
+  "fullname",
+  "phonenumber",
+  "alternatephonenumber",
+  "consigneecompany",
+  "gstin",
+  "email",
+  "fulladdress",
+  "country",
+  "state",
+  "city",
+  "pincode",
+  "landmark",
+  "billing_is_same_as_consignee",
+  "billing_full_name",
+  "billing_phone",
+  "billing_email",
+  "billing_address",
+  "billing_landmark",
+  "billing_pincode",
+  "billing_city",
+  "billing_state",
+  "billing_country",
+  "pickup_location_name",
   "pickup_person_name",
   "pickup_person_phone",
   "pickup_person_email",
@@ -41,12 +41,29 @@ const expectedHeaders = [
   "pickup_country",
   "pickup_state",
   "pickup_city",
+  "pickup_location_code",
+  "pickup_account_id",
+  "isOtherField",
+  "isActive",
   "pickup_pincode",
+  "channel",
+  "productDetails",
+  "payment_mode",
+  "total_amount",
+  "order_value",
+  "tax_amount",
+  "discount",
+  "gift_wrap_charges",
+  "other_charges",
+  "cod_charges",
+  "shipping_charges",
   "dead_weight",
   "volumetric_weigth",
   "length",
   "breath",
   "height",
+  "account_id",
+  "order_status",
 ];
 
 const FileUpload = () => {
@@ -57,12 +74,12 @@ const FileUpload = () => {
 
   useEffect(() => {
     if (isSuccess === true && data.statusCode === 200) {
-      toast.success(data.orderResponse, {
+      toast.success(data.message, {
         autoClose: "2000",
         onClose: () => navigate("/order"),
       });
     } else if (isError === true) {
-      toast.error("something went wrong", { autoClose: "2000" });
+      toast.error(error.data.errorMessage, { autoClose: "2000" });
     }
   }, [data, error]);
 
@@ -81,58 +98,79 @@ const FileUpload = () => {
   const validateFields = (fileExtension, data) => {
     console.log("validateFields", data);
     for (let elem of data) {
+      console.log("single object element", elem);
       const {
-        consignee_person_name,
-        consignee_person_email,
-        consignee_person_phone,
-        consignee_person_pincode,
-        consignee_person_fulladdress,
-        consignee_person_landmark,
-        consignee_person_city,
-        consignee_person_state,
-        consignee_person_country,
-        orderid,
-        channel,
+        fullname,
+        phonenumber,
+        gstin,
+        email,
+        fulladdress,
+        country,
+        state,
+        city,
+        pincode,
+        landmark,
+        order_id,
         productDetails,
+        payment_mode,
+        pickup_location_name,
         pickup_person_name,
         pickup_person_phone,
         pickup_person_email,
         pickup_address,
         pickup_landmark,
-        pickup_pincode,
-        pickup_city,
-        pickup_state,
         pickup_country,
+        pickup_state,
+        pickup_city,
+        pickup_location_code,
+        pickup_account_id,
+        isOtherField,
+        isActive,
+        pickup_pincode,
+        dead_weight,
+        volumetric_weigth,
         length,
         breath,
         height,
+        account_id,
+        order_status,
       } = elem;
 
       const obj = {
-        consignee_person_name,
-        consignee_person_email,
-        consignee_person_phone,
-        consignee_person_pincode,
-        consignee_person_fulladdress,
-        consignee_person_landmark,
-        consignee_person_city,
-        consignee_person_state,
-        consignee_person_country,
-        orderid,
-        channel,
+        fullname,
+        phonenumber,
+        gstin,
+        email,
+        fulladdress,
+        country,
+        state,
+        city,
+        pincode,
+        landmark,
+        order_id,
         productDetails,
+        payment_mode,
+        pickup_location_name,
         pickup_person_name,
         pickup_person_phone,
         pickup_person_email,
         pickup_address,
         pickup_landmark,
-        pickup_pincode,
-        pickup_city,
-        pickup_state,
         pickup_country,
+        pickup_state,
+        pickup_city,
+        pickup_location_code,
+        pickup_account_id,
+        isOtherField,
+        isActive,
+        pickup_pincode,
+        dead_weight,
+        volumetric_weigth,
         length,
         breath,
         height,
+        account_id,
+        order_status,
       };
       const rowValues = Object.values(obj);
       console.log("rowValues", rowValues);
@@ -157,21 +195,31 @@ const FileUpload = () => {
       const formattedData = data.map((row) => {
         return {
           consigneeDetails: {
-            fullname: row.consignee_person_name || "",
-            phonenumber: row.consignee_person_phone || "",
-            alternatephonenumber: row.consignee_person_alterPhonenumber || "",
-            consigneecompany: row.consignee_person_consigneecompany || "",
-            gstin: row.consignee_person_gstin || "",
-            email: row.consignee_person_email || "",
-            fulladdress: row.consignee_person_fulladdress || "",
-            landmark: row.consignee_person_landmark || "",
+            fullname: row.fullname || "",
+            phonenumber: row.phonenumber || "",
+            alternatephonenumber: row.alternatephonenumber || "",
+            consigneecompany: row.consigneecompany || "",
+            gstin: row.gstin || "",
+            email: row.email || "",
+            fulladdress: row.fulladdress || "",
+            landmark: row.landmark || "",
             consignee_person_country: "India",
-            state: row.consignee_person_state || "",
-            city: row.consignee_person_city || "",
-            pincode: row.consignee_person_pincode || "",
+            state: row.state || "",
+            city: row.city || "",
+            pincode: row.pincode || "",
+            billing_is_same_as_consignee: row || "",
+            billing_full_name: row.billing_full_name || "",
+            billing_phone: row.billing_phone || "",
+            billing_email: row.billing_email || "",
+            billing_address: row.billing_address || "",
+            billing_landmark: row.billing_landmark || "",
+            billing_pincode: row.billing_pincode || "",
+            billing_city: row.billing_city || "",
+            billing_state: row.billing_state || "",
+            billing_country: row.billing_country || "",
           },
           orderDetails: {
-            orderid: row.orderid || "",
+            orderid: row.order_id || "",
             channel: row.channel || "",
             productDetails: JSON.parse(row.productDetails || "[]"),
             payment_mode: row.payment_mode || "prepaid",
@@ -203,6 +251,8 @@ const FileUpload = () => {
             breath: parseFloat(row.breath || 0),
             height: parseFloat(row.height || 0),
           },
+          order_status: row.order_status,
+          account_id: row.account_id,
         };
       });
       console.log("formatedData", formattedData);
@@ -233,7 +283,6 @@ const FileUpload = () => {
             handleValidationError(parsingData);
             return;
           }
-
           processFile(result.data);
         },
         error: (error) => {
@@ -245,12 +294,16 @@ const FileUpload = () => {
       reader.onload = (e) => {
         try {
           const data = new Uint8Array(e.target.result);
+          console.log("----Unit8Array----", data);
           const workbook = XLSX.read(data, { type: "array" });
+          console.log("-------workbook------", workbook);
           const sheetName = workbook.SheetNames[0];
+          console.log("-----sheetName----", sheetName);
           const worksheet = workbook.Sheets[sheetName];
+          console.log("-----worksheet-----", worksheet);
           // Get headers from first row
           const headers = XLSX.utils.sheet_to_json(worksheet, { header: 1 })[0];
-
+          console.log("------headers-----", headers);
           const sheetData = XLSX.utils.sheet_to_json(worksheet);
           console.log("sheetData", sheetData);
           const validation = validateHeaders(fileExtension, headers);
@@ -259,12 +312,13 @@ const FileUpload = () => {
             handleValidationError(validation);
             return;
           }
-          // const parsingData = validateFields(fileExtension, sheetData);
-          // if (parsingData) {
-          //   handleValidationError(parsingData);
-          //   return;
-          // }
+          const parsingData = validateFields(fileExtension, sheetData);
+          if (parsingData) {
+            handleValidationError(parsingData);
+            return;
+          }
 
+          console.log("result.data", sheetData);
           processFile(sheetData);
         } catch (error) {
           console.log("error", error);

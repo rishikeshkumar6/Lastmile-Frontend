@@ -178,6 +178,10 @@ img {
   -ms-overflow-style: none; /* IE and Edge */
 }
 
+.tableRow>tbody>tr>td{
+  border: 2px solid #eee;
+}
+
 
 
 

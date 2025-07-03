@@ -25,7 +25,7 @@ function App() {
           <div className="flex items-center space-x-2">
             <Truck className="h-8 w-8 text-indigo-600" />
             <span className="text-xl font-bold text-gray-800">
-              Rishu Logistic
+              Logistic Solutions
             </span>
           </div>
           <nav className="hidden md:flex space-x-8">

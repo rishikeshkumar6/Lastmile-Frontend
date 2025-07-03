@@ -60,8 +60,10 @@ const Order = () => {
         return setActiveButton("Non Deleivery Report");
       case "Cancel Order":
         return setActiveButton("Cancel Order");
-      case "All Orders":
-        return setActiveButton("All Orders");
+      case "supicious_order":
+        return setActiveButton("supicious_order");
+      case "all":
+        return setActiveButton("all");
     }
   };
   function debounce(fn, delay) {
@@ -92,6 +94,7 @@ const Order = () => {
         popup={shipmentPopup}
         setPopup={setShipmentPopup}
         shipmentRowData={shipmentRowData}
+        setActiveButton={setActiveButton}
       />
       <section className="flex gap-6">
         <Sidebar />
@@ -157,8 +160,18 @@ const Order = () => {
             </div>
           </div>
 
-          <div className="flex justify-between py-5 pl-14">
-            <div className="flex gap-5 items-center w-[40%]">
+          <div
+            className={`flex ${
+              isSuccess && Object.keys(data).length > 0
+                ? "justify-between"
+                : "justify-end"
+            } py-5 pl-14`}
+          >
+            <div
+              className={`gap-5 items-center w-[40%] ${
+                isSuccess && Object.keys(data).length > 0 ? "flex" : "hidden"
+              }`}
+            >
               <form
                 class="max-w-md w-[100%]"
                 onSubmit={(e) => e.preventDefault()}
@@ -198,7 +211,8 @@ const Order = () => {
                 </div>
               </form>
             </div>
-            <div className="flex gap-5 items-center">
+
+            <div className={` gap-5 items-center flex`}>
               <button className="  text-sm font-normal  px-8 py-3 rounded-sm  cursor-pointer flex gap-2 items-center bg-slate-900 text-white">
                 <HiOutlineRefresh className="text-[20px]" /> Sync
               </button>
@@ -236,7 +250,7 @@ const Order = () => {
               Booked
             </button>
             <button
-              class={`text-sm font-normal py-2 px-3  rounded-sm  cursor-pointer flex gap-2 items-center ${
+              class={`text-sm font-normal py-2 px-3  rounded-sm  cursor-not-allowed flex gap-2 items-center ${
                 activeButton === "Pickup/Mainfest"
                   ? " bg-black text-white"
                   : " bg-white text-black"
@@ -248,7 +262,7 @@ const Order = () => {
               Pickup/Mainfest
             </button>
             <button
-              class={`text-sm font-normal py-2 px-3  rounded-sm  cursor-pointer flex gap-2 items-center ${
+              class={`text-sm font-normal py-2 px-3  rounded-sm  cursor-not-allowed flex gap-2 items-center ${
                 activeButton === "In Transit"
                   ? " bg-black text-white"
                   : " bg-white text-black"
@@ -260,7 +274,7 @@ const Order = () => {
               In Transit
             </button>
             <button
-              class={`text-sm font-normal  py-2 px-3  rounded-sm  cursor-pointer flex gap-2 items-center ${
+              class={`text-sm font-normal  py-2 px-3  rounded-sm  cursor-not-allowed flex gap-2 items-center ${
                 activeButton === "Out For Deleivery"
                   ? " bg-black text-white"
                   : " bg-white text-black"
@@ -272,7 +286,7 @@ const Order = () => {
               Out For Deleivery
             </button>
             <button
-              class={`text-sm font-normal  py-2 px-3  rounded-sm  cursor-pointer flex gap-2 items-center ${
+              class={`text-sm font-normal  py-2 px-3  rounded-sm  cursor-not-allowed flex gap-2 items-center ${
                 activeButton === "Deleivered"
                   ? " bg-black text-white"
                   : " bg-white text-black"
@@ -284,7 +298,7 @@ const Order = () => {
               Deleivered
             </button>
             <button
-              class={`text-sm font-normal  py-2 px-3  rounded-sm  cursor-pointer flex gap-2 items-center ${
+              class={`text-sm font-normal  py-2 px-3  rounded-sm  cursor-not-allowed flex gap-2 items-center ${
                 activeButton === "Return To Origin"
                   ? " bg-black text-white"
                   : " bg-white text-black"
@@ -293,10 +307,10 @@ const Order = () => {
               disabled={true}
               title="coming soon"
             >
-              Return To Origin
+              RTO
             </button>
             <button
-              class={`text-sm font-normal py-2 px-3  rounded-sm  cursor-pointer flex gap-2 items-center ${
+              class={`text-sm font-normal py-2 px-3  rounded-sm  cursor-not-allowed flex gap-2 items-center ${
                 activeButton === "Non Deleivery Report"
                   ? " bg-black text-white"
                   : " bg-white text-black"
@@ -306,6 +320,17 @@ const Order = () => {
               title="coming soon"
             >
               Non Deleivery Report
+            </button>
+            <button
+              class={`text-sm font-normal py-2 px-3  rounded-sm  cursor-pointer flex gap-2 items-center ${
+                activeButton === "supicious_order"
+                  ? " bg-black text-white"
+                  : " bg-white text-black"
+              }`}
+              onClick={() => handleActiveButton("supicious_order")}
+              title="coming soon"
+            >
+              Suspicious Orders
             </button>
             <button
               class={`text-sm font-normal py-2 px-3  rounded-sm  cursor-pointer flex gap-2 items-center ${
@@ -321,15 +346,14 @@ const Order = () => {
             </button>
             <button
               class={`text-sm font-normal  py-2 px-3  rounded-sm  cursor-pointer flex gap-2 items-center ${
-                activeButton === "All Orders"
+                activeButton === "all"
                   ? " bg-black text-white"
                   : " bg-white text-black"
               }`}
-              onClick={() => handleActiveButton("All Orders")}
-              disabled={true}
+              onClick={() => handleActiveButton("all")}
               title="coming soon"
             >
-              All Orders
+              All
             </button>
           </ul>
 
@@ -338,6 +362,7 @@ const Order = () => {
               <ReactSelect dates={dates} setDates={setDates} />
               <GenerateExcel />
             </div>
+
             {isSuccess === true &&
               Object.keys(data).length > 0 &&
               data.orderRes.length > 0 && (
@@ -353,7 +378,8 @@ const Order = () => {
                       </th>
                       <th className="p-3 text-sm">Order Details</th>
                       <th className="p-3 text-sm">
-                        {activeButton === "new"
+                        {activeButton === "new" ||
+                        activeButton === "supicious_order"
                           ? "Pickup Details"
                           : "Courier Details"}
                       </th>
@@ -399,7 +425,13 @@ const Order = () => {
             )}
           </div>
 
-          {isError === true && <ErrorTable />}
+          {isError === true && (
+            <ErrorTable
+              className="h-[400px] flex items-center justify-center bg-white flex-col gap-5"
+              w={["20%"]}
+              errorMessage={"No Order Found"}
+            />
+          )}
           {isLoading === true && <LoadingTable />}
         </div>
         {console.log(

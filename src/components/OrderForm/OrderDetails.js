@@ -4,9 +4,11 @@ import { useUpdateOrderMutation } from "../../Redux/Action";
 import { api } from "../../Redux/Action";
 import { MdDelete } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
+import Select from "react-select";
 import * as Yup from "yup";
 import { Button } from "@mui/material";
 import { FiPlus } from "react-icons/fi";
+import { toast } from "react-toastify";
 
 const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
   const navigate = useNavigate();
@@ -19,7 +21,19 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
       {
         name: "",
         price: "",
+        hsn_code: "",
+        category: "",
+        brand: "",
+        expiry_date: "",
+        batch_no: "",
+        images: [],
+        dead_weigth: "",
+        volumetric_weigth: "",
+        length: "",
+        breath: "",
+        height: "",
         quantity: "",
+        isSensitiveOrder: false,
         sku_code: "",
       },
     ],
@@ -33,6 +47,43 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
     order_value: 0,
     tax_amount: 0,
   });
+
+  const sensitiveOrder = [
+    "Food & Beverages",
+    "Pharmaceuticals / Medicines",
+    "Cosmetics & Personal Care",
+    "Chemicals / Cleaning Supplies",
+    "Nutritional Supplements",
+    "Baby Products",
+  ];
+  const options = [
+    { value: "Food & Beverages", label: "Food & Beverages" },
+    {
+      value: "Pharmaceuticals / Medicines",
+      label: "Pharmaceuticals / Medicines",
+    },
+    { value: "Cosmetics & Personal Care", label: "Cosmetics & Personal Care" },
+    { value: "Nutritional Supplements", label: "Nutritional Supplements	" },
+    {
+      value: "Chemicals / Cleaning Supplies",
+      label: "Chemicals / Cleaning Supplies",
+    },
+    { value: "Baby Products", label: "Baby Products" },
+    { value: "Apparel & Fashion", label: "Apparel & Fashion	" },
+    { value: "Electronics", label: "Electronics" },
+    { value: "Home Appliances", label: "Home Appliances" },
+    { value: "Furniture", label: "Furniture" },
+    { value: "Books & Stationery", label: "Books & Stationery	" },
+    { value: "Toys & Games", label: "Toys & Games	" },
+    { value: "Tools & Hardware", label: "Tools & Hardware	" },
+    { value: "Jewelry & Watches", label: "Jewelry & Watches" },
+    { value: "Automobile Accessories", label: "Automobile Accessories" },
+    { value: "Sports Equipment", label: "Sports Equipment	" },
+    { value: "Musical Instruments", label: "Musical Instruments" },
+    { value: "Digital Products", label: "Digital Products" },
+    { value: "Decor & Art", label: "Decor & Art	" },
+    { value: "Bags & Luggage", label: "Bags & Luggage" },
+  ];
 
   const extraCharge = (values) => {
     const {
@@ -61,17 +112,34 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
         name: Yup.string().required("name  is required field"),
         price: Yup.string().required("price  is required field"),
         quantity: Yup.string().required("quantity  is required field"),
-        sku_code: Yup.string().required("sku_code  is required field"),
+        isSensitiveOrder: Yup.boolean().required(),
+        expiry_date: Yup.string().when("isSensitiveOrder", {
+          is: true,
+          then: (schema) => schema.required("expiry date is required"),
+          otherwise: (schema) => schema.notRequired(),
+        }),
       })
     ),
   });
 
   const handleProducts = (setFieldValue, values) => {
-    const orderDetailsForms = { ...values };
+    const orderDetailsForms = JSON.parse(JSON.stringify(values));
     orderDetailsForms.productDetails.push({
       name: "",
       price: "",
+      hsn_code: "",
+      category: "",
+      brand: "",
+      expiry_date: "",
+      batch_no: "",
+      images: [],
+      dead_weigth: "",
+      volumetric_weigth: "",
+      length: "",
+      breath: "",
+      height: "",
       quantity: "",
+      isSensitiveOrder: false,
       sku_code: "",
     });
     setFieldValue("productDetails", orderDetailsForms.productDetails);
@@ -107,7 +175,10 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
       );
       navigate(`/order/ordercreate/${id}/pickup-details`);
     }
-  }, [data]);
+    if (isError === true) {
+      toast.error(error.data["errorMessage"], { autoClose: "2000" });
+    }
+  }, [data, error]);
 
   const handleDelete = (values, id, setFieldValue) => {
     console.log("handleDelete function is called", values, id, "----");
@@ -117,6 +188,9 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
     });
     setFieldValue("productDetails", filterData);
   };
+  const AlertError = () => {
+    toast.error("negative value is not allowed", { autoClose: 2000 });
+  };
 
   return (
     <Formik
@@ -124,10 +198,12 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
       initialValues={orderDetailsForm}
       validationSchema={orderDetailsFormSchema}
       onSubmit={(field) => {
+        console.log("-----slug-----", slug, "--------id-----", id);
         if (slug !== undefined && id !== undefined) {
           const newField = { ...field };
           newField["id"] = id;
           newField["slug"] = slug;
+          console.log("---------newField-------", newField);
           updateOrder(newField);
         }
         console.log(field);
@@ -172,6 +248,13 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
           const finalValue = (tax_amount / 100) * TotalAmmount;
           return isNaN(finalValue) === true ? 0 : finalValue;
         };
+        const handleChange = (e, args1, args2) => {
+          setFieldValue(args1, e.value);
+          const isSensitiveOrder = sensitiveOrder.includes(e.value);
+          console.log("checksensitive info", isSensitiveOrder);
+          setFieldValue(args2, isSensitiveOrder);
+          console.log(e);
+        };
         return (
           <Form>
             <div className="w-[82%] m-[auto] gap-12 flex flex-wrap">
@@ -203,7 +286,7 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
                         ? "customInputBorderError"
                         : "customInputBorder"
                     }`}
-                    placeholder="Enter Order Id"
+                    placeholder="Enter Channel"
                   />
                   <ErrorMessage
                     name={`channel`}
@@ -213,7 +296,7 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
                 </div>
               </div>
               <hr className="w-full my-4 border-t border-gray-300" />
-              <div className="flex w-[100%] font-normal text-[15px] gap-y-2 flex-wrap gap-x-7">
+              <div className="flex w-[100%] font-normal text-[15px] gap-y-5 flex-wrap">
                 <div className="text-xl w-[100%] flex justify-between ">
                   <div className="flex items-center gap-2">
                     {" "}
@@ -235,13 +318,13 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
                   console.log("element", elem);
                   console.log("index", index);
                   return (
-                    <>
-                      <div className="flex flex-col w-[25%]">
+                    <div className=" relative flex flex-col gap-5 w-[100%] border p-[25px]">
+                      <div className="flex flex-col w-[65%]">
                         Product Name*
                         <Field
                           name={`productDetails[${index}].name`}
                           className={productValidation(index, "name")}
-                          placeholder="Enter Order Id"
+                          placeholder="Enter product name"
                         />
                         <ErrorMessage
                           name={`productDetails[${index}].name`}
@@ -249,56 +332,166 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
                           className="text-red-500"
                         />
                       </div>
-                      <div className="flex flex-col w-[15%]">
-                        quantity*
-                        <Field
-                          type="number"
-                          name={`productDetails[${index}].quantity`}
-                          className={productValidation(index, "quantity")}
-                          placeholder="Enter Order Id"
-                        />
-                        <ErrorMessage
-                          name={`productDetails[${index}].quantity`}
-                          component={"div"}
-                          className="text-red-500"
+                      <div className="flex gap-5">
+                        <div className="flex flex-col w-[15%]">
+                          quantity*
+                          <Field
+                            type="number"
+                            name={`productDetails[${index}].quantity`}
+                            className={productValidation(index, "quantity")}
+                            onInput={(e) => {
+                              if (e.target.value === "") return;
+
+                              // Convert to string and check decimal places
+                              if (e.target.value.includes(".")) {
+                                e.target.value = parseInt(e.target.value); // trim to integer
+                              }
+
+                              if (e.target.value < 0) {
+                                console.log("inner condition value");
+                                AlertError();
+                                e.target.value = 0;
+                              }
+                            }}
+                            placeholder="Enter quantity"
+                          />
+                          <ErrorMessage
+                            name={`productDetails[${index}].quantity`}
+                            component={"div"}
+                            className="text-red-500"
+                          />
+                        </div>
+                        <div className="flex flex-col w-[15%]">
+                          price*
+                          <Field
+                            type="number"
+                            name={`productDetails[${index}].price`}
+                            className={productValidation(index, "price")}
+                            onInput={(e) => {
+                              if (e.target.value === "") return;
+
+                              // Convert to string and check decimal places
+                              const parts = e.target.value.split(".");
+                              console.log(parts);
+                              if (parts[1]?.length > 2) {
+                                // Trim to 2 decimals
+                                e.target.value = `${parts[0]}.${parts[1].slice(
+                                  0,
+                                  2
+                                )}`;
+                              }
+                              if (e.target.value < 0) {
+                                console.log("inner condition value");
+                                AlertError();
+                                e.target.value = 0;
+                              }
+                            }}
+                            placeholder="Enter price"
+                          />
+                          <ErrorMessage
+                            name={`productDetails[${index}].price`}
+                            component={"div"}
+                            className="text-red-500"
+                          />
+                        </div>
+                        {values.productDetails[index].isSensitiveOrder && (
+                          <>
+                            {" "}
+                            <div className="flex flex-col w-[15%]">
+                              Batch No
+                              <Field
+                                name={`productDetails[${index}].batch_no`}
+                                className={productValidation(index, "batch_no")}
+                                placeholder="Enter batch no"
+                              />
+                            </div>
+                            <div className="flex flex-col w-[15%]">
+                              expiry date*
+                              <Field
+                                type="date"
+                                name={`productDetails[${index}].expiry_date`}
+                                className={productValidation(
+                                  index,
+                                  "expiry_date"
+                                )}
+                                placeholder="Enter expiry date"
+                              />
+                              <ErrorMessage
+                                name={`productDetails[${index}].expiry_date`}
+                                component={"div"}
+                                className="text-red-500"
+                              />
+                            </div>
+                          </>
+                        )}
+                      </div>
+                      <div className="flex w-[100] gap-5">
+                        <div className="flex flex-col w-[32%]">
+                          Sku Code
+                          <Field
+                            name={`productDetails[${index}].sku_code`}
+                            className={productValidation(index, "sku_code")}
+                            onInput={(e) => {
+                              if (e.target.value.length > 50) {
+                                console.log("inner condition value");
+                                e.target.value = e.target.value.slice(0, 50);
+                              }
+                            }}
+                            placeholder="Enter sku code"
+                          />
+                        </div>
+                        <div className="flex flex-col w-[32%]">
+                          Hsn Code
+                          <Field
+                            name={`productDetails[${index}].hsn_code`}
+                            className={productValidation(index, "hsn_code")}
+                            type="number"
+                            onInput={(e) => {
+                              if (e.target.value === "") return;
+                              if (e.target.value < 0) {
+                                e.target.value = 0;
+                                AlertError();
+                              }
+                              if (e.target.value.length > 8) {
+                                console.log("inner condition value");
+                                e.target.value = e.target.value.slice(0, 8);
+                              }
+                            }}
+                            placeholder="Enter hsn code"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        Category*
+                        <Select
+                          value={{
+                            label: values.productDetails[index].category,
+                            value: values.productDetails[index].category,
+                          }}
+                          name={`productDetails[${index}].category`}
+                          options={options}
+                          onChange={(e) =>
+                            handleChange(
+                              e,
+                              `productDetails[${index}].category`,
+                              `productDetails[${index}].isSensitiveOrder`
+                            )
+                          }
+                          className="basic-multi-select w-[65%]"
+                          classNamePrefix="select"
                         />
                       </div>
-                      <div className="flex flex-col w-[15%]">
-                        price*
-                        <Field
-                          type="number"
-                          name={`productDetails[${index}].price`}
-                          className={productValidation(index, "price")}
-                          placeholder="Enter Order Id"
-                        />
-                        <ErrorMessage
-                          name={`productDetails[${index}].price`}
-                          component={"div"}
-                          className="text-red-500"
-                        />
-                      </div>
-                      <div className="flex flex-col w-[25%]">
-                        Sku Code
-                        <Field
-                          name={`productDetails[${index}].sku_code`}
-                          className={productValidation(index, "sku_code")}
-                          placeholder="Enter Order Id"
-                        />
-                        <ErrorMessage
-                          name={`productDetails[${index}].sku_code`}
-                          component={"div"}
-                          className="text-red-500"
-                        />
-                      </div>
+
                       {index !== 0 && (
                         <MdDelete
-                          className="text-[25px] mt-8 text-red-500 cursor-pointer"
+                          className="absolute top-3 right-3 text-[25px] text-red-500 cursor-pointer"
                           onClick={() =>
                             handleDelete(values, index, setFieldValue)
                           }
                         />
                       )}
-                    </>
+                    </div>
                   );
                 })}
               </div>
@@ -320,15 +513,55 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
                   <div className="flex flex-col w-[25%]">
                     Shipping Charges
                     <Field
+                      type="number"
                       name="shipping_charges"
                       className="customInputBorder px-3 py-1"
+                      onInput={(e) => {
+                        if (e.target.value === "") return;
+
+                        // Convert to string and check decimal places
+                        const parts = e.target.value.split(".");
+                        console.log(parts);
+                        if (parts[1]?.length > 2) {
+                          // Trim to 2 decimals
+                          e.target.value = `${parts[0]}.${parts[1].slice(
+                            0,
+                            2
+                          )}`;
+                        }
+                        if (e.target.value < 0) {
+                          console.log("inner condition value");
+                          AlertError();
+                          e.target.value = 0;
+                        }
+                      }}
                       placeholder="Enter Order Id"
                     />
                   </div>
                   <div className="flex flex-col w-[25%]">
                     COD Charge
                     <Field
+                      type="number"
                       name="cod_charges"
+                      onInput={(e) => {
+                        if (e.target.value === "") return;
+
+                        // Convert to string and check decimal places
+                        const parts = e.target.value.split(".");
+                        console.log(parts);
+                        if (parts[1]?.length > 2) {
+                          // Trim to 2 decimals
+                          e.target.value = `${parts[0]}.${parts[1].slice(
+                            0,
+                            2
+                          )}`;
+                        }
+                        if (e.target.value < 0) {
+                          console.log("inner condition value");
+                          AlertError();
+                          e.target.value = 0;
+                        }
+                      }}
                       className={`customInputBorder px-3 py-1 ${
                         values.payment_mode === "prepaid"
                           ? "cursor-no-drop"
@@ -343,7 +576,27 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
                   <div className="flex flex-col w-[25%]">
                     Discounts{" "}
                     <Field
+                      type="number"
                       name="discount"
+                      onInput={(e) => {
+                        if (e.target.value < 0) {
+                          if (e.target.value === "") return;
+
+                          // Convert to string and check decimal places
+                          const parts = e.target.value.split(".");
+                          console.log(parts);
+                          if (parts[1]?.length > 2) {
+                            // Trim to 2 decimals
+                            e.target.value = `${parts[0]}.${parts[1].slice(
+                              0,
+                              2
+                            )}`;
+                          }
+                          console.log("inner condition value");
+                          AlertError();
+                          e.target.value = 0;
+                        }
+                      }}
                       className="customInputBorder px-3 py-1"
                       placeholder="Enter Order Id"
                     />
@@ -351,7 +604,27 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
                   <div className="flex flex-col w-[25%]">
                     Gift Wrap
                     <Field
+                      type="number"
                       name="gift_wrap_charges"
+                      onInput={(e) => {
+                        if (e.target.value === "") return;
+
+                        // Convert to string and check decimal places
+                        const parts = e.target.value.split(".");
+                        console.log(parts);
+                        if (parts[1]?.length > 2) {
+                          // Trim to 2 decimals
+                          e.target.value = `${parts[0]}.${parts[1].slice(
+                            0,
+                            2
+                          )}`;
+                        }
+                        if (e.target.value < 0) {
+                          console.log("inner condition value");
+                          AlertError();
+                          e.target.value = 0;
+                        }
+                      }}
                       className="customInputBorder px-3 py-1"
                       placeholder="Enter Order Id"
                     />
@@ -359,7 +632,27 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
                   <div className="flex flex-col w-[25%]">
                     Other Charges{" "}
                     <Field
+                      type="number"
                       name="other_charges"
+                      onInput={(e) => {
+                        if (e.target.value === "") return;
+
+                        // Convert to string and check decimal places
+                        const parts = e.target.value.split(".");
+                        console.log(parts);
+                        if (parts[1]?.length > 2) {
+                          // Trim to 2 decimals
+                          e.target.value = `${parts[0]}.${parts[1].slice(
+                            0,
+                            2
+                          )}`;
+                        }
+                        if (e.target.value < 0) {
+                          console.log("inner condition value");
+                          AlertError();
+                          e.target.value = 0;
+                        }
+                      }}
                       className="customInputBorder px-3 py-1"
                       placeholder="Enter Order Id"
                     />
@@ -367,7 +660,27 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
                   <div className="flex flex-col w-[25%]">
                     Tax (precent)
                     <Field
+                      type="number"
                       name="tax_amount"
+                      onInput={(e) => {
+                        if (e.target.value === "") return;
+
+                        // Convert to string and check decimal places
+                        const parts = e.target.value.split(".");
+                        console.log(parts);
+                        if (parts[1]?.length > 2) {
+                          // Trim to 2 decimals
+                          e.target.value = `${parts[0]}.${parts[1].slice(
+                            0,
+                            2
+                          )}`;
+                        }
+                        if (e.target.value < 0) {
+                          console.log("inner condition value");
+                          AlertError();
+                          e.target.value = 0;
+                        }
+                      }}
                       className="customInputBorder px-3 py-1"
                       placeholder="Enter Order Id"
                     />
@@ -413,16 +726,8 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
                   Next
                 </Button>
               </div>
-              {console.log(
-                "rtk query data",
-                Loading,
-                Success,
-                Error,
-                Data,
-                Errors,
-                slug,
-                id
-              )}
+              {console.log("formik payload", values)}
+              {console.log("formik error payload", errors)}
             </div>
           </Form>
         );
