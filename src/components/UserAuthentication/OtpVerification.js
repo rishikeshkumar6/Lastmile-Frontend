@@ -100,10 +100,10 @@ const OTPVerification = ({ onBackClick }) => {
             <Shield className="h-8 w-8 text-blue-600" />
           </div>
           <h2 className="text-3xl font-bold text-gray-800 mb-2">
-            Verify Phonenumber
+            Verify Email
           </h2>
           <p className="text-gray-600">
-            We've sent a verification code to your phonenumber
+            We've sent a verification code to your email
           </p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-6">

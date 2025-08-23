@@ -9,31 +9,13 @@ const ForgotPassword = ({ onBackClick }) => {
   const [forgotPassword, { isLoading, isSuccess, isError, data, error }] =
     useForgotPasswordMutation();
   const [forgotPaasowrd, setForgotPassword] = useState({
-    resetPasswordMethod: "phonenumber",
-    phonenumber: "",
     email: "",
   });
 
   const forgotPasswordSchema = Yup.object().shape({
-    resetPasswordMethod: Yup.string()
-      .oneOf(["email", "phonenumber"], "Invalid login method")
-      .required("Login method is required"),
     email: Yup.string()
-      .email("Must be a valid email")
-      .test("email-required", "Email is required", function (value) {
-        console.log("this.parent", this.parent);
-        const { resetPasswordMethod } = this.parent;
-        console.log("email", !!value);
-        return resetPasswordMethod === "email" ? !!value : true; // Required if loginMethod is "email"
-      }),
-
-    phonenumber: Yup.string()
-      .matches(/^\d{10}$/, "Phone number must be exactly 10 digits")
-      .test("phone-required", "Phone number is required", function (value) {
-        console.log("phonenumber", !!value);
-        const { resetPasswordMethod } = this.parent;
-        return resetPasswordMethod === "phonenumber" ? !!value : true; // Required if loginMethod is "phonenumber"
-      }),
+      .email("fill valid email")
+      .required("email is required field"),
   });
   useEffect(() => {
     if (isSuccess === true && data?.statusCode === 201) {
@@ -74,7 +56,7 @@ const ForgotPassword = ({ onBackClick }) => {
                   </h2>
                   {values.resetPasswordMethod !== "email" ? (
                     <p className="text-gray-600">
-                      Enter your phonenumber to reset your password
+                      Enter your email to reset your password
                     </p>
                   ) : (
                     <p className="text-gray-600">
@@ -84,52 +66,13 @@ const ForgotPassword = ({ onBackClick }) => {
                 </div>
                 <div className="space-y-6">
                   <div className="space-y-3">
-                    <div className="flex gap-2 items-center">
-                      <Field
-                        type="radio"
-                        name="resetPasswordMethod"
-                        id="phonenumber"
-                        value={"phonenumber"}
-                      />
-                      <label
-                        htmlFor="phonenumber"
-                        className="text-sm font-medium text-gray-700 block"
-                      >
-                        Phonenumber
-                      </label>
-                      <Field
-                        type="radio"
-                        name="resetPasswordMethod"
-                        id="email"
-                        value={"email"}
-                      />
-                      <label
-                        htmlFor="email"
-                        className="text-sm font-medium text-gray-700 block"
-                      >
-                        Email
-                      </label>
-                    </div>
-
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                       <Field
-                        type={
-                          values.resetPasswordMethod !== "email"
-                            ? "number"
-                            : "email"
-                        }
-                        name={
-                          values.resetPasswordMethod !== "email"
-                            ? "phonenumber"
-                            : "email"
-                        }
+                        type="email"
+                        name="email"
                         className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder={
-                          values.resetPasswordMethod !== "email"
-                            ? "Enter your phonenumber"
-                            : "Enter your email id"
-                        }
+                        placeholder="enter your mail id"
                       />
                     </div>
                     <>

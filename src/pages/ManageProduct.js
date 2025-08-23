@@ -170,7 +170,7 @@ const ManageLocation = () => {
                 errorMessage={"No Order Found"}
               />
             )}
-            {isLoading === true && <LoadingTable />}
+            {isLoading === true && <LoadingTable tabletype="producttable" />}
           </div>
         </div>
         {console.log("Rtk query payload", {

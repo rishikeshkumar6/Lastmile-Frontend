@@ -1,8 +1,6 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import html2pdf from "html2pdf.js";
-import { createPopper } from "@popperjs/core";
 import { RxDotsVertical } from "react-icons/rx";
 import { Menu, MenuItem, MenuButton, SubMenu } from "@szhsin/react-menu";
 import Popup from "reactjs-popup";
@@ -39,62 +37,6 @@ const DataTable = ({
   const [toolkit, setToolKit] = useState(null);
   const [cancelOrderState, setCancelOrderState] = useState(false);
   const [drawer, setDrawer] = useState(true);
-  const buttonRef = useRef(null);
-  const tooltipRef = useRef(null);
-  const labelRef = useRef(null);
-
-  const labelData = {
-    shipTo: {
-      name: "Moksh Jaswal",
-      address: "House No. 45, Palm Enclave, Rajouri Garden",
-      city: "New Delhi, 110027, India",
-      phone: "9871178775",
-    },
-    shipFrom: {
-      company: "Warehousity",
-      name: "Moksh Jaswal",
-      address: "House No. 45, Palm Enclave, Rajouri Garden",
-      city: "New Delhi, 110027, India",
-      phone: "9871178775",
-    },
-    package: {
-      dimensions: "10 x 10 x 10 cm",
-      weight: "0.5 kg",
-      date: "10 Apr 2024, 05:03:26",
-      paymentMode: "Prepaid",
-    },
-    courier: {
-      name: "Delhivery",
-      awb: "3306837002",
-    },
-    order: {
-      id: "3075",
-      amount: 100,
-    },
-    products: [
-      {
-        name: "Product 1",
-        quantity: 1,
-        amount: 100,
-      },
-    ],
-  };
-
-  const handleDownloadPDF = () => {
-    console.log("handleDownloadPDF is calling");
-    if (labelRef.current) {
-      const element = labelRef.current;
-      const opt = {
-        margin: 0,
-        filename: `shipping-label-${labelData.order.id}.pdf`,
-        image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: "in", format: [5, 7.5], orientation: "portrait" },
-      };
-
-      html2pdf().set(opt).from(element).save();
-    }
-  };
 
   useEffect(() => {
     console.log("Data", Data);
@@ -106,12 +48,24 @@ const DataTable = ({
       setSelectAll(false);
     }
   }, [Data]);
-  const handleMouseEnter = () => {
-    setToolKit(true);
-    createPopper(buttonRef.current, tooltipRef.current, {
-      placement: "top", // Adjust as needed
-    });
-  };
+
+  const totalAmmount =
+    row !== null
+      ? row.orderDetails !== null
+        ? row.orderDetails.productDetails.length > 0
+          ? row.orderDetails.productDetails.reduce((prev, curr) => {
+              return prev + curr.price * curr.quantity;
+            }, 0)
+          : "N/A"
+        : "N/A"
+      : "N/A";
+  const shippingCharges =
+    row !== null && row?.orderDetails
+      ? row.orderDetails.cod_charges +
+        row.orderDetails.gift_wrap_charges +
+        row.orderDetails.other_charges +
+        row.orderDetails.shipping_charges
+      : "N/A";
 
   const handleMouseLeave = () => setToolKit(false);
   const {
@@ -346,9 +300,21 @@ const DataTable = ({
       </td>
       <td className="p-3 text-[0.8rem]">
         <div className="flex flex-col gap-1">
-          <span>$100</span>
-          <span className="w-[60%] bg-red-200 flex justify-center gap-1">
-            Prepaid
+          <span>{`₹ ${
+            totalAmmount
+              ? totalAmmount
+              : "" + shippingCharges
+              ? shippingCharges
+              : ""
+          }`}</span>
+          <span
+            className={`w-[60%] ${
+              order_details?.payment_mode === "prepaid"
+                ? "bg-red-200"
+                : "bg-green-200"
+            } flex justify-center gap-1`}
+          >
+            {order_details?.payment_mode}
           </span>
         </div>
       </td>
@@ -411,41 +377,12 @@ const DataTable = ({
                   </li>
                 )}
                 {order_status === "booked" && (
-                    <li>
-                      <span
-                        class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white hover:cursor-pointer"
-                        onClick={() => navigate(`/label/${id}`)}
-                      >
-                        Generate Label
-                      </span>
-                    </li>
-                  ) && (
-                    <li>
-                      <span
-                        class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white hover:cursor-pointer"
-                        onClick={() => navigate(`/label/${id}`)}
-                      >
-                        Generate Invoice
-                      </span>
-                    </li>
-                  )}
-                {order_status === "booked" && (
                   <li>
                     <span
                       class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white hover:cursor-pointer"
                       onClick={() => navigate(`/label/${id}`)}
                     >
                       Generate Label
-                    </span>
-                  </li>
-                )}
-                {order_status === "booked" && (
-                  <li>
-                    <span
-                      class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white hover:cursor-pointer"
-                      onClick={() => navigate(`/label/${id}`)}
-                    >
-                      Download Manifest
                     </span>
                   </li>
                 )}
@@ -469,11 +406,6 @@ const DataTable = ({
           </Menu>
         </div>
       </td>
-      {console.log(
-        isLoading === true &&
-          freight_rate_data !== null &&
-          freight_rate_data !== undefined
-      )}{" "}
     </tr>
   );
 };

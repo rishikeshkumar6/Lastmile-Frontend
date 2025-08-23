@@ -57,8 +57,29 @@ function Label() {
 
   useEffect(() => {
     if (isSuccess === true && data !== undefined) {
-      const { consigneeDetails, pickupDetails, orderDetails, packageDetails } =
-        data.orderRes;
+      const {
+        consigneeDetails,
+        pickupDetails,
+        orderDetails,
+        packageDetails,
+        shippingInfo,
+      } = data.orderRes;
+
+      const totalAmmount =
+        orderDetails !== null
+          ? orderDetails.productDetails.length > 0
+            ? orderDetails.productDetails.reduce((prev, curr) => {
+                return prev + curr.price * curr.quantity;
+              }, 0)
+            : "N/A"
+          : "N/A";
+      const shippingCharges =
+        orderDetails !== null
+          ? orderDetails.cod_charges +
+            orderDetails.gift_wrap_charges +
+            orderDetails.other_charges +
+            orderDetails.shipping_charges
+          : "N/A";
 
       setLabelData({
         shipTo: {
@@ -119,8 +140,8 @@ function Label() {
             orderDetails !== null ? orderDetails.payment_mode : "N/A",
         },
         courier: {
-          name: "Delhivery",
-          awb: "3306837002",
+          name: shippingInfo?.courier_partner,
+          awb: shippingInfo?.awb_number,
         },
         order: {
           id:
@@ -129,12 +150,9 @@ function Label() {
                 ? orderDetails.orderid
                 : "N/A"
               : "N/A",
-          amount:
-            orderDetails !== null
-              ? orderDetails.total_amount !== ""
-                ? orderDetails.total_amount
-                : "N/A"
-              : "N/A",
+          amount: totalAmmount + shippingCharges,
+          paymentMode:
+            orderDetails !== null ? orderDetails.payment_mode : "N/A",
         },
         products:
           orderDetails !== null

@@ -54,7 +54,6 @@ const PackageDetails = ({
       console.log(
         "again useEffect is called because post cache is not deleted"
       );
-      alert("new order created successfully");
       navigate(`/order`);
     }
   }, [data]);

@@ -172,14 +172,20 @@ const LoginForm = () => {
                       className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="Enter your password"
                     />
-                    <span className="text-red-400 absolute w-[100%] left-0 bottom-[-25px]">
+                    <span
+                      className={`text-red-400 absolute w-[100%] left-0 top-[40px]`}
+                    >
                       <ErrorMessage name="password" />
                     </span>
                   </div>
                 </div>
                 <button
                   type="button"
-                  className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+                  className={`text-sm text-blue-600 hover:text-blue-800 font-medium ${
+                    errors?.password?.length > 40
+                      ? "w-[100%] flex justify-end"
+                      : ""
+                  }`}
                 >
                   <Link to={"/forgotpassword"}>Forgot password?</Link>
                 </button>
@@ -203,7 +209,7 @@ const LoginForm = () => {
                 </p>
               </div>
             </div>
-            {console.log("errors", errors)}
+            {console.log("errors", errors?.password?.length > 40)}
           </div>
         </Form>
       )}

@@ -172,7 +172,7 @@ const Order = () => {
               errorMessage={"No Order Found"}
             />
           )}
-          {isLoading === true && <LoadingTable />}
+          {isLoading === true && <LoadingTable tabletype="pickuplocation" />}
         </div>
       </section>
     </>

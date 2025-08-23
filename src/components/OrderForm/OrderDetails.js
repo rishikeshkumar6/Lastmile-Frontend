@@ -198,12 +198,10 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
       initialValues={orderDetailsForm}
       validationSchema={orderDetailsFormSchema}
       onSubmit={(field) => {
-        console.log("-----slug-----", slug, "--------id-----", id);
         if (slug !== undefined && id !== undefined) {
           const newField = { ...field };
           newField["id"] = id;
           newField["slug"] = slug;
-          console.log("---------newField-------", newField);
           updateOrder(newField);
         }
         console.log(field);
@@ -466,7 +464,9 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
                         Category*
                         <Select
                           value={{
-                            label: values.productDetails[index].category,
+                            label: values.productDetails[index].category
+                              ? values.productDetails[index].category
+                              : "Select Category.....",
                             value: values.productDetails[index].category,
                           }}
                           name={`productDetails[${index}].category`}

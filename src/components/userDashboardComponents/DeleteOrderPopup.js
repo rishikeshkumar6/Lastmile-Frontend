@@ -14,12 +14,15 @@ const DeleteCardPopup = ({ popup, setPopup, row }) => {
   };
   useEffect(() => {
     if (isSuccess && data.statusCode === 200) {
+      setPopup(false);
       toast.success(data.message, { autoClose: "2000" });
     }
     if (isError && error.data.statusCode === 401) {
+      setPopup(false);
       toast.error(error.data.message, { autoClose: "2000" });
     }
     if (isError && error.data.statusCode === 500) {
+      setPopup(false);
       toast.error(error.data.errorMessage, { autoClose: "2000" });
     }
   }, [data, error]);

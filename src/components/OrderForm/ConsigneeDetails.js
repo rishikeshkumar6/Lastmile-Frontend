@@ -665,6 +665,8 @@ const ConsigneeDetails = ({
                 Next
               </Button>
             </div>
+            {console.log("errors-->>", errors)}
+            {console.log("<<<<<value>>>>", values)}
           </div>
         </Form>
       )}

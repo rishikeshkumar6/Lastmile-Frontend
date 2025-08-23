@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useUpdatePasswordMutation } from "../../Redux/Action";
+import { useNavigate } from "react-router-dom";
 
 const ResetPassword = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     password: "",
     confirmPassword: "",
@@ -64,6 +66,7 @@ const ResetPassword = () => {
   useEffect(() => {
     if (isSuccess === true && data?.statusCode === 201) {
       toast.success(data["message"], { autoClose: 2000 });
+      navigate("/login");
     }
     if (isError === true) {
       toast.success("internal server error", { autoClose: 2000 });

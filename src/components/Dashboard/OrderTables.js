@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { format } from "date-fns";
+import LoadingTable from "../userDashboardComponents/LoadingTable";
 
 const OrdersTable = ({
   orders,
@@ -74,38 +75,40 @@ const OrdersTable = ({
     <div className="bg-white shadow-md rounded-lg overflow-hidden">
       <div className="overflow-y-auto max-h-[calc(100vh-250px)]">
         <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              {[
-                "Courier Partner",
-                "Expected Pickup",
-                "Estimited Delivery",
-                "Chargeable Weight ",
-                "Charges",
-                "Action",
-              ].map((field) => (
-                <th
-                  key={field}
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  <button
-                    className="flex items-center focus:outline-none"
-                    onClick={() => handleSort(field)}
+          {Data.length > 0 && (
+            <thead className="bg-gray-50">
+              <tr>
+                {[
+                  "Courier Partner",
+                  "Expected Pickup",
+                  "Estimited Delivery",
+                  "Chargeable Weight ",
+                  "Charges",
+                  "Action",
+                ].map((field) => (
+                  <th
+                    key={field}
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
-                    {field.charAt(0).toUpperCase() + field.slice(1)}
-                    {sortField === field &&
-                      (sortDirection === "asc" ? (
-                        <ChevronUp size={16} />
-                      ) : (
-                        <ChevronDown size={16} />
-                      ))}
-                  </button>
-                </th>
-              ))}
-            </tr>
-          </thead>
+                    <button
+                      className="flex items-center focus:outline-none"
+                      onClick={() => handleSort(field)}
+                    >
+                      {field.charAt(0).toUpperCase() + field.slice(1)}
+                      {sortField === field &&
+                        (sortDirection === "asc" ? (
+                          <ChevronUp size={16} />
+                        ) : (
+                          <ChevronDown size={16} />
+                        ))}
+                    </button>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+          )}
           <tbody className="bg-white divide-y divide-gray-200">
-            {Data.length > 0 &&
+            {Data.length > 0 ? (
               Data[0].map((order) => (
                 <React.Fragment key={order.estimate_delivey_date}>
                   <tr className="hover:bg-gray-50">
@@ -135,7 +138,7 @@ const OrdersTable = ({
                       <span
                         className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full`}
                       >
-                        {order.weight} kg
+                        {0.5} kg
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -161,7 +164,10 @@ const OrdersTable = ({
                     </td>
                   </tr>
                 </React.Fragment>
-              ))}
+              ))
+            ) : (
+              <LoadingTable tabletype="shippingtable" />
+            )}
           </tbody>
         </table>
       </div>

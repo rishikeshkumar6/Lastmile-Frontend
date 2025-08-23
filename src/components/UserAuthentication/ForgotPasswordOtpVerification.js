@@ -86,10 +86,10 @@ const ForgotPasswordOtpVerifications = ({ onBackClick }) => {
             <Shield className="h-8 w-8 text-blue-600" />
           </div>
           <h2 className="text-3xl font-bold text-gray-800 mb-2">
-            Verify Phonenumber
+            Verify Email
           </h2>
           <p className="text-gray-600">
-            We've sent a verification code to your phonenumber
+            We've sent a verification code to your email
           </p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -111,13 +111,16 @@ const ForgotPasswordOtpVerifications = ({ onBackClick }) => {
             type="submit"
             className="w-full bg-blue-600 text-white rounded-lg py-2.5 font-medium hover:bg-blue-700 transition-colors"
           >
-           {isLoading?'Loading........':'Verify Number'}
+            {isLoading ? "Loading........" : "Verify Email"}
           </button>
         </form>
         <div className="mt-6 text-center">
           <p className="text-gray-600">
             Didn't receive the code?{" "}
-            <button className="text-blue-600 hover:text-blue-800 font-medium">
+            <button
+              className="text-blue-600 hover:text-blue-800 font-medium"
+              onClick={handleSubmit}
+            >
               Resend
             </button>
           </p>

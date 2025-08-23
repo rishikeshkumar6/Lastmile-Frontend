@@ -83,12 +83,14 @@ const ShippingLabel = ({
             <b>Order ID</b>: {order.id}
           </span>
           <div className="text-center mt-2">
-            <h1 className="font-bold text-[20px]">PREPAID</h1>
+            <h1 className="font-bold text-[20px]">
+              {order?.paymentMode?.toUpperCase()}
+            </h1>
             <h1 className="font-bold text-[18px]">₹ {order.amount}</h1>
           </div>
         </div>
       </div>
-      <div className="flex-1 border-t border-black p-3 md:p-5 text-[10px]">
+      <div className="flex-1 border-t border-black   text-[10px]">
         <table className="w-full">
           <thead className="bg-base-100 py-3">
             <tr>
@@ -98,20 +100,25 @@ const ShippingLabel = ({
             </tr>
           </thead>
           <tbody>
-            {products.map((product, index) => (
+            {products?.slice(0, 2)?.map((product, index) => (
               <tr key={index}>
-                <td className="px-5 py-4">{`${product.name.slice(
+                <td className="px-5 py-2">{`${product.name.slice(
                   0,
-                  15
+                  35
                 )}...`}</td>
                 <td className="px-5">{product.quantity}</td>
-                <td className="text-right py-4 px-5">₹{product.price}</td>
+                <td className="text-right py-2 px-5">₹{product.price}</td>
               </tr>
             ))}
           </tbody>
         </table>
-        <div className="flex pr-5 justify-end mt-5">
-          <b>Total</b>: ₹{totalAmount}
+        {products.length > 2 && (
+          <div className="flex pr-5 justify-end mt-4">{`${
+            products.slice(2).length
+          } more product`}</div>
+        )}
+        <div className="flex pr-5 justify-end mt-4">
+          <b>Total</b>: ₹{order.amount}
         </div>
       </div>
       <div className="border-b border-t px-3 md:px-5 py-2 md:py-3 text-[9px] border-black flex gap-4 md:gap-10 items-center text-center">
@@ -119,8 +126,9 @@ const ShippingLabel = ({
         eligible for return or exchange according to the store's policy.
       </div>
       <div className="px-3 md:px-5 py-2 md:py-3 text-[9px] text-center">
-        Powered by <b>Last Miles @ Warehousity</b>.
+        Powered by <b>Logistic Solutions</b>.
       </div>
+      {console.log("<<<<<<orderDetails>>>>>", order)}
     </div>
   );
 };

@@ -99,7 +99,7 @@ const Order = () => {
       <section className="flex gap-6">
         <Sidebar />
         <div className="m-3 text-xl text-gray-900   w-[90%] m-[auto]">
-          <div class="absolute hidden z-10 p-4 w-full max-w-md max-h-full">
+          {/* <div class="absolute hidden z-10 p-4 w-full max-w-md max-h-full">
             <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
               <button
                 type="button"
@@ -158,7 +158,7 @@ const Order = () => {
                 </button>
               </div>
             </div>
-          </div>
+          </div> */}
 
           <div
             className={`flex ${
@@ -339,8 +339,7 @@ const Order = () => {
                   : " bg-white text-black"
               }`}
               onClick={() => handleActiveButton("Cancel Order")}
-              disabled={true}
-              title="coming soon"
+              disabled={false}
             >
               Cancel Orders
             </button>

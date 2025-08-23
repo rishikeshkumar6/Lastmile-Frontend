@@ -207,7 +207,8 @@ const FileUpload = () => {
             state: row.state || "",
             city: row.city || "",
             pincode: row.pincode || "",
-            billing_is_same_as_consignee: row || "",
+            billing_is_same_as_consignee:
+              row.billing_is_same_as_consignee || "",
             billing_full_name: row.billing_full_name || "",
             billing_phone: row.billing_phone || "",
             billing_email: row.billing_email || "",

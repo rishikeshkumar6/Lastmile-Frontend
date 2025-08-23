@@ -22,7 +22,7 @@ const PublicRoutes = () => {
   const location = useLocation();
   console.log("url location", location.pathname);
   if (isLoading) return <LoadingScreen />;
-  if (isSuccess) return <Navigate to="/dashboard" />;
+  if (isSuccess) return <Navigate to="/order" />;
   // Redirect to dashboard if authenticated
 
   return <Outlet />; // Allow access to public routes if not authenticated
