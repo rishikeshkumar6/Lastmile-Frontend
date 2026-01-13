@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { format } from "date-fns";
 import LoadingTable from "../userDashboardComponents/LoadingTable";
+import ErrorTable from "../userDashboardComponents/ErrorTable";
 
 const OrdersTable = ({
   orders,
@@ -14,6 +15,7 @@ const OrdersTable = ({
   popup,
   setPopup,
   setActiveButton,
+  is_freight_error,
 }) => {
   const [shippingOrder, { isLoading, isSuccess, isError, data, error }] =
     useShippingOrderMutation();
@@ -166,7 +168,11 @@ const OrdersTable = ({
                 </React.Fragment>
               ))
             ) : (
-              <LoadingTable tabletype="shippingtable" />
+              <ErrorTable
+                className="h-[400px] flex items-center justify-center bg-white flex-col gap-5"
+                w={["20%"]}
+                errorMessage={`No Courier Found`}
+              />
             )}
           </tbody>
         </table>

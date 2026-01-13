@@ -23,15 +23,7 @@ export const menus = [
   { name: "Manage Location", link: "/manage_location", icon: GrMapLocation },
   { name: "Manage Product", link: "/manage_product", icon: BsBox },
 
-  { name: "messages", link: "/chat", icon: FiMessageSquare },
-  {
-    name: "Rate Calculator",
-    link: "/rate-calculator",
-    icon: GiCalculator,
-    margin: true,
-  },
   { name: "Wallet History", link: "/wallethistory", icon: IoWalletOutline },
   { name: "Rate Card", link: "/rate_card", icon: GiCalculator },
-  { name: "Saved", link: "/saved", icon: AiOutlineHeart, margin: true },
   { name: "logout", link: "/", icon: IoIosLogOut },
 ];

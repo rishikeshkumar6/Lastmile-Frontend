@@ -5,12 +5,20 @@ import { useFreightRateMutation } from "../Redux/Action";
 //import styles 👇
 import "react-modern-drawer/dist/index.css";
 import OrdersTable from "./Dashboard/OrderTables";
+import LoadingTable from "./userDashboardComponents/LoadingTable";
+import ErrorTable from "./userDashboardComponents/ErrorTable";
 
 const AvatarDrawer = ({
   popup,
   setPopup,
   shipmentRowData,
   setActiveButton,
+  freightRate,
+  is_ferightrare_loading,
+  is_ferightrare_success,
+  freight_rate_data,
+  is_freight_error,
+  freight_error,
 }) => {
   const handlePopup = () => {
     setPopup(!popup);
@@ -202,15 +210,36 @@ const AvatarDrawer = ({
               )}
             </thead>
           </table>
-          <OrdersTable
-            orders={recentOrders}
-            isSubscribed={true}
-            shipmentRowData={shipmentRowData}
-            popup={popup}
-            setPopup={setPopup}
-            setActiveButton={setActiveButton}
-          />
+          {is_ferightrare_success && (
+            <OrdersTable
+              orders={recentOrders}
+              isSubscribed={true}
+              shipmentRowData={shipmentRowData}
+              popup={popup}
+              setPopup={setPopup}
+              setActiveButton={setActiveButton}
+              is_freight_error={is_freight_error}
+            />
+          )}
+          {is_ferightrare_loading && <LoadingTable />}
+          {is_freight_error && (
+            <ErrorTable
+              className="h-[400px] flex items-center justify-center bg-white flex-col gap-5"
+              w={["20%"]}
+              errorMessage={`${
+                freight_error?.data?.errorMessage ||
+                "An Internal Server Error occurs"
+              }`}
+            />
+          )}
         </div>
+        {console.log(
+          is_ferightrare_loading,
+          is_ferightrare_success,
+          freight_rate_data,
+          is_freight_error,
+          freight_error
+        )}
       </Drawer>
     </>
   );

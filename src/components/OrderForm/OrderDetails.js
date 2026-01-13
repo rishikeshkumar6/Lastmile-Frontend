@@ -256,9 +256,9 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
         return (
           <Form>
             <div className="w-[82%] m-[auto] gap-12 flex flex-wrap">
-              <div className="flex w-[100%] font-normal text-[15px] gap-y-2 flex-wrap gap-x-20">
+              <div className="flex w-[100%] font-normal text-[15px] gap-y-2 flex-wrap gap-x-5">
                 <div className="text-xl w-[100%]">Order Details</div>
-                <div className="flex flex-col w-[46%]">
+                <div className="flex flex-col w-[48%]">
                   Order Id*
                   <Field
                     name="orderid"
@@ -275,7 +275,7 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
                     className="text-red-500"
                   />
                 </div>
-                <div className="flex flex-col w-[46%]">
+                <div className="flex flex-col w-[48%]">
                   Channel
                   <Field
                     name="channel"
@@ -317,7 +317,7 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
                   console.log("index", index);
                   return (
                     <div className=" relative flex flex-col gap-5 w-[100%] border p-[25px]">
-                      <div className="flex flex-col w-[65%]">
+                      <div className="flex flex-col w-[86%]">
                         Product Name*
                         <Field
                           name={`productDetails[${index}].name`}
@@ -331,7 +331,7 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
                         />
                       </div>
                       <div className="flex gap-5">
-                        <div className="flex flex-col w-[15%]">
+                        <div className="flex flex-col w-[20%]">
                           quantity*
                           <Field
                             type="number"
@@ -359,7 +359,7 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
                             className="text-red-500"
                           />
                         </div>
-                        <div className="flex flex-col w-[15%]">
+                        <div className="flex flex-col w-[20%]">
                           price*
                           <Field
                             type="number"
@@ -395,7 +395,7 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
                         {values.productDetails[index].isSensitiveOrder && (
                           <>
                             {" "}
-                            <div className="flex flex-col w-[15%]">
+                            <div className="flex flex-col w-[20%]">
                               Batch No
                               <Field
                                 name={`productDetails[${index}].batch_no`}
@@ -403,7 +403,7 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
                                 placeholder="Enter batch no"
                               />
                             </div>
-                            <div className="flex flex-col w-[15%]">
+                            <div className="flex flex-col w-[20%]">
                               expiry date*
                               <Field
                                 type="date"
@@ -424,7 +424,7 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
                         )}
                       </div>
                       <div className="flex w-[100] gap-5">
-                        <div className="flex flex-col w-[32%]">
+                        <div className="flex flex-col w-[42%]">
                           Sku Code
                           <Field
                             name={`productDetails[${index}].sku_code`}
@@ -438,7 +438,7 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
                             placeholder="Enter sku code"
                           />
                         </div>
-                        <div className="flex flex-col w-[32%]">
+                        <div className="flex flex-col w-[42%]">
                           Hsn Code
                           <Field
                             name={`productDetails[${index}].hsn_code`}
@@ -478,7 +478,7 @@ const OrderDetails = ({ Loading, Success, Error, Data, Errors, slug, id }) => {
                               `productDetails[${index}].isSensitiveOrder`
                             )
                           }
-                          className="basic-multi-select w-[65%]"
+                          className="basic-multi-select w-[86%]"
                           classNamePrefix="select"
                         />
                       </div>

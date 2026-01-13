@@ -23,16 +23,19 @@ const DataTable = ({
   shipmentPopup,
   setShipmentPopup,
   setShipmentRowData,
+  freightRate,
+  is_ferightrare_loading,
+  is_ferightrare_success,
+  freight_rate_data,
+  is_freight_error,
+  freight_error,
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const Data = useSelector(
     (state) => state["rootReducer"]["orderSlice"]["exportOrder"]
   );
-  const [
-    freightRate,
-    { isLoading, isSuccess, data: freight_rate_data, isError, error },
-  ] = useFreightRateMutation();
+
   const [selectedOrders, setSelectedOrders] = useState([]);
   const [toolkit, setToolKit] = useState(null);
   const [cancelOrderState, setCancelOrderState] = useState(false);
@@ -56,9 +59,9 @@ const DataTable = ({
           ? row.orderDetails.productDetails.reduce((prev, curr) => {
               return prev + curr.price * curr.quantity;
             }, 0)
-          : "N/A"
-        : "N/A"
-      : "N/A";
+          : ""
+        : ""
+      : "";
   const shippingCharges =
     row !== null && row?.orderDetails
       ? row.orderDetails.cod_charges +
@@ -104,7 +107,7 @@ const DataTable = ({
   useEffect(() => {
     console.log("---freight rate useEffect hook----");
     if (
-      isSuccess === true &&
+      is_ferightrare_success === true &&
       freight_rate_data !== null &&
       freight_rate_data !== undefined
     ) {
@@ -406,6 +409,14 @@ const DataTable = ({
           </Menu>
         </div>
       </td>
+      {console.log(
+        "rtk query state check",
+        is_ferightrare_loading,
+        is_ferightrare_success,
+        freight_rate_data,
+        is_freight_error,
+        freight_error
+      )}
     </tr>
   );
 };

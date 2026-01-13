@@ -17,6 +17,7 @@ import GenerateExcel from "../components/userDashboardComponents/ExportOrder";
 import DateRangePicker from "../components/OrderForm/DatePicker";
 import ReactSelect from "../components/userDashboardComponents/ReactSelect";
 import AvatarDrawer from "../components/AvatarDrawer";
+import { useFreightRateMutation } from "../Redux/Action";
 
 const Order = () => {
   const dispatch = useDispatch();
@@ -33,6 +34,16 @@ const Order = () => {
 
   const [getAllOrder, { isLoading, isSuccess, isError, data, error }] =
     useLazyGetAllOrderQuery();
+  const [
+    freightRate,
+    {
+      isLoading: is_ferightrare_loading,
+      isSuccess: is_ferightrare_success,
+      data: freight_rate_data,
+      isError: is_freight_error,
+      error: freight_error,
+    },
+  ] = useFreightRateMutation();
   const navigate = useNavigate();
   useEffect(() => {
     document.title = "Dashboard";
@@ -95,6 +106,12 @@ const Order = () => {
         setPopup={setShipmentPopup}
         shipmentRowData={shipmentRowData}
         setActiveButton={setActiveButton}
+        freightRate={freightRate}
+        is_ferightrare_loading={is_ferightrare_loading}
+        is_ferightrare_success={is_ferightrare_success}
+        freight_rate_data={freight_rate_data}
+        is_freight_error={is_freight_error}
+        freight_error={freight_error}
       />
       <section className="flex gap-6">
         <Sidebar />
@@ -160,18 +177,8 @@ const Order = () => {
             </div>
           </div> */}
 
-          <div
-            className={`flex ${
-              isSuccess && Object.keys(data).length > 0
-                ? "justify-between"
-                : "justify-end"
-            } py-5 pl-14`}
-          >
-            <div
-              className={`gap-5 items-center w-[40%] ${
-                isSuccess && Object.keys(data).length > 0 ? "flex" : "hidden"
-              }`}
-            >
+          <div className={`flex justify-between justify-end py-5 pl-14`}>
+            <div className={`gap-5 items-center w-[40%] flex`}>
               <form
                 class="max-w-md w-[100%]"
                 onSubmit={(e) => e.preventDefault()}
@@ -402,6 +409,14 @@ const Order = () => {
                           shipmentPopup={shipmentPopup}
                           setShipmentPopup={setShipmentPopup}
                           setShipmentRowData={setShipmentRowData}
+                          isError={isError}
+                          isLoading={isLoading}
+                          freightRate={freightRate}
+                          is_ferightrare_loading={is_ferightrare_loading}
+                          is_ferightrare_success={is_ferightrare_success}
+                          freight_rate_data={freight_rate_data}
+                          is_freight_error={is_freight_error}
+                          freight_error={freight_error}
                         />
                       );
                     })}

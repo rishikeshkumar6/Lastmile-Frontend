@@ -260,7 +260,7 @@ const ConsigneeDetails = ({
 
             <div className="text-[15px] font-normal flex flex-wrap gap-5">
               {" "}
-              <div className="flex flex-col w-[32%] relative">
+              <div className="flex flex-col w-[48%] relative">
                 Full Name*
                 <Field
                   name="fullname"
@@ -277,7 +277,7 @@ const ConsigneeDetails = ({
                   className="text-red-600 text-sm"
                 />
               </div>
-              <div className="flex flex-col w-[32%]">
+              <div className="flex flex-col w-[48%]">
                 Phone Number*
                 <Field
                   type="number"
@@ -295,7 +295,7 @@ const ConsigneeDetails = ({
                   className="text-red-600 text-sm"
                 />
               </div>
-              <div className="flex flex-col w-[32%]">
+              <div className="flex flex-col w-[48%]">
                 Email*
                 <Field
                   type="email"
@@ -313,7 +313,7 @@ const ConsigneeDetails = ({
                   className="text-red-600 text-sm"
                 />
               </div>
-              <div className="flex flex-col w-[32%]">
+              <div className="flex flex-col w-[48%]">
                 Alternate Phone Number
                 <Field
                   type="number"
@@ -322,7 +322,7 @@ const ConsigneeDetails = ({
                   placeholder="Enter Consignee Alternate Phone Number"
                 />
               </div>
-              <div className="flex flex-col w-[32%]">
+              <div className="flex flex-col w-[48%]">
                 Consignee's Company
                 <Field
                   name="consigneecompany"
@@ -330,7 +330,7 @@ const ConsigneeDetails = ({
                   placeholder="Enter Consignee Company Name"
                 />
               </div>
-              <div className="flex flex-col w-[32%]">
+              <div className="flex flex-col w-[48%]">
                 GSTIN*
                 <Field
                   name="gstin"
@@ -355,7 +355,7 @@ const ConsigneeDetails = ({
               </span>
             </div>
             <div className="text-[15px] font-normal flex flex-wrap gap-5">
-              <div className="flex flex-col w-[50%]">
+              <div className="flex flex-col w-[48%]">
                 Full Address*
                 <Field
                   name="fulladdress"
@@ -389,7 +389,7 @@ const ConsigneeDetails = ({
                   className="text-red-600 text-sm"
                 />
               </div>
-              <div className="flex flex-col w-[32%]">
+              <div className="flex flex-col w-[48%]">
                 Pincode*
                 <Field
                   type="number"
@@ -413,7 +413,7 @@ const ConsigneeDetails = ({
                   className="text-red-600 text-sm"
                 />
               </div>
-              <div className="flex flex-col w-[32%]">
+              <div className="flex flex-col w-[48%]">
                 City*
                 <Field
                   name="city"
@@ -430,7 +430,7 @@ const ConsigneeDetails = ({
                   className="text-red-600 text-sm"
                 />
               </div>
-              <div className="flex flex-col w-[32%]">
+              <div className="flex flex-col w-[48%]">
                 State*
                 <Field
                   name="state"
@@ -447,7 +447,7 @@ const ConsigneeDetails = ({
                   className="text-red-600 text-sm"
                 />
               </div>
-              <div className="flex flex-col w-[32%]">
+              <div className="flex flex-col w-[48%]">
                 Country*
                 <Field
                   name="country"
@@ -486,7 +486,7 @@ const ConsigneeDetails = ({
                 <div className="font-[500]">Billing Details </div>
                 <div className="text-[15px] font-normal flex flex-wrap gap-5">
                   {" "}
-                  <div className="flex flex-col w-[32%] relative">
+                  <div className="flex flex-col w-[48%] relative">
                     Full Name*
                     <Field
                       name="billing_full_name"
@@ -503,7 +503,7 @@ const ConsigneeDetails = ({
                       className="text-red-600 text-sm"
                     />
                   </div>
-                  <div className="flex flex-col w-[32%]">
+                  <div className="flex flex-col w-[48%]">
                     Phone Number*
                     <Field
                       type="number"
@@ -521,7 +521,7 @@ const ConsigneeDetails = ({
                       className="text-red-600 text-sm"
                     />
                   </div>
-                  <div className="flex flex-col w-[32%]">
+                  <div className="flex flex-col w-[48%]">
                     Email*
                     <Field
                       type="email"
@@ -542,7 +542,7 @@ const ConsigneeDetails = ({
                 </div>
                 <div className="font-[500] w-[100%]">Billing Address </div>
                 <div className="text-[15px] font-normal flex flex-wrap gap-5">
-                  <div className="flex flex-col w-[50%]">
+                  <div className="flex flex-col w-[48%]">
                     Full Address*
                     <Field
                       name="billing_address"
@@ -576,7 +576,7 @@ const ConsigneeDetails = ({
                       className="text-red-600 text-sm"
                     />
                   </div>
-                  <div className="flex flex-col w-[32%]">
+                  <div className="flex flex-col w-[48%]">
                     Pincode*
                     <Field
                       type="number"
@@ -600,7 +600,7 @@ const ConsigneeDetails = ({
                       className="text-red-600 text-sm"
                     />
                   </div>
-                  <div className="flex flex-col w-[32%]">
+                  <div className="flex flex-col w-[48%]">
                     City*
                     <Field
                       name="billing_city"
@@ -617,7 +617,7 @@ const ConsigneeDetails = ({
                       className="text-red-600 text-sm"
                     />
                   </div>
-                  <div className="flex flex-col w-[32%]">
+                  <div className="flex flex-col w-[48%]">
                     State*
                     <Field
                       name="billing_state"
@@ -634,7 +634,7 @@ const ConsigneeDetails = ({
                       className="text-red-600 text-sm"
                     />
                   </div>
-                  <div className="flex flex-col w-[32%]">
+                  <div className="flex flex-col w-[48%]">
                     Country*
                     <Field
                       name="billing_country"
