@@ -17,6 +17,7 @@ import {
 import Sidebar from "../components/Sidebar";
 
 const Dashboard = () => {
+  document.title = "Dashboard";
   const orderStatusData = [
     {
       title: "New Orders",

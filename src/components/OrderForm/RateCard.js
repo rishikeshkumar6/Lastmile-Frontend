@@ -218,6 +218,7 @@ const courierData = [
 ];
 
 const RateCard = () => {
+  document.title = "Courier Rate Card";
   return (
     <section className="flex gap-6">
       <Sidebar />

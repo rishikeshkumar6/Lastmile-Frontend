@@ -14,6 +14,7 @@ import { useLazyGetAllProductQuery } from "../Redux/Action";
 import ErrorTable from "../components/userDashboardComponents/ErrorTable";
 import DeleteCardPopup from "../components/DeleteProductCardPopup";
 const ManageLocation = () => {
+  document.title = "Manage Product";
   const dispatch = useDispatch();
   const [getAllProduct, { isLoading, isSuccess, data, isError, error }] =
     useLazyGetAllProductQuery();

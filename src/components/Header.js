@@ -81,7 +81,7 @@ const Header = () => {
           try {
             const response = await axios.post(
               `${process.env.REACT_APP_DEVELOPEMENT_URL}/api/v1/paymentverification`,
-              { ...res, ...data }
+              { ...res, ...data },
             );
             if (
               Object.keys(response.data).length > 0 &&
@@ -136,79 +136,7 @@ const Header = () => {
         >
           Recharge
         </button> */}
-          <li
-            className="relative flex"
-            onMouseEnter={() => setIsButtonHovered(true)}
-            onMouseLeave={() => setIsButtonHovered(false)}
-          >
-            <button
-              id="mega-menu-icons-dropdown-button"
-              className="flex items-center justify-between w-full py-2 px-3 font-medium text-gray-900 border-b border-gray-100 md:w-auto hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-blue-600 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-blue-500 md:dark:hover:bg-transparent dark:border-gray-700"
-            >
-              Quick Actions
-            </button>
 
-            {/* Mega Menu Dropdown */}
-            <div
-              id="mega-menu-icons-dropdown"
-              className={`absolute ${
-                isButtonHovered ? "block" : "hidden"
-              } z-10 top-full  -translate-x-1/2 w-auto md:w-[65vw] min-w-[300px] max-w-[800px] text-sm bg-white border border-gray-100 rounded-lg shadow-md dark:border-gray-700 dark:bg-gray-700 p-4 transition-opacity duration-300`}
-            >
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-4 w-full">
-                {/* Menu Items */}
-                <div
-                  className="p-2 flex flex-col items-center text-center cursor-pointer border rounded-lg hover:border-indigo-500"
-                  onClick={() => navigate("/order/ordercreate")}
-                >
-                  <img
-                    src="https://sr-cdn-1.shiprocket.in/img/add_order.svg"
-                    className="w-12 h-12 mb-2"
-                    alt="Add order"
-                  />
-                  <span className="text-sm ">Add an Order</span>
-                </div>
-
-                <div className="p-2 flex flex-col items-center text-center cursor-pointer border rounded-lg hover:border-indigo-500">
-                  <img
-                    src="https://sr-cdn-1.shiprocket.in/img/bike.svg"
-                    className="w-12 h-12 mb-2"
-                    alt="Hyperlocal shipment"
-                  />
-                  <span className="text-sm">Create a Hyperlocal Shipment</span>
-                </div>
-                <div className="p-2 flex flex-col items-center text-center cursor-pointer border rounded-lg hover:border-indigo-500">
-                  <img
-                    src="https://sr-cdn-1.shiprocket.in/img/rate_calulator.svg"
-                    className="w-12 h-12 mb-2"
-                    alt="Hyperlocal shipment"
-                  />
-                  <span className="text-sm">Rate Calculator</span>
-                </div>
-                <div className="p-2 flex flex-col items-center text-center cursor-pointer border rounded-lg hover:border-indigo-500">
-                  <img
-                    src="https://sr-cdn-1.shiprocket.in/img/create_ticket.svg"
-                    className="w-12 h-12 mb-2"
-                    alt="Hyperlocal shipment"
-                  />
-                  <span className="text-sm">Create a Ticket</span>
-                </div>
-                <div
-                  className="p-2 flex flex-col items-center text-center cursor-pointer border rounded-lg hover:border-indigo-500"
-                  onClick={() => navigate("/orderDetails")}
-                >
-                  <img
-                    src="https://sr-cdn-1.shiprocket.in/img/track_shipment.svg"
-                    className="w-12 h-12 mb-2"
-                    alt="Hyperlocal shipment"
-                  />
-                  <span className="text-sm">Track Shipments</span>
-                </div>
-
-                {/* Add other menu items similarly */}
-              </div>
-            </div>
-          </li>
           <button
             type="button"
             class="flex gap-2 items-center text-white bg-[#4285F4] hover:bg-[#4285F4]/90 focus:ring-4 focus:outline-none focus:ring-[#4285F4]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#4285F4]/55"

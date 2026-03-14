@@ -29,11 +29,12 @@ const DataTable = ({
   freight_rate_data,
   is_freight_error,
   freight_error,
+  activeButton,
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const Data = useSelector(
-    (state) => state["rootReducer"]["orderSlice"]["exportOrder"]
+    (state) => state["rootReducer"]["orderSlice"]["exportOrder"],
   );
 
   const [selectedOrders, setSelectedOrders] = useState([]);
@@ -216,7 +217,7 @@ const DataTable = ({
               {order_details["productDetails"][0]["name"] !== ""
                 ? `${order_details["productDetails"][0]["name"].slice(
                     0,
-                    20
+                    20,
                   )}....`
                 : ""}
             </span>
@@ -307,8 +308,8 @@ const DataTable = ({
             totalAmmount
               ? totalAmmount
               : "" + shippingCharges
-              ? shippingCharges
-              : ""
+                ? shippingCharges
+                : ""
           }`}</span>
           <span
             className={`w-[60%] ${
@@ -324,98 +325,92 @@ const DataTable = ({
       <td className="p-3 text-[0.8rem]">
         {order_status !== "" ? order_status : ""}
       </td>
-      <td className="px-3 py-5 text-[0.8rem] flex items-center gap-2">
-        {order_status !== "" && order_status === "new" ? (
-          <button
-            className="flex gap-2 items-center justify-center text-white bg-[#4285F4] hover:bg-[#4285F4]/90 focus:ring-4 focus:outline-none focus:ring-[#4285F4]/50 font-medium text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#4285F4]/55"
-            onClick={handleShipment}
-          >
-            Ship Now
-          </button>
-        ) : (
-          <button
-            className="flex gap-2 items-center justify-center text-white bg-[#4285F4] hover:bg-[#4285F4]/90 focus:ring-4 focus:outline-none focus:ring-[#4285F4]/50 font-medium text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#4285F4]/55"
-            onClick={() => navigate("/orderDetails")}
-          >
-            Track
-          </button>
-        )}
-        <div className="relative">
-          <Menu
-            menuButton={
-              <MenuButton>
-                {" "}
-                <RxDotsVertical className="cursor-pointer" />
-              </MenuButton>
-            }
-          >
-            <div
-              class="z-10 absolute bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-40 dark:bg-gray-700 dark:divide-gray-600"
-              onClose={() => setDrawer(false)}
+      {activeButton !== "all" && (
+        <td className="px-3 py-5 text-[0.8rem] flex items-center gap-2">
+          {order_status !== "" && order_status === "new" ? (
+            <button
+              className="flex gap-2 items-center justify-center text-white bg-[#4285F4] hover:bg-[#4285F4]/90 focus:ring-4 focus:outline-none focus:ring-[#4285F4]/50 font-medium text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#4285F4]/55"
+              onClick={handleShipment}
             >
-              <ul
-                class="py-2 text-sm text-gray-700 dark:text-gray-200"
-                aria-labelledby="dropdownMenuIconButton"
+              Ship Now
+            </button>
+          ) : (
+            <button
+              className="flex gap-2 items-center justify-center text-white bg-[#4285F4] hover:bg-[#4285F4]/90 focus:ring-4 focus:outline-none focus:ring-[#4285F4]/50 font-medium text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#4285F4]/55"
+              onClick={() => navigate("/orderDetails")}
+            >
+              Track
+            </button>
+          )}
+          <div className="relative">
+            <Menu
+              menuButton={
+                <MenuButton>
+                  {" "}
+                  <RxDotsVertical className="cursor-pointer" />
+                </MenuButton>
+              }
+            >
+              <div
+                class="z-10 absolute bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-40 dark:bg-gray-700 dark:divide-gray-600"
+                onClose={() => setDrawer(false)}
               >
-                <li>
-                  <span
-                    href="#"
-                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white hover:cursor-pointer"
-                    onClick={() => navigate("/orderDetails")}
-                  >
-                    View Order
-                  </span>
-                </li>
-                {(order_status === "new" ||
-                  order_status === "supicious_order") && (
-                  <li>
-                    <span
-                      class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white hover:cursor-pointer"
-                      onClick={() =>
-                        navigate(`/order/ordercreate/${id}/consignee-details`)
-                      }
-                    >
-                      Edit Order
-                    </span>
-                  </li>
-                )}
-                {order_status === "booked" && (
-                  <li>
-                    <span
-                      class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white hover:cursor-pointer"
-                      onClick={() => navigate(`/label/${id}`)}
-                    >
-                      Generate Label
-                    </span>
-                  </li>
-                )}
-                {(order_status === "new" ||
-                  order_status === "supicious_order") && (
+                <ul
+                  class="py-2 text-sm text-gray-700 dark:text-gray-200"
+                  aria-labelledby="dropdownMenuIconButton"
+                >
                   <li>
                     <span
                       href="#"
-                      class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white hover:cursor-pointer text-red-600"
+                      class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white hover:cursor-pointer"
+                      onClick={() => navigate("/orderDetails")}
                     >
-                      <DeleteCardPopup
-                        popup={cancelOrderState}
-                        setPopup={setCancelOrderState}
-                        row={row}
-                      />
+                      View Order
                     </span>
                   </li>
-                )}
-              </ul>
-            </div>
-          </Menu>
-        </div>
-      </td>
-      {console.log(
-        "rtk query state check",
-        is_ferightrare_loading,
-        is_ferightrare_success,
-        freight_rate_data,
-        is_freight_error,
-        freight_error
+                  {(order_status === "new" ||
+                    order_status === "supicious_order") && (
+                    <li>
+                      <span
+                        class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white hover:cursor-pointer"
+                        onClick={() =>
+                          navigate(`/order/ordercreate/${id}/consignee-details`)
+                        }
+                      >
+                        Edit Order
+                      </span>
+                    </li>
+                  )}
+                  {order_status === "booked" && (
+                    <li>
+                      <span
+                        class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white hover:cursor-pointer"
+                        onClick={() => navigate(`/label/${id}`)}
+                      >
+                        Generate Label
+                      </span>
+                    </li>
+                  )}
+                  {(order_status === "new" ||
+                    order_status === "supicious_order") && (
+                    <li>
+                      <span
+                        href="#"
+                        class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white hover:cursor-pointer text-red-600"
+                      >
+                        <DeleteCardPopup
+                          popup={cancelOrderState}
+                          setPopup={setCancelOrderState}
+                          row={row}
+                        />
+                      </span>
+                    </li>
+                  )}
+                </ul>
+              </div>
+            </Menu>
+          </div>
+        </td>
       )}
     </tr>
   );

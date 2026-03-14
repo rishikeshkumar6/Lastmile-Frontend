@@ -10,7 +10,7 @@ export const api = createApi({
       console.log(state);
       headers.set(
         "Authorization",
-        `bearer ${state["rootReducer"]["userSlice"]["token"]}`
+        `bearer ${state["rootReducer"]["userSlice"]["token"]}`,
       );
       return headers;
     },
@@ -105,8 +105,8 @@ export const paymentApi = api.injectEndpoints({
 export const orderApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getAllOrder: builder.query({
-      query: (payload = "default") => ({
-        url: `/api/v1/getAllOrder?page=${payload.page}&batchSize=10&order_status=${payload.activeButton}&searchTerm=${payload.searchInput}&start_date=${payload.dates.start_date}&end_date=${payload.dates.end_date}`,
+      query: (payload = {}) => ({
+        url: `/api/v1/getAllOrder?page=${payload?.page}&batchSize=10&order_status=${payload?.activeButton}&searchTerm=${payload?.searchInput}&start_date=${payload?.dates.start_date}&end_date=${payload?.dates.end_date}`,
         method: "GET",
       }),
       providesTags: ["getAllOrders"],
@@ -299,7 +299,7 @@ export const {
 
 export const {
   useGetOrderQuery,
-  useLazyGetAllOrderQuery,
+  useGetAllOrderQuery,
   useCreateOrderMutation,
   useUpdateOrderMutation,
   useBulkUploadOrderMutation,

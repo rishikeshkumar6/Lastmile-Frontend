@@ -1,12 +1,11 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
-import { MdOutlineFileDownload } from "react-icons/md";
 import { IoCartOutline } from "react-icons/io5";
 import Pagination from "@mui/material/Pagination";
-import { useLazyGetAllOrderQuery } from "../Redux/Action";
+import { useGetAllOrderQuery } from "../Redux/Action";
 import Stack from "@mui/material/Stack";
 import { HiOutlineRefresh } from "react-icons/hi";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { order } from "../Redux/exportOrderSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
@@ -14,26 +13,41 @@ import DataTable from "../components/userDashboardComponents/DataTable";
 import LoadingTable from "../components/userDashboardComponents/LoadingTable";
 import ErrorTable from "../components/userDashboardComponents/ErrorTable";
 import GenerateExcel from "../components/userDashboardComponents/ExportOrder";
-import DateRangePicker from "../components/OrderForm/DatePicker";
 import ReactSelect from "../components/userDashboardComponents/ReactSelect";
 import AvatarDrawer from "../components/AvatarDrawer";
 import { useFreightRateMutation } from "../Redux/Action";
+import { toast } from "react-toastify";
 
 const Order = () => {
+  document.title = "Order";
   const dispatch = useDispatch();
   const Data = useSelector(
-    (state) => state["rootReducer"]["orderSlice"]["exportOrder"]
+    (state) => state["rootReducer"]["orderSlice"]["exportOrder"],
   );
   const [shipmentRowData, setShipmentRowData] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const [selectAll, setSelectAll] = useState(false);
-  const [activeButton, setActiveButton] = useState("new");
-  const [page, setPage] = useState(1);
-  const [searchInput, setSearchInput] = useState("");
-  const [dates, setDates] = useState({ start_date: "", end_date: "" });
+  const [activeButton, setActiveButton] = useState(
+    searchParams.get("status") || "new",
+  );
+  const [page, setPage] = useState(searchParams.get("page") || 1);
+  const [searchInput, setSearchInput] = useState(
+    searchParams.get("search_term") || "",
+  );
+  const [dates, setDates] = useState({
+    start_date: searchParams.get("start_date") || "",
+    end_date: searchParams.get("end_date") || "",
+  });
   const [shipmentPopup, setShipmentPopup] = useState(false);
 
-  const [getAllOrder, { isLoading, isSuccess, isError, data, error }] =
-    useLazyGetAllOrderQuery();
+  const { isLoading, isSuccess, isError, data, error, refetch } =
+    useGetAllOrderQuery({
+      page,
+      searchInput,
+      activeButton,
+      dates,
+    });
   const [
     freightRate,
     {
@@ -46,9 +60,13 @@ const Order = () => {
   ] = useFreightRateMutation();
   const navigate = useNavigate();
   useEffect(() => {
-    document.title = "Dashboard";
-    console.log("useEffect called with:", searchInput);
-    getAllOrder({ page, searchInput, activeButton, dates }, { force: true });
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set("page", page);
+    newSearchParams.set("search_term", searchInput);
+    newSearchParams.set("status", activeButton);
+    newSearchParams.set("start_date", dates.start_date);
+    newSearchParams.set("end_date", dates.end_date);
+    setSearchParams(newSearchParams);
   }, [page, searchInput, activeButton, dates]);
 
   const handleActiveButton = (status) => {
@@ -116,67 +134,6 @@ const Order = () => {
       <section className="flex gap-6">
         <Sidebar />
         <div className="m-3 text-xl text-gray-900   w-[90%] m-[auto]">
-          {/* <div class="absolute hidden z-10 p-4 w-full max-w-md max-h-full">
-            <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
-              <button
-                type="button"
-                class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                data-modal-hide="popup-modal"
-              >
-                <svg
-                  class="w-3 h-3"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 14 14"
-                >
-                  <path
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
-                  />
-                </svg>
-                <span class="sr-only">Close modal</span>
-              </button>
-              <div class="p-4 md:p-5 text-center">
-                <svg
-                  class="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                  />
-                </svg>
-                <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
-                  Are you sure you want to delete this product?
-                </h3>
-                <button
-                  data-modal-hide="popup-modal"
-                  type="button"
-                  class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
-                >
-                  Yes, I'm sure
-                </button>
-                <button
-                  data-modal-hide="popup-modal"
-                  type="button"
-                  class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                >
-                  No, cancel
-                </button>
-              </div>
-            </div>
-          </div> */}
-
           <div className={`flex justify-between justify-end py-5 pl-14`}>
             <div className={`gap-5 items-center w-[40%] flex`}>
               <form
@@ -220,7 +177,13 @@ const Order = () => {
             </div>
 
             <div className={` gap-5 items-center flex`}>
-              <button className="  text-sm font-normal  px-8 py-3 rounded-sm  cursor-pointer flex gap-2 items-center bg-slate-900 text-white">
+              <button
+                className="  text-sm font-normal  px-8 py-3 rounded-sm  cursor-pointer flex gap-2 items-center bg-slate-900 text-white"
+                onClick={() => {
+                  refetch();
+                  toast.info("Syncing data...", { autoClose: "2000" });
+                }}
+              >
                 <HiOutlineRefresh className="text-[20px]" /> Sync
               </button>
               <Link to="/order/ordercreate">
@@ -257,74 +220,64 @@ const Order = () => {
               Booked
             </button>
             <button
-              class={`text-sm font-normal py-2 px-3  rounded-sm  cursor-not-allowed flex gap-2 items-center ${
+              class={`text-sm font-normal py-2 px-3  rounded-sm  flex gap-2 items-center ${
                 activeButton === "Pickup/Mainfest"
                   ? " bg-black text-white"
                   : " bg-white text-black"
               }`}
               onClick={() => handleActiveButton("Pickup/Mainfest")}
-              disabled={true}
-              title="coming soon"
             >
               Pickup/Mainfest
             </button>
             <button
-              class={`text-sm font-normal py-2 px-3  rounded-sm  cursor-not-allowed flex gap-2 items-center ${
+              class={`text-sm font-normal py-2 px-3  rounded-sm   flex gap-2 items-center ${
                 activeButton === "In Transit"
                   ? " bg-black text-white"
                   : " bg-white text-black"
               }`}
               onClick={() => handleActiveButton("In Transit")}
-              disabled={true}
-              title="coming soon"
             >
               In Transit
             </button>
             <button
-              class={`text-sm font-normal  py-2 px-3  rounded-sm  cursor-not-allowed flex gap-2 items-center ${
+              class={`text-sm font-normal  py-2 px-3  rounded-sm   flex gap-2 items-center ${
                 activeButton === "Out For Deleivery"
                   ? " bg-black text-white"
                   : " bg-white text-black"
               }`}
               onClick={() => handleActiveButton("Out For Deleivery")}
-              disabled={true}
               title="coming soon"
             >
               Out For Deleivery
             </button>
             <button
-              class={`text-sm font-normal  py-2 px-3  rounded-sm  cursor-not-allowed flex gap-2 items-center ${
+              class={`text-sm font-normal  py-2 px-3  rounded-sm flex gap-2 items-center ${
                 activeButton === "Deleivered"
                   ? " bg-black text-white"
                   : " bg-white text-black"
               }`}
               onClick={() => handleActiveButton("Deleivered")}
-              disabled={true}
-              title="coming soon"
             >
               Deleivered
             </button>
             <button
-              class={`text-sm font-normal  py-2 px-3  rounded-sm  cursor-not-allowed flex gap-2 items-center ${
+              class={`text-sm font-normal  py-2 px-3  rounded-sm flex gap-2 items-center ${
                 activeButton === "Return To Origin"
                   ? " bg-black text-white"
                   : " bg-white text-black"
               }`}
               onClick={() => handleActiveButton("Return To Origin")}
-              disabled={true}
               title="coming soon"
             >
               RTO
             </button>
             <button
-              class={`text-sm font-normal py-2 px-3  rounded-sm  cursor-not-allowed flex gap-2 items-center ${
+              class={`text-sm font-normal py-2 px-3  rounded-sm flex gap-2 items-center ${
                 activeButton === "Non Deleivery Report"
                   ? " bg-black text-white"
                   : " bg-white text-black"
               }`}
               onClick={() => handleActiveButton("Non Deleivery Report")}
-              disabled={true}
-              title="coming soon"
             >
               Non Deleivery Report
             </button>
@@ -335,7 +288,6 @@ const Order = () => {
                   : " bg-white text-black"
               }`}
               onClick={() => handleActiveButton("supicious_order")}
-              title="coming soon"
             >
               Suspicious Orders
             </button>
@@ -357,7 +309,6 @@ const Order = () => {
                   : " bg-white text-black"
               }`}
               onClick={() => handleActiveButton("all")}
-              title="coming soon"
             >
               All
             </button>
@@ -394,7 +345,9 @@ const Order = () => {
                       <th className="p-3 text-sm">Package Details </th>
                       <th className="p-3 text-sm">Payment Mode</th>
                       <th className="p-3 text-sm">Status</th>
-                      <th className="p-3 text-sm">Action</th>
+                      {activeButton !== "all" && (
+                        <th className="p-3 text-sm">Action</th>
+                      )}
                     </tr>
                   </thead>
                   <tbody className="bg-white border-2">
@@ -417,6 +370,7 @@ const Order = () => {
                           freight_rate_data={freight_rate_data}
                           is_freight_error={is_freight_error}
                           freight_error={freight_error}
+                          activeButton={activeButton}
                         />
                       );
                     })}
@@ -454,7 +408,7 @@ const Order = () => {
           isSuccess,
           isError,
           data,
-          error
+          error,
         )}
         {console.log("search term", searchInput)}
       </section>

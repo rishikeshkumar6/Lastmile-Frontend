@@ -16,14 +16,15 @@ const DeleteCardPopup = ({ deletePopup, setDeletePopup, deletePayload }) => {
       toast.success(data.message, { autoClose: "2000" });
       setDeletePopup(!deletePopup);
     }
+    console.log("data statusCode logs", data?.statusCode);
     if (
       isError === true &&
-      (data.statusCode === 500 || data.statusCode === 401)
+      (error?.data?.statusCode === 500 || error?.data?.statusCode === 401)
     ) {
-      toast.error(data.errorMessage, { autoClose: "2000" });
+      toast.error(error?.data?.errorMessage, { autoClose: "2000" });
       setDeletePopup(!deletePopup);
     }
-  }, [data]);
+  }, [data, error, isError, isSuccess]);
   return (
     <>
       <Popup

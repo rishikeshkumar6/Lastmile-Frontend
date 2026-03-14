@@ -12,6 +12,7 @@ import Drawers from "../components/OrderForm/PickupDrawer";
 import { FiPlus } from "react-icons/fi";
 
 const Order = () => {
+  document.title = "Manage Location";
   const [open, setOpen] = useState(false);
   const [pickupData, setPickupData] = useState(null);
   const [page, setPage] = useState(1);
@@ -48,10 +49,7 @@ const Order = () => {
         <div className="m-3 text-xl text-gray-900   w-[90%] m-[auto]">
           <div className="w-full px-8 py-4 bg-white">
             <div
-              className={`py-5 flex ${
-                isSuccess && data.pickupResponse.length > 0
-                  ? "justify-between"
-                  : "justify-end"
+              className={`py-5 flex justify-between items-center
               }`}
             >
               <div className="flex  w-[40%]">

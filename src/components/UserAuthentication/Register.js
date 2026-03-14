@@ -27,7 +27,7 @@ const SignupForm = () => {
         userManageId({
           type: "userid",
           userId: data.id,
-        })
+        }),
       );
       toast.success("user register successfully", {
         autoClose: "3000",
@@ -38,7 +38,7 @@ const SignupForm = () => {
         error?.data?.error?.errors[0]?.message || error.data["errorMessage"],
         {
           autoClose: "3000",
-        }
+        },
       );
     }
   }, [data, error]);

@@ -28,7 +28,7 @@ const LoginForm = () => {
         userManageState({
           type: "token",
           token: data.token,
-        })
+        }),
       );
       navigate("/dashboard");
     } else if (isError === true) {

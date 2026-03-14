@@ -10,6 +10,7 @@ import LoadingTable from "../userDashboardComponents/LoadingTable";
 const ITEMS_PER_PAGE = 10;
 
 export default function WalletHistory() {
+  document.title = "Wallet History";
   const [currentPage, setCurrentPage] = useState(1);
   const [walletHistory, { isLoading, isSuccess, data, isError, error }] =
     useLazyWalletHistoryQuery();
@@ -22,7 +23,7 @@ export default function WalletHistory() {
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const currentTransactions = mockTransactions.slice(
     startIndex,
-    startIndex + ITEMS_PER_PAGE
+    startIndex + ITEMS_PER_PAGE,
   );
 
   const formatCurrency = (amount) => {
@@ -86,93 +87,85 @@ export default function WalletHistory() {
             ) : (
               ""
             )}
-            <tbody className="divide-y divide-gray-200">
-              {isSuccess === true ? (
-                data.walletResponse.length > 0 ? (
-                  data?.walletResponse?.map((transaction, index) => (
-                    <tr key={transaction.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {startIndex + index + 1}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {`${transaction.date ? transaction.date : "N/A"}`}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">
-                        {`${
-                          transaction.transaction_id
-                            ? transaction.transaction_id
-                            : "N/A"
-                        }`}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        <span
-                          className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            transaction.transaction_type &&
-                            transaction.transaction_type === "WALLET_RECHARGE"
-                              ? "bg-green-100 text-green-800"
-                              : "bg-red-100 text-red-800"
-                          }`}
-                        >
+            <tbody className="bg-white">
+              {isSuccess === true
+                ? data.walletResponse.length > 0
+                  ? data?.walletResponse?.map((transaction, index) => (
+                      <tr key={transaction.id} className="hover:bg-gray-50">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {startIndex + index + 1}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {`${transaction.date ? transaction.date : "N/A"}`}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">
                           {`${
-                            transaction.transaction_type
-                              ? transaction.transaction_type
+                            transaction.transaction_id
+                              ? transaction.transaction_id
                               : "N/A"
                           }`}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600">
-                        {`${
-                          transaction.credit_amount
-                            ? transaction.credit_amount.toFixed(2)
-                            : 0
-                        }`}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600">
-                        {`${
-                          transaction.debit_amount
-                            ? transaction.debit_amount.toFixed(2)
-                            : 0
-                        }`}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        {`${
-                          transaction.wallet_balance
-                            ? transaction.wallet_balance.toFixed(2)
-                            : "N/A"
-                        }`}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        <span
-                          className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            transaction.payment_status &&
-                            transaction.payment_status === "SUCCESS"
-                              ? "bg-green-100 text-green-800"
-                              : "bg-red-100 text-red-800"
-                          }`}
-                        >
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                          <span
+                            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                              transaction.transaction_type &&
+                              transaction.transaction_type === "WALLET_RECHARGE"
+                                ? "bg-green-100 text-green-800"
+                                : "bg-red-100 text-red-800"
+                            }`}
+                          >
+                            {`${
+                              transaction.transaction_type
+                                ? transaction.transaction_type
+                                : "N/A"
+                            }`}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600">
                           {`${
-                            transaction.payment_status
-                              ? transaction.payment_status
+                            transaction.credit_amount
+                              ? transaction.credit_amount.toFixed(2)
+                              : 0
+                          }`}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600">
+                          {`${
+                            transaction.debit_amount
+                              ? transaction.debit_amount.toFixed(2)
+                              : 0
+                          }`}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                          {`${
+                            transaction.wallet_balance
+                              ? transaction.wallet_balance.toFixed(2)
                               : "N/A"
                           }`}
-                        </span>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <ErrorTable
-                    className="h-[400px] flex items-center justify-center bg-white flex-col gap-5"
-                    w={["20%"]}
-                    errorMessage={"No Transation available"}
-                  />
-                )
-              ) : (
-                ""
-              )}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <span
+                            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                              transaction.payment_status &&
+                              transaction.payment_status === "SUCCESS"
+                                ? "bg-green-100 text-green-800"
+                                : "bg-red-100 text-red-800"
+                            }`}
+                          >
+                            {`${
+                              transaction.payment_status
+                                ? transaction.payment_status
+                                : "N/A"
+                            }`}
+                          </span>
+                        </td>
+                      </tr>
+                    ))
+                  : ""
+                : ""}
             </tbody>
           </table>
         </div>
-        {isSuccess === true && data.walletResponse.length > 0 && (
+        {isSuccess === true && data?.walletResponse?.length > 0 && (
           <Stack spacing={2} className="py-5 m-[auto]">
             <Pagination
               count={data.totalPage}
@@ -182,13 +175,14 @@ export default function WalletHistory() {
             />
           </Stack>
         )}
-        {isError === true && (
-          <ErrorTable
-            className="h-[400px] flex items-center justify-center bg-white flex-col gap-5"
-            w={["20%"]}
-            errorMessage={"No Transation available"}
-          />
-        )}
+        {isError === true ||
+          (isLoading === false && data?.walletResponse?.length === 0 && (
+            <ErrorTable
+              className="h-[400px] flex items-center justify-center bg-white flex-col gap-5"
+              w={["20%"]}
+              errorMessage={"No Transation available"}
+            />
+          ))}
         {isLoading === true && <LoadingTable tabletype="walletTable" />}
       </div>
     </section>
